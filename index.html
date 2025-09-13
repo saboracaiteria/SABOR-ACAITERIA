@@ -1,0 +1,2293 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Online - SABOR AÇAÍTERIA</title>
+    <!-- Tailwind CSS para estilização responsiva e moderna -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fontes Google para uma tipografia agradável -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Tone.js para sons no jogo -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    <style>
+        /* Define a fonte base para todo o corpo do documento */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Estilização personalizada para a barra de rolagem do conteúdo dos modais */
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-body::-webkit-scrollbar-track {
+            background: #e5e7eb; /* cinza-200 */
+            border-radius: 10px;
+        }
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #EC4899; /* Rosa Instagram */
+            border-radius: 10px;
+        }
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #DB2777; /* Rosa Instagram mais escuro */
+        }
+        /* Oculta os botões de incremento/decremento em inputs numéricos */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield; /* Compatibilidade com Firefox */
+        }
+        /* Estilo para checkboxes desabilitados */
+        input[type="checkbox"]:disabled + span {
+            color: #9ca3af; /* cinza-400 */
+            cursor: not-allowed;
+        }
+        /* Transição suave para o modal de alerta */
+        .alert-modal {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        /* Destaca o título do botão de rádio quando selecionado */
+        input[type="radio"]:checked + div > .radio-title {
+            color: #EC4899; /* Rosa Instagram */
+        }
+        /* Ajusta a visibilidade do ícone de seleção de tempo em fundos escuros */
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.2); /* Inverte as cores para escurecer em fundo claro */
+        }
+        /* Estilos base para modais para habilitar transições de entrada/saída */
+        .modal {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none; /* Desabilita interação quando oculto */
+        }
+        /* Estilos para modais quando visíveis */
+        .modal.flex {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto; /* Habilita interação quando visível */
+        }
+
+        /* Estilos específicos para o canvas do jogo */
+        #game-canvas {
+            background-color: #87CEEB; /* Azul céu */
+            border: 2px solid #333;
+            display: block;
+            width: 100%; /* Torna o canvas responsivo à largura do contêiner */
+            height: 400px; /* Altura fixa, será ajustada por JS para manter proporção */
+            border-radius: 10px;
+        }
+        /* Ajuste de altura para telas menores */
+        @media (max-width: 640px) {
+            #game-canvas {
+                height: 300px; /* Ajusta a altura para telas menores */
+            }
+        }
+
+        /* Classe para o gradiente de Instagram */
+        .instagram-gradient {
+            background: linear-gradient(to right, #833AB4, #FD1D1D, #FCB045);
+        }
+        .instagram-gradient-hover:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Seção do Cabeçalho -->
+    <header class="sticky top-0 z-40 backdrop-blur-sm p-4 sm:p-6 rounded-b-2xl shadow-lg border-b border-gray-200 instagram-gradient">
+        <div class="text-center">
+            <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white">SABOR AÇAÍTERIA</h1>
+            <p class="text-md md:text-lg mt-1 text-white opacity-90 flex items-center justify-center">
+                <i class="fas fa-clock mr-2"></i> <span id="store-hours-display-text">Carregando horário...</span>
+                <span id="store-status-indicator" class="ml-2 px-3 py-1 text-xs rounded-full"></span>
+            </p>
+        </div>
+    </header>
+
+    <!-- Seção do Player de Rádio Online -->
+    <div class="bg-white p-4 text-center shadow-md border-b border-gray-200">
+        <h3 class="text-lg font-bold text-gray-800 mb-2">Sintonize na Correio FM Canaã dos Carajás!</h3>
+        <audio controls class="w-full max-w-md mx-auto rounded-lg shadow-md">
+            <source src="https://sws.onradio.biz/9664/stream" type="audio/mpeg">
+            Seu navegador não suporta o elemento de áudio.
+        </audio>
+        <p class="text-xs text-gray-500 mt-2">
+            <i class="fas fa-info-circle mr-1"></i> A reprodução pode não iniciar automaticamente em alguns navegadores.
+        </p>
+    </div>
+
+    <!-- Seção do Banner do Jogo -->
+    <div class="p-4 text-center shadow-md instagram-gradient">
+        <a href="#" onclick="app.game.openGameModal(event)" class="inline-block bg-white text-pink-600 font-bold py-3 px-8 rounded-full hover:bg-pink-100 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-lg">
+            <i class="fas fa-gamepad mr-2"></i> Jogue Pegue o Açaí e Ganhe Descontos!
+        </a>
+    </div>
+
+    <div class="container mx-auto p-4 sm:p-8 max-w-4xl">
+
+        <!-- Banners de Status da Loja e Horário de Entrega -->
+        <div id="store-status-banner" class="hidden"></div>
+        <div id="delivery-time-banner" class="hidden"></div>
+
+        <!-- Área de Conteúdo Principal - Lista de Produtos -->
+        <main class="space-y-8">
+            <section id="tamanhos" class="bg-white p-6 rounded-2xl shadow-md">
+                <h2 class="text-3xl font-bold text-pink-600 mb-4 border-b-2 border-gray-200 pb-2">Escolha o Tamanho</h2>
+                <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Cards de produtos serão renderizados aqui pelo JavaScript -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Seção do Rodapé -->
+        <footer class="text-center mt-10 space-y-4">
+            <div class="bg-white p-4 rounded-2xl shadow-md border-2 border-gray-200">
+                 <h3 class="text-lg font-bold text-pink-600 mb-2 flex items-center justify-center gap-2">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Nosso Endereço
+                </h3>
+                 <p id="store-address-display" class="text-gray-800 text-base">
+                    Carregando endereço...
+                </p>
+            </div>
+            <div class="text-gray-600 pt-2">
+                <p>Siga-nos no Instagram: 
+                    <a href="https://www.instagram.com/sabor_acaiteria/profilecard/?igsh=NjF2ZWMwNHNiNzI0" target="_blank" class="font-semibold text-pink-600 hover:underline">@sabor_acaiteria</a>
+                </p>
+            </div>
+            <!-- Contêiner de Botões de Ação -->
+            <div class="mt-6">
+                 <a href="#" onclick="app.openAdminPanel(event)" class="inline-block bg-gray-200 text-purple-700 font-bold py-3 px-6 rounded-lg hover:bg-gray-300 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    <i class="fas fa-user-shield mr-2"></i>Painel do Administrador
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Botão Flutuante do WhatsApp (Loja) -->
+    <a id="whatsapp-link" href="#" target="_blank" class="fixed bottom-5 left-5 z-50">
+        <button class="bg-green-500 text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center hover:bg-green-600 transition-transform transform hover:scale-110">
+            <i class="fab fa-whatsapp text-3xl"></i>
+        </button>
+    </a>
+
+    <!-- Botão Flutuante do WhatsApp (Emerson Taxista) -->
+    <a href="https://wa.me/5594981756146?text=Ol%C3%A1%20Emerson%2C%20estou%20precisando%20de%20transporte%2C%20voce%20esta%20dispon%C3%ADvel%3F" target="_blank" class="fixed top-1/2 -translate-y-1/2 left-5 z-50 group">
+        <button class="bg-blue-600 text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-transform transform hover:scale-110">
+            <i class="fas fa-car text-3xl"></i>
+        </button>
+        <span class="absolute left-full ml-3 px-3 py-1 bg-blue-600 text-white text-sm font-bold rounded-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            Chamar Emerson (Uber/Táxi)
+        </span>
+    </a>
+
+    <!-- Botão Flutuante do Carrinho -->
+    <div id="cart-button" class="fixed bottom-5 right-5 z-50 hidden">
+        <button onclick="app.toggleCartModal()" class="text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center transition-transform transform hover:scale-110 instagram-gradient instagram-gradient-hover">
+            <i class="fas fa-shopping-cart text-2xl"></i>
+            <span id="cart-count" class="absolute -top-1 -right-1 bg-white text-pink-600 text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center border-2 border-pink-600">0</span>
+        </button>
+    </div>
+
+    <!-- Modal de Seleção de Tamanho de Combo -->
+    <div id="combo-size-modal" class="modal fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white text-gray-900 rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 id="combo-size-modal-title" class="text-2xl font-bold text-pink-600">Escolha o Tamanho do Combo</h3>
+                <button onclick="app.closeComboSizeModal()" class="text-gray-500 hover:text-pink-500"><i class="fas fa-times text-2xl"></i></button>
+            </div>
+            <div id="combo-size-modal-body" class="p-6 space-y-4 overflow-y-auto modal-body">
+                <!-- Opções de tamanho serão renderizadas aqui pelo JavaScript -->
+            </div>
+            <div class="p-4 bg-gray-100 border-t border-gray-200 flex justify-end">
+                <button id="select-combo-size-btn" class="text-white font-bold py-3 px-6 rounded-lg transition-all flex items-center gap-2 instagram-gradient instagram-gradient-hover" disabled>
+                    <i class="fas fa-arrow-right"></i> Continuar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Personalização de Item -->
+    <div id="item-modal" class="modal fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white text-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 id="modal-title" class="text-2xl font-bold text-pink-600">Monte seu Açaí</h3>
+                <button onclick="app.closeItemModal()" class="text-gray-500 hover:text-pink-500"><i class="fas fa-times text-2xl"></i></button>
+            </div>
+            <div id="modal-body" class="p-6 space-y-6 overflow-y-auto modal-body">
+                <!-- Opções de adicionais serão renderizadas aqui pelo JavaScript -->
+            </div>
+            <div class="p-4 bg-gray-100 border-t border-gray-200 flex justify-between items-center">
+                <div>
+                    <span class="text-lg font-medium text-gray-800">Total do Item:</span>
+                    <span id="modal-item-total" class="text-2xl font-bold text-pink-600 ml-2">R$ 0,00</span>
+                </div>
+                <button id="add-to-cart-btn" class="text-white font-bold py-3 px-6 rounded-lg transition-all flex items-center gap-2 instagram-gradient instagram-gradient-hover">
+                    <i class="fas fa-cart-plus"></i> Adicionar ao Carrinho
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal do Carrinho -->
+    <div id="cart-modal" class="modal fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
+         <div class="bg-white text-gray-900 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-pink-600">Seu Carrinho e Pedido</h3>
+                <button onclick="app.toggleCartModal()" class="text-gray-500 hover:text-pink-500"><i class="fas fa-times text-2xl"></i></button>
+            </div>
+            <div class="p-6 space-y-6 overflow-y-auto modal-body">
+                <div id="cart-items-container"></div>
+                <div id="cart-summary-details" class="pt-4 mt-4 border-t border-gray-200 space-y-2 hidden">
+                     <div class="flex justify-between text-gray-600">
+                         <span>Subtotal</span>
+                         <span id="cart-subtotal">R$ 0,00</span>
+                     </div>
+                     <div class="flex justify-between text-gray-600">
+                         <span>Taxa de Entrega</span>
+                         <span id="cart-delivery-fee">R$ 0,00</span>
+                     </div>
+                     <div id="cart-discount-row" class="flex justify-between text-green-600 font-bold hidden">
+                         <span>Desconto Aplicado</span>
+                         <span id="cart-discount-amount">- R$ 0,00</span>
+                     </div>
+                </div>
+                <div id="checkout-form" class="space-y-4 pt-6 border-t border-gray-200 hidden">
+                    <h4 class="text-xl font-bold text-gray-900">Informações do Pedido</h4>
+                    <div id="delivery-options">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <label id="delivery-option-delivery" class="flex-1 flex items-center p-3 border-2 border-gray-300 rounded-lg cursor-pointer has-[:checked]:border-pink-500 has:checked:bg-pink-100">
+                                <input type="radio" name="delivery_option" value="delivery" class="hidden" checked>
+                                <div class="flex items-center">
+                                    <span class="mr-3"><i class="fas fa-motorcycle text-xl text-pink-500"></i></span>
+                                    <div><span class="font-semibold text-gray-800 block radio-title">Delivery (Entrega)</span><span class="text-sm text-gray-500">20-60 min</span></div>
+                                </div>
+                            </label>
+                            <label id="delivery-option-takeout" class="flex-1 flex items-center p-3 border-2 border-gray-300 rounded-lg cursor-pointer has-[:checked]:border-pink-500 has:checked:bg-pink-100">
+                                <input type="radio" name="delivery_option" value="takeout" class="hidden">
+                                <div class="flex items-center">
+                                    <span class="mr-3"><i class="fas fa-store text-xl text-pink-500"></i></span>
+                                    <div><span class="font-semibold text-gray-800 block radio-title">Retirar na Loja</span><span class="text-sm text-gray-500">20-30 min</span></div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="customer-name" class="block text-sm font-medium text-gray-600">Seu Nome</label>
+                        <input type="text" id="customer-name" class="mt-1 block w-full bg-gray-100 border-2 border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base" required>
+                    </div>
+                    <div id="delivery-fields" class="space-y-4">
+                         <div>
+                            <label for="neighborhood" class="block text-sm font-medium text-gray-600">Selecione o Bairro</label>
+                            <select id="neighborhood" class="mt-1 block w-full bg-gray-100 border-2 border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base">
+                                <option value="" data-fee="0">-- Escolha uma opção --</option>
+                                <option value="Jardim Europa" data-fee="9.00">Jardim Europa (R$ 9,00)</option>
+                                <option value="Amec" data-fee="9.00">Amec (R$ 9,00)</option>
+                                <option value="Vale dos Sonhos 1" data-fee="9.00">Vale dos Sonhos 1 (R$ 9,00)</option>
+                                <option value="Vale dos Sonhos 2" data-fee="9.00">Vale dos Sonhos 2 (R$ 9,00)</option>
+                                <option value="Vale da Benção" data-fee="9.00">Vale da Benção (R$ 9,00)</option>
+                                <option value="Jardim do Lago" data-fee="12.00">Jardim do Lago (R$ 12,00)</option>
+                                <option value="Casas Populares" data-fee="9.00">Casas Populares (R$ 9,00)</option>
+                                <option value="Nova Esperança 2" data-fee="9.00">Nova Esperança 2 (R$ 9,00)</option>
+                                <option value="Outro Bairro" data-fee="7.00">Outro Bairro (Taxa Padrão R$ 7,00)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="customer-address" class="block text-sm font-medium text-gray-600">Endereço Completo (Rua, Número, Complemento)</label>
+                            <input type="text" id="customer-address" class="mt-1 block w-full bg-gray-100 border-2 border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base" placeholder="Ex: Rua das Flores, 123, apt 4" required>
+                        </div>
+                    </div>
+                     <div>
+                        <label for="payment-method" class="block text-sm font-medium text-gray-600">Forma de Pagamento</label>
+                        <select id="payment-method" class="mt-1 block w-full bg-gray-100 border-2 border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base">
+                            <option>Pix</option>
+                            <option>Cartão de Crédito (na entrega)</option>
+                            <option>Cartão de Débito (na entrega)</option>
+                            <option>Dinheiro</option>
+                        </select>
+                        <p class="text-xs text-yellow-700 mt-2"><i class="fas fa-info-circle mr-1"></i>Observação: não aceitamos VR e vales refeição no momento.</p>
+                    </div>
+                     <div>
+                        <label for="observations" class="block text-sm font-medium text-gray-600">Observações</label>
+                        <textarea id="observations" rows="3" class="mt-1 block w-full bg-gray-100 border-2 border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base" placeholder="Ex: Troco para R$50, sem cebola, etc."></textarea>
+                    </div>
+                     <div id="discount-section" class="pt-4 border-t border-gray-200">
+                        <h4 class="text-xl font-bold text-gray-900 mb-2">Seus Pontos de Desconto</h4>
+                        <div class="flex items-center mb-3">
+                            <span id="current-discount-points" class="text-xl font-bold text-green-600">0</span>
+                        </div>
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="apply-discount-checkbox" class="h-5 w-5 rounded border-gray-400 bg-gray-200 text-green-600 focus:ring-green-500">
+                            <span class="ml-2 text-gray-800 font-medium">Aplicar Desconto (se disponível)</span>
+                        </label>
+                        <p id="discount-message" class="text-sm text-gray-600 mt-2">Nenhum desconto disponível.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 bg-gray-100 border-t border-gray-200 flex justify-between items-center">
+                 <div>
+                    <span class="text-lg font-medium text-gray-800">Total do Pedido:</span>
+                    <span id="cart-total" class="text-2xl font-bold text-pink-600 ml-2">R$ 0,00</span>
+                </div>
+                <button onclick="app.finalizeOrder()" class="text-white font-bold py-3 px-6 rounded-lg transition-all flex items-center gap-2 instagram-gradient instagram-gradient-hover">
+                    <i class="fab fa-whatsapp"></i> Finalizar Pedido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="confirmation-modal" class="modal fixed inset-0 bg-black bg-opacity-70 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white text-gray-900 rounded-2xl shadow-2xl w-full max-w-lg text-center p-8">
+            <div id="confirmation-icon"><i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i></div>
+            <h3 id="confirmation-title" class="text-2xl font-bold text-gray-900 mb-2">Pedido Recebido!</h3>
+            <p id="confirmation-message" class="text-gray-600 mb-6">Seu pedido foi gerado! Clique no botão abaixo para encaminhá-lo para o WhatsApp da loja e finalizar a compra.</p>
+            <div id="order-summary" class="text-left bg-gray-100 p-4 rounded-lg mb-6 max-h-60 overflow-y-auto modal-body"></div>
+            <div id="initial-confirm-buttons" class="flex flex-col sm:flex-row gap-4 justify-center">
+                 <button onclick="app.sendOrderViaWhatsApp()" class="w-full bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 transition-all flex items-center justify-center gap-2">
+                    <i class="fab fa-whatsapp"></i> Enviar Pedido
+                </button>
+                <button onclick="app.closeConfirmationModal()" class="w-full bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg hover:bg-gray-400 transition-all">Fechar</button>
+            </div>
+            <div id="post-send-buttons" class="hidden flex-col gap-4 justify-center">
+                 <p class="text-sm text-yellow-700 mb-4">Após enviar a mensagem no WhatsApp, confirme abaixo para limpar seu carrinho.</p>
+                 <button onclick="app.confirmOrderSent()" class="w-full bg-teal-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-teal-600 transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-check-square"></i> Pedido Enviado, Limpar Carrinho
+                </button>
+                <button onclick="app.closeConfirmationModal()" class="w-full bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg hover:bg-gray-400 transition-all">Manter Carrinho e Fechar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Alerta -->
+    <div id="alert-modal" class="alert-modal fixed inset-0 bg-black bg-opacity-60 z-[60] hidden items-center justify-center p-4 opacity-0">
+        <div class="bg-white text-gray-900 rounded-2xl shadow-2xl w-full max-w-sm text-center p-6 transform scale-95 transition-transform">
+            <div id="alert-icon" class="mx-auto mb-4"></div>
+            <h3 id="alert-title" class="text-xl font-bold text-gray-900 mb-2">Atenção!</h3>
+            <p id="alert-message" class="text-gray-600 mb-6">Mensagem de alerta.</p>
+            <button onclick="app.closeAlertModal()" class="w-full instagram-gradient text-white font-bold py-2 px-6 rounded-lg instagram-gradient-hover">OK</button>
+        </div>
+    </div>
+
+    <!-- Modal do Painel de Administração -->
+    <div id="admin-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-[70] hidden items-center justify-center p-4">
+        <div class="bg-white text-gray-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-purple-700"><i class="fas fa-user-shield mr-2"></i>Painel do Administrador</h3>
+                <button onclick="app.closeAdminModal()" class="text-gray-500 hover:text-pink-500"><i class="fas fa-times text-2xl"></i></button>
+            </div>
+            <div id="admin-body" class="p-6 space-y-6 overflow-y-auto modal-body">
+                <!-- Conteúdo do painel de administração será renderizado aqui pelo JavaScript -->
+            </div>
+            <div class="p-4 bg-gray-100 border-t border-gray-200 flex flex-wrap justify-between items-center gap-4">
+                <div class="flex gap-4">
+                    <button onclick="app.saveAdminChanges()" class="instagram-gradient text-white font-bold py-3 px-6 rounded-lg instagram-gradient-hover flex items-center gap-2">
+                        <i class="fas fa-save"></i> Salvar Alterações
+                    </button>
+                    <button onclick="app.resetToDefaults()" class="bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-700 transition-all flex items-center gap-2 text-sm">
+                        <i class="fas fa-undo"></i> Restaurar Padrão
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Senha do Administrador -->
+    <div id="password-modal" class="modal fixed inset-0 bg-black bg-opacity-70 z-[80] hidden items-center justify-center p-4">
+        <div class="bg-white text-gray-900 rounded-2xl shadow-2xl w-full max-w-sm text-center p-6">
+            <h3 class="text-xl font-bold text-purple-700 mb-4">Acesso Restrito</h3>
+            <p class="text-gray-600 mb-4">Por favor, insira a senha de administrador.</p>
+            <input type="password" id="admin-password-input" class="mt-1 block w-full bg-gray-100 border-2 border-gray-300 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base" placeholder="Senha">
+            <div class="mt-6 flex gap-4">
+                <button onclick="app.closePasswordModal()" class="w-full bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-400 transition-all">Cancelar</button>
+                <button onclick="app.checkAdminPassword()" class="w-full instagram-gradient text-white font-bold py-2 px-6 rounded-lg instagram-gradient-hover">Entrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Ação (Genérico) -->
+    <div id="confirm-action-modal" class="modal fixed inset-0 bg-black bg-opacity-70 z-[80] hidden items-center justify-center p-4">
+        <div class="bg-white text-gray-900 rounded-2xl shadow-2xl w-full max-w-sm text-center p-6">
+            <div id="confirm-action-icon" class="mx-auto mb-4"><i class="fas fa-exclamation-triangle text-yellow-500 text-5xl"></i></div>
+            <h3 id="confirm-action-title" class="text-xl font-bold text-gray-900 mb-2">Confirmar Ação</h3>
+            <p id="confirm-action-message" class="text-gray-600 mb-6">Você tem certeza?</p>
+            <div class="mt-6 flex gap-4">
+                <button id="confirm-action-cancel-btn" class="w-full bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-400 transition-all">Cancelar</button>
+                <button id="confirm-action-confirm-btn" class="w-full instagram-gradient text-white font-bold py-2 px-6 rounded-lg instagram-gradient-hover">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal do Jogo -->
+    <div id="game-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-[90] hidden items-center justify-center p-4">
+        <div class="bg-white text-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-pink-600"><i class="fas fa-gamepad mr-2"></i>Pegue o Açaí!</h3>
+                <button onclick="app.game.closeGameModal()" class="text-gray-500 hover:text-pink-500"><i class="fas fa-times text-2xl"></i></button>
+            </div>
+            <div class="p-6 flex-grow flex flex-col items-center justify-center">
+                <canvas id="game-canvas" class="w-full max-w-5xl"></canvas>
+                <div class="mt-4 text-center text-lg font-bold">
+                    Score: <span id="game-score">0</span> | Misses: <span id="game-misses">0</span>
+                </div>
+                <div id="game-discount-message" class="text-green-600 text-xl font-bold mt-2 hidden"></div>
+                <div id="game-message" class="text-pink-600 text-xl font-bold mt-2"></div>
+                <div class="mt-6 flex gap-4">
+                    <button id="game-start-btn" onclick="app.game.startGame(false)" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700 transition-all">
+                        <i class="fas fa-play mr-2"></i> Iniciar Jogo
+                    </button>
+                    <button id="game-training-btn" onclick="app.game.startGame(true)" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-all">
+                        <i class="fas fa-dumbbell mr-2"></i> Modo Treino
+                    </button>
+                    <button id="game-restart-btn" onclick="app.game.startGame(false)" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-all hidden">
+                        <i class="fas fa-redo mr-2"></i> Reiniciar
+                    </button>
+                </div>
+                <div class="mt-4 flex justify-center gap-4">
+                    <button id="move-left-btn" class="instagram-gradient text-white font-bold py-6 px-16 rounded-lg instagram-gradient-hover">
+                        <i class="fas fa-arrow-left text-3xl"></i>
+                    </button>
+                    <button id="move-right-btn" class="instagram-gradient text-white font-bold py-6 px-16 rounded-lg instagram-gradient-hover">
+                        <i class="fas fa-arrow-right text-3xl"></i>
+                    </button>
+                </div>
+                <p class="text-sm text-gray-600 mt-4 text-center">
+                    Use as setas ← →, os botões abaixo ou deslize na tela para mover a cesta!
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    // --- OBJETO GLOBAL DO APLICATIVO ---
+    // Encapsula todo o estado e lógica do aplicativo para melhor organização.
+    const app = {
+        // --- ESTADO DO APLICATIVO ---
+        cart: [], // Carrinho de compras
+        currentItem: null, // Item atualmente sendo personalizado no modal
+        whatsAppMessage: '', // Mensagem formatada para o WhatsApp
+        isStoreOpen: false, // Indica se a loja está aberta
+        isDeliveryTime: false, // Indica se é horário de entrega
+        adminSettings: {}, // Configurações do painel de administração
+        products: [], // Lista de produtos disponíveis
+        toppings: {}, // Opções de adicionais
+        selectedComboProductId: null, // ID do combo sendo configurado
+        currentDiscountPoints: 0, // Pontos de desconto acumulados pelo usuário
+        appliedDiscountPercentage: 0, // Porcentagem de desconto aplicada
+
+        // --- DADOS PADRÃO (para carregamento inicial ou reset) ---
+        defaultAdminSettings: {
+            storeStatus: 'auto', // 'auto', 'open', 'closed'
+            deliveryMode: 'both', // 'both', 'delivery', 'takeout'
+            openingTime: '15:15', // 15:15 PM
+            closingTime: '22:15', // 22:15 PM
+            openDays: [0, 1, 2, 3, 4, 5, 6], // Domingo = 0, Segunda = 1, etc.
+            whatsappNumber: '5594991623576',
+            address: 'Av. Rio Branco, Bairro Novo Horizonte, prox a praça',
+            weekdayDeliveryStartTime: '18:00', // 18:00 PM
+            weekendDeliveryStartTime: '15:30'  // 15:30 PM para Sábado (6) e Domingo (0)
+        },
+        defaultProducts: [
+            { id: 1, name: 'Copo 300ml', price: 14.00, disabled: false, type: 'base_acai', description: '' },
+            { id: 2, name: 'Copo 400ml', price: 17.00, disabled: false, type: 'base_acai', description: '' },
+            { id: 3, name: 'Copo 500ml', price: 20.00, disabled: false, type: 'base_acai', description: '' },
+            { id: 4, name: 'Barca M', price: 55.00, disabled: false, type: 'base_acai', description: '' },
+            // Combos Especiais - agora com tamanho selecionável
+            { id: 5, name: 'Diet Granola', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: granola, leite em pó, leite condensado' },
+            { id: 6, name: 'Refrescante', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: sorvete, calda de chocolate, leite em pó, leite condensado' },
+            { id: 7, name: 'Mega Especial', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: leite em pó, leite condensado, banana, creme de avelã (Nutella)' },
+            { id: 8, name: 'Preferido', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: paçoca, leite em pó, leite condensado, creme de avelã (Nutella)' },
+            { id: 9, name: 'Maltine +', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: ovomaltine, tapioca, leite em pó, leite condensado' },
+            { id: 10, name: 'Amendoimix', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: amendoim, leite em pó, leite condensado' },
+            { id: 11, name: 'Megapower', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: chocopower, leite em pó, leite condensado, creme de avelã (Nutella)' },
+            { id: 12, name: 'Açaí Banana', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: leite em pó, tapioca, leite condensado, banana' },
+            { id: 13, name: 'Favorito Nutella', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: flocos, leite condensado, leite em pó, creme de avelã (Nutella)' },
+            { id: 14, name: 'Sabores do Pará', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: banana, uva, leite em pó, leite condensado, creme de avelã (Nutella)' },
+            { id: 15, name: 'Kids Especial', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: M&M\'s, uva, creme de avelã (Nutella), leite em pó, leite condensado, banana' },
+            { id: 16, name: 'Namorados', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: uva, morango, creme de avelã (Nutella), leite em pó, leite condensado' },
+            { id: 17, name: 'Kitkat', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: KitKat, creme de avelã, leite em pó, calda de chocolate' },
+            { id: 18, name: 'Euforia', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: morango, kiwi, banana, leite em pó, calda de morango' },
+            { id: 19, name: 'Ninho', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: creme de Ninho, creme de avelã, calda de chocolate' },
+            { id: 20, name: 'Bombom', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: Sonho de Valsa, leite em pó, calda de chocolate, creme de avelã' },
+            { id: 21, name: 'Maracujá', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: mousse de maracujá, creme de avelã, leite em pó, calda de chocolate' },
+        ],
+        cupSizes: [ // Define os tamanhos dos copos e seus preços
+            { name: '300ml', price: 14.00 },
+            { name: '400ml', price: 17.00 },
+            { name: '500ml', price: 20.00 }
+        ],
+        defaultToppings: {
+            // Categorias de adicionais
+            free: {
+                title: '🍓 Frutas, Cremes e Grãos (Grátis, escolha até 3)', limit: 3, items: [
+                    { name: 'Sorvete', disabled: false }, { name: 'Banana', disabled: false }, { name: 'Morango', disabled: false }, 
+                    { name: 'Manga', disabled: false }, { name: 'Kiwi', disabled: false }, { name: 'Uva', disabled: false }, 
+                    { name: 'Abacaxi', disabled: false }, { name: 'Creme de Leite Ninho', disabled: false }, { name: 'Creme de Cupuaçu', disabled: false }, 
+                    { name: 'Creme de Avelã', disabled: false }, { name: 'Mousse de Maracujá', disabled: false },
+                    { name: 'Granola Tradicional', disabled: false }, { name: 'Aveia', disabled: false }, { name: 'Flocos', disabled: false }, 
+                    { name: 'Tapioca', disabled: false }, { name: 'Paçoca', disabled: false }, { name: 'Leite em Pó', disabled: false }, 
+                    { name: 'Amendoim', disabled: false }, { name: 'Coco Ralado', disabled: false }
+                ]
+            },
+            caldas: {
+                title: '🍯 Caldas (Grátis, escolha até 2)', limit: 2, items: [
+                    { name: 'Leite Condensado', disabled: false }, { name: 'Calda de Chocolate', disabled: false }, { name: 'Calda de Morango', disabled: false }, 
+                    { name: 'Calda de Caramelo', disabled: false }, { name: 'Calda de Açaí', disabled: false }, { name: 'Calda de Kiwi', disabled: false }
+                ]
+            },
+            paid_tier2: {
+                title: '🍫 Doces e Chocolates (+ R$ 2,00 cada)', price: 2.00, items: [
+                    { name: 'Gotas de Chocolate', disabled: false }, { name: 'Confetes', disabled: false }, { name: 'Bis Picado', disabled: false }, 
+                    { name: 'Sonho de Valsa', disabled: false }, { name: 'M&M\'s', disabled: false }, { name: 'Ovomaltine', disabled: false }, { name: 'Chocopower', disabled: false }, { name: 'KitKat', disabled: false }
+                ]
+            }
+        },
+
+        // Níveis de desconto e suas porcentagens
+        discountTiers: [
+            { points: 35, percentage: 2.5 },
+            { points: 50, percentage: 3.0 },
+            { points: 65, percentage: 3.5 },
+            { points: 90, percentage: 4.5 },
+            { points: 110, percentage: 5.5 },
+            { points: 120, percentage: 6.5 },
+            { points: 150, percentage: 10.0 }
+        ],
+
+        // --- CHAVES DE ARMAZENAMENTO LOCAL ---
+        CART_STORAGE_KEY: 'saborAcaiteriaCart',
+        CUSTOMER_INFO_STORAGE_KEY: 'saborAcaiteriaCustomerInfo',
+        ADMIN_SETTINGS_STORAGE_KEY: 'saborAcaiteriaAdminSettings',
+        PRODUCTS_STORAGE_KEY: 'saborAcaiteriaProducts',
+        TOPPINGS_STORAGE_KEY: 'saborAcaiteriaToppings',
+        DISCOUNT_POINTS_STORAGE_KEY: 'saborAcaiteriaDiscountPoints', // Para pontos de desconto
+
+        // --- SELETORES DE ELEMENTOS DOM (armazenados em cache para performance) ---
+        elements: {
+            productList: document.getElementById('product-list'),
+            itemModal: document.getElementById('item-modal'),
+            cartModal: document.getElementById('cart-modal'),
+            confirmationModal: document.getElementById('confirmation-modal'),
+            adminModal: document.getElementById('admin-modal'),
+            cartButton: document.getElementById('cart-button'),
+            alertModal: document.getElementById('alert-modal'),
+            customerNameInput: document.getElementById('customer-name'),
+            customerAddressInput: document.getElementById('customer-address'),
+            neighborhoodSelect: document.getElementById('neighborhood'),
+            deliveryFields: document.getElementById('delivery-fields'),
+            deliveryOptionRadios: document.querySelectorAll('input[name="delivery_option"]'),
+            passwordModal: document.getElementById('password-modal'),
+            adminPasswordInput: document.getElementById('admin-password-input'),
+            confirmActionModal: document.getElementById('confirm-action-modal'),
+            deliveryTimeBanner: document.getElementById('delivery-time-banner'),
+            storeHoursDisplayText: document.getElementById('store-hours-display-text'),
+            storeStatusIndicator: document.getElementById('store-status-indicator'),
+            storeStatusBanner: document.getElementById('store-status-banner'),
+            modalTitle: document.getElementById('modal-title'),
+            modalBody: document.getElementById('modal-body'),
+            modalItemTotal: document.getElementById('modal-item-total'),
+            addToCartBtn: document.getElementById('add-to-cart-btn'),
+            cartItemsContainer: document.getElementById('cart-items-container'),
+            cartTotalEl: document.getElementById('cart-total'),
+            cartCountEl: document.getElementById('cart-count'),
+            checkoutForm: document.getElementById('checkout-form'),
+            summaryDetails: document.getElementById('cart-summary-details'),
+            cartSubtotal: document.getElementById('cart-subtotal'),
+            cartDeliveryFee: document.getElementById('cart-delivery-fee'),
+            deliveryOptionDelivery: document.getElementById('delivery-option-delivery'),
+            deliveryOptionTakeout: document.getElementById('delivery-option-takeout'),
+            paymentMethod: document.getElementById('payment-method'),
+            observations: document.getElementById('observations'),
+            orderSummary: document.getElementById('order-summary'),
+            confirmationIcon: document.getElementById('confirmation-icon'),
+            confirmationTitle: document.getElementById('confirmation-title'),
+            confirmationMessage: document.getElementById('confirmation-message'),
+            initialConfirmButtons: document.getElementById('initial-confirm-buttons'),
+            postSendButtons: document.getElementById('post-send-buttons'),
+            alertMessage: document.getElementById('alert-message'),
+            alertTitle: document.getElementById('alert-title'),
+            alertIcon: document.getElementById('alert-icon'),
+            adminBody: document.getElementById('admin-body'),
+            confirmActionMessage: document.getElementById('confirm-action-message'),
+            confirmActionConfirmBtn: document.getElementById('confirm-action-confirm-btn'),
+            confirmActionCancelBtn: document.getElementById('confirm-action-cancel-btn'),
+            storeAddressDisplay: document.getElementById('store-address-display'),
+            whatsappLink: document.getElementById('whatsapp-link'),
+            comboSizeModal: document.getElementById('combo-size-modal'),
+            comboSizeModalTitle: document.getElementById('combo-size-modal-title'),
+            comboSizeModalBody: document.getElementById('combo-size-modal-body'),
+            selectComboSizeBtn: document.getElementById('select-combo-size-btn'),
+            // Elementos do jogo
+            gameModal: document.getElementById('game-modal'),
+            gameCanvas: document.getElementById('game-canvas'),
+            gameScore: document.getElementById('game-score'),
+            gameMisses: document.getElementById('game-misses'),
+            gameMessage: document.getElementById('game-message'),
+            gameDiscountMessage: document.getElementById('game-discount-message'),
+            gameStartBtn: document.getElementById('game-start-btn'),
+            gameTrainingBtn: document.getElementById('game-training-btn'),
+            gameRestartBtn: document.getElementById('game-restart-btn'),
+            moveLeftBtn: document.getElementById('move-left-btn'),
+            moveRightBtn: document.getElementById('move-right-btn'),
+            // Elementos de desconto no modal do carrinho
+            currentDiscountPoints: document.getElementById('current-discount-points'),
+            applyDiscountCheckbox: document.getElementById('apply-discount-checkbox'),
+            discountMessage: document.getElementById('discount-message'),
+            cartDiscountRow: document.getElementById('cart-discount-row'),
+            cartDiscountAmount: document.getElementById('cart-discount-amount'),
+        },
+
+        // --- FUNÇÕES AUXILIARES ---
+        // Formata um valor numérico para o formato de moeda brasileira.
+        formatCurrency(value) {
+            return `R$ ${value.toFixed(2).replace('.', ',')}`;
+        },
+
+        // --- FUNÇÕES DE ARMAZENAMENTO LOCAL ---
+        // Salva o carrinho no localStorage.
+        saveCart() { localStorage.setItem(app.CART_STORAGE_KEY, JSON.stringify(app.cart)); },
+        // Carrega o carrinho do localStorage.
+        loadCart() {
+            const savedCart = localStorage.getItem(app.CART_STORAGE_KEY);
+            if (savedCart) app.cart = JSON.parse(savedCart);
+        },
+        // Salva as informações do cliente no localStorage.
+        saveCustomerInfo() {
+            const info = {
+                name: app.elements.customerNameInput.value,
+                address: app.elements.customerAddressInput.value,
+                neighborhood: app.elements.neighborhoodSelect.value,
+                deliveryOption: document.querySelector('input[name="delivery_option"]:checked')?.value
+            };
+            localStorage.setItem(app.CUSTOMER_INFO_STORAGE_KEY, JSON.stringify(info));
+        },
+        // Carrega as informações do cliente do localStorage.
+        loadCustomerInfo() {
+            const savedInfo = localStorage.getItem(app.CUSTOMER_INFO_STORAGE_KEY);
+            if (savedInfo) {
+                const info = JSON.parse(savedInfo);
+                app.elements.customerNameInput.value = info.name || '';
+                app.elements.customerAddressInput.value = info.address || '';
+                if (app.elements.neighborhoodSelect) {
+                    app.elements.neighborhoodSelect.value = info.neighborhood || '';
+                }
+                if (info.deliveryOption) {
+                    const radio = document.querySelector(`input[name="delivery_option"][value="${info.deliveryOption}"]`);
+                    if (radio) radio.checked = true;
+                }
+            }
+        },
+        // Salva os pontos de desconto no localStorage.
+        saveDiscountPoints() {
+            localStorage.setItem(app.DISCOUNT_POINTS_STORAGE_KEY, app.currentDiscountPoints.toString());
+        },
+        // Carrega os pontos de desconto do localStorage.
+        loadDiscountPoints() {
+            const savedPoints = localStorage.getItem(app.DISCOUNT_POINTS_STORAGE_KEY);
+            app.currentDiscountPoints = savedPoints ? parseInt(savedPoints) : 0;
+        },
+        // Carrega todas as configurações e dados do localStorage, mesclando com os padrões.
+        loadLocalData() {
+            const savedSettings = localStorage.getItem(app.ADMIN_SETTINGS_STORAGE_KEY);
+            app.adminSettings = savedSettings ? { ...app.defaultAdminSettings, ...JSON.parse(savedSettings) } : app.defaultAdminSettings;
+
+            const savedProducts = localStorage.getItem(app.PRODUCTS_STORAGE_KEY);
+            app.products = savedProducts ? JSON.parse(savedProducts) : app.defaultProducts;
+
+            const savedToppings = localStorage.getItem(app.TOPPINGS_STORAGE_KEY);
+            app.toppings = savedToppings ? JSON.parse(savedToppings) : app.defaultToppings;
+        },
+
+        // --- FUNÇÃO DE ALERTA PERSONALIZADA ---
+        // Exibe um modal de alerta com uma mensagem e título customizáveis.
+        showAlert(message, title = 'Atenção!', isError = false) {
+            app.elements.alertMessage.textContent = message;
+            app.elements.alertTitle.textContent = title;
+            if (isError) {
+                app.elements.alertIcon.innerHTML = '<i class="fas fa-exclamation-triangle text-pink-500 text-5xl"></i>';
+            } else {
+                app.elements.alertIcon.innerHTML = '<i class="fas fa-check-circle text-green-500 text-5xl"></i>';
+            }
+            app.elements.alertModal.classList.remove('hidden');
+            setTimeout(() => {
+                app.elements.alertModal.classList.remove('opacity-0');
+                app.elements.alertModal.querySelector('div > div').classList.remove('scale-95');
+            }, 10);
+        },
+        // Fecha o modal de alerta.
+        closeAlertModal() {
+            app.elements.alertModal.classList.add('opacity-0');
+            app.elements.alertModal.querySelector('div > div').classList.add('scale-95');
+            setTimeout(() => { app.elements.alertModal.classList.add('hidden'); }, 300);
+        },
+
+        // --- LÓGICA DE STATUS DA LOJA ---
+        // Renderiza o texto do horário de funcionamento da loja.
+        renderStoreHoursDisplay() {
+            const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+            let daysString = "Fechado todos os dias";
+
+            if (app.adminSettings.openDays.length > 0) {
+                if (app.adminSettings.openDays.length === 7) {
+                    daysString = "Todos os dias";
+                } else {
+                    daysString = app.adminSettings.openDays.sort((a, b) => a - b).map(dayIndex => dayNames[dayIndex]).join(', ');
+                }
+            }
+            
+            app.elements.storeHoursDisplayText.textContent = `${app.adminSettings.openingTime} às ${app.adminSettings.closingTime} (${daysString})`;
+        },
+
+        // Verifica o status da loja (aberta/fechada) e o horário de entrega.
+        checkStoreStatus() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentDay = now.getDay();
+
+            const isWeekend = (currentDay === 0 || currentDay === 6);
+            const deliveryStartTimeStr = isWeekend ? app.adminSettings.weekendDeliveryStartTime : app.adminSettings.weekdayDeliveryStartTime;
+            const [deliveryStartHour, deliveryStartMinute] = deliveryStartTimeStr.split(':').map(Number);
+            
+            if (app.adminSettings.storeStatus === 'open') {
+                app.isStoreOpen = true;
+            } else if (app.adminSettings.storeStatus === 'closed') {
+                app.isStoreOpen = false;
+            } else { // 'auto'
+                const isTodayOpenDay = app.adminSettings.openDays.includes(currentDay);
+                if (!isTodayOpenDay) {
+                    app.isStoreOpen = false;
+                } else {
+                    const [openHour, openMinute] = app.adminSettings.openingTime.split(':').map(Number);
+                    const [closeHour, closeMinute] = app.adminSettings.closingTime.split(':').map(Number);
+                    
+                    const openTimeInMinutes = openHour * 60 + openMinute;
+                    const closeTimeInMinutes = closeHour * 60 + closeMinute;
+                    const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+                    if (closeTimeInMinutes < openTimeInMinutes) {
+                        app.isStoreOpen = (currentTimeInMinutes >= openTimeInMinutes || currentTimeInMinutes <= closeTimeInMinutes);
+                    } else {
+                        app.isStoreOpen = (currentTimeInMinutes >= openTimeInMinutes && currentTimeInMinutes <= closeTimeInMinutes);
+                    }
+                }
+            }
+
+            const currentDeliveryTimeInMinutes = currentHour * 60 + currentMinute;
+            const deliveryStartTimeInMinutes = deliveryStartHour * 60 + deliveryStartMinute;
+            app.isDeliveryTime = currentDeliveryTimeInMinutes >= deliveryStartTimeInMinutes;
+
+            // Atualiza o indicador de status da loja e o banner
+            if (app.isStoreOpen) {
+                app.elements.storeStatusIndicator.textContent = 'Aberto';
+                app.elements.storeStatusIndicator.className = 'ml-2 px-3 py-1 text-xs rounded-full bg-green-500 text-white font-bold';
+                app.elements.storeStatusBanner.innerHTML = '';
+                app.elements.storeStatusBanner.classList.add('hidden');
+            } else {
+                app.elements.storeStatusIndicator.textContent = 'Fechado';
+                app.elements.storeStatusIndicator.className = 'ml-2 px-3 py-1 text-xs rounded-full bg-pink-500 text-white font-bold';
+                app.elements.storeStatusBanner.innerHTML = `
+                    <div class="bg-pink-100 border-l-4 border-pink-500 text-pink-700 p-4 rounded-md mb-8 text-center" role="alert">
+                        <p class="font-bold text-lg">No momento estamos fechados!</p>
+                        <p class="text-sm">Você pode navegar pelo cardápio, mas os pedidos estão suspensos.</p>
+                    </div>
+                `;
+                app.elements.storeStatusBanner.classList.remove('hidden');
+            }
+
+            // Re-renderiza produtos para atualizar seu status de exibição (desabilitado/habilitado)
+            app.renderProducts();
+
+            // Atualiza o banner de horário de entrega
+            if (!app.isDeliveryTime && app.isStoreOpen && (app.adminSettings.deliveryMode === 'both' || app.adminSettings.deliveryMode === 'delivery')) {
+                app.elements.deliveryTimeBanner.innerHTML = `
+                    <div class="bg-pink-100 border-l-4 border-pink-500 text-pink-700 p-4 rounded-md mb-8 text-center" role="alert">
+                        <p class="font-bold text-lg">Entregas começam a partir das ${deliveryStartTimeStr}h!</p>
+                        <p class="text-sm">Você ainda pode fazer pedidos para retirar na loja.</p>
+                    </div>
+                `;
+                app.elements.deliveryTimeBanner.classList.remove('hidden');
+            } else {
+                app.elements.deliveryTimeBanner.classList.add('hidden');
+                app.elements.deliveryTimeBanner.innerHTML = '';
+            }
+
+            app.renderStoreHoursDisplay();
+            app.renderDeliveryOptions(); // Atualiza as opções de entrega com base no status da loja/entrega
+            app.renderCart(); // Re-renderiza o carrinho para atualizar o total/status do botão de finalizar
+        },
+
+        // --- FUNÇÕES DE RENDERIZAÇÃO ---
+        // Renderiza os cards de produtos na página.
+        renderProducts() {
+            app.elements.productList.innerHTML = '';
+            app.products.forEach(product => {
+                const isPermanentlyDisabled = product.disabled; // Esta é a propriedade 'disabled' dos dados do produto
+
+                // O card deve ser sempre clicável se não estiver permanentemente desabilitado
+                let cardClickHandler = '';
+                if (!isPermanentlyDisabled) {
+                    if (product.type === 'combo_selectable_size') {
+                        cardClickHandler = `onclick="app.openComboSizeModal('${product.id}')"`;
+                    } else {
+                        cardClickHandler = `onclick="app.openItemModal('${product.id}', ${product.price}, '')"`;
+                    }
+                }
+
+                const cardClasses = isPermanentlyDisabled
+                    ? "bg-gray-100 border border-gray-200 rounded-xl p-4 text-center transition-all cursor-not-allowed flex flex-col justify-between opacity-60"
+                    : "bg-white border border-gray-200 rounded-xl p-4 text-center transition-all hover:shadow-lg hover:border-pink-500 cursor-pointer flex flex-col justify-between";
+                
+                const buttonText = isPermanentlyDisabled ? "Indisponível" : "Montar"; // Sempre "Montar" se não estiver permanentemente desabilitado
+                
+                const buttonClasses = isPermanentlyDisabled
+                    ? "mt-4 bg-gray-300 text-gray-600 font-semibold py-2 px-4 rounded-lg cursor-not-allowed w-full"
+                    : "mt-4 text-white font-semibold py-2 px-4 rounded-lg w-full instagram-gradient instagram-gradient-hover";
+                
+                const nameColor = isPermanentlyDisabled ? "text-gray-600" : "text-gray-900";
+                const priceColor = isPermanentlyDisabled ? "text-gray-500" : "text-pink-600";
+                const descriptionColor = isPermanentlyDisabled ? "text-gray-500" : "text-gray-600";
+
+                const priceDisplay = product.type === 'base_acai' ? `<p class="text-2xl font-semibold ${priceColor} mt-2">${app.formatCurrency(product.price)}</p>` : `<p class="text-xl font-semibold ${priceColor} mt-2">A partir de ${app.formatCurrency(app.cupSizes[0].price)}</p>`;
+
+                const productCard = `
+                    <div class="${cardClasses}" ${cardClickHandler}>
+                        <div>
+                            <h3 class="font-bold text-xl ${nameColor}">${product.name}</h3>
+                            ${product.description ? `<p class="text-sm ${descriptionColor} mt-1">${product.description}</p>` : ''}
+                            ${priceDisplay}
+                        </div>
+                        <button class="${buttonClasses}" ${isPermanentlyDisabled ? 'disabled' : ''}>${buttonText}</button>
+                    </div>
+                `;
+                app.elements.productList.innerHTML += productCard;
+            });
+        },
+
+        // Renderiza os itens do carrinho e o resumo do pedido.
+        renderCart() {
+            if (app.cart.length === 0) {
+                app.elements.cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center">Seu carrinho está vazio.</p>';
+                app.elements.checkoutForm.classList.add('hidden');
+                app.elements.summaryDetails.classList.add('hidden');
+            } else {
+                app.elements.checkoutForm.classList.remove('hidden');
+                app.elements.summaryDetails.classList.remove('hidden');
+                app.elements.cartItemsContainer.innerHTML = app.cart.map((item, index) => {
+                    let toppingsDisplay = '';
+                    if (item.type === 'base_acai') {
+                        toppingsDisplay = item.toppings.length > 0
+                        ? item.toppings.map(t => `<span>- ${t.name} ${t.price > 0 ? `(+ ${app.formatCurrency(t.price)})` : ''}</span>`).join('<br>')
+                        : '<span>- Açaí puro</span>';
+                    } else if (item.type === 'combo_selectable_size') {
+                        toppingsDisplay = `<span>Tamanho: ${item.selectedSize}</span><br><span>${item.description.replace('Sugestão: ', '')}</span>`;
+                    }
+                    
+                    return `
+                        <div class="flex items-start justify-between p-4 border-b border-gray-200">
+                            <div>
+                                <p class="font-bold text-lg text-gray-900">${item.name} (x${item.quantity})</p>
+                                <div class="text-sm text-gray-600 pl-2 mt-1">
+                                    ${toppingsDisplay}
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold text-lg text-pink-600">${app.formatCurrency(item.price * item.quantity)}</p>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <button onclick="app.updateQuantity(${index}, -1)" class="bg-gray-200 w-7 h-7 rounded-full font-bold text-lg flex items-center justify-center">-</button>
+                                    <span class="font-bold w-5 text-center">${item.quantity}</span>
+                                    <button onclick="app.updateQuantity(${index}, 1)" class="bg-gray-200 w-7 h-7 rounded-full font-bold text-lg flex items-center justify-center">+</button>
+                                    <button onclick="app.removeFromCart(${index})" class="text-pink-500 hover:text-pink-700 ml-2"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const subtotal = app.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const deliveryOption = document.querySelector('input[name="delivery_option"]:checked')?.value;
+            
+            let deliveryFee = 0;
+            if (deliveryOption === 'delivery' && subtotal > 0) {
+                const selectedOption = app.elements.neighborhoodSelect.options[app.elements.neighborhoodSelect.selectedIndex];
+                deliveryFee = parseFloat(selectedOption.dataset.fee || 0);
+            }
+            
+            // Calcula o desconto com base nos pontos atuais e estado do checkbox
+            app.appliedDiscountPercentage = app.getApplicableDiscount();
+            let discountAmount = 0;
+            if (app.elements.applyDiscountCheckbox.checked && app.appliedDiscountPercentage > 0) {
+                discountAmount = (subtotal + deliveryFee) * (app.appliedDiscountPercentage / 100);
+            }
+
+            const finalTotal = subtotal + deliveryFee - discountAmount;
+
+            app.elements.cartSubtotal.textContent = app.formatCurrency(subtotal);
+            app.elements.cartDeliveryFee.textContent = app.formatCurrency(deliveryFee);
+            app.elements.cartTotalEl.textContent = app.formatCurrency(finalTotal);
+
+            // Atualiza a exibição do desconto no resumo do carrinho
+            if (discountAmount > 0) {
+                app.elements.cartDiscountRow.classList.remove('hidden');
+                app.elements.cartDiscountAmount.textContent = `- ${app.formatCurrency(discountAmount)}`;
+            } else {
+                app.elements.cartDiscountRow.classList.add('hidden');
+            }
+
+            app.updateDiscountSection(); // Atualiza a exibição dos pontos de desconto e mensagem
+
+            // Desabilita o botão de finalizar se a loja estiver fechada ou o carrinho vazio
+            const finalizeBtn = document.querySelector('button[onclick="app.finalizeOrder()"]');
+            if (finalizeBtn) {
+                if (!app.isStoreOpen || app.cart.length === 0) {
+                    finalizeBtn.disabled = true;
+                    finalizeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    finalizeBtn.disabled = false;
+                    finalizeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        },
+
+        // Calcula o maior desconto aplicável com base nos pontos atuais.
+        getApplicableDiscount() {
+            let maxPercentage = 0;
+            // Ordena os níveis em ordem decrescente para encontrar o maior desconto aplicável
+            app.discountTiers.sort((a, b) => b.points - a.points).forEach(tier => {
+                if (app.currentDiscountPoints >= tier.points) {
+                    maxPercentage = tier.percentage;
+                    return;
+                }
+            });
+            return maxPercentage;
+        },
+
+        // Atualiza a seção de desconto no modal do carrinho.
+        updateDiscountSection() {
+            app.elements.currentDiscountPoints.textContent = app.currentDiscountPoints;
+            const applicableDiscount = app.getApplicableDiscount();
+
+            if (applicableDiscount > 0) {
+                app.elements.applyDiscountCheckbox.disabled = false;
+                app.elements.discountMessage.textContent = `Você tem ${app.currentDiscountPoints} pontos! Desconto de ${applicableDiscount.toFixed(1)}% disponível.`;
+            } else {
+                app.elements.applyDiscountCheckbox.checked = false;
+                app.elements.applyDiscountCheckbox.disabled = true;
+                const nextTier = app.discountTiers.find(tier => app.currentDiscountPoints < tier.points);
+                if (nextTier) {
+                    app.elements.discountMessage.textContent = `Acumule mais pontos para desbloquear descontos! Próximo: ${nextTier.points} pontos (${nextTier.percentage.toFixed(1)}% de desconto).`;
+                } else {
+                    app.elements.discountMessage.textContent = `Você tem ${app.currentDiscountPoints} pontos! Nenhum desconto adicional disponível no momento.`;
+                }
+            }
+        },
+
+        // --- LÓGICA DE OPÇÕES DE ENTREGA ---
+        // Renderiza e gerencia as opções de entrega/retirada.
+        renderDeliveryOptions() {
+            const deliveryRadio = app.elements.deliveryOptionDelivery.querySelector('input');
+            const takeoutRadio = app.elements.deliveryOptionTakeout.querySelector('input');
+            const deliveryOptionsContainer = document.getElementById('delivery-options');
+
+            const now = new Date();
+            const currentDay = now.getDay();
+            const isWeekend = (currentDay === 0 || currentDay === 6);
+            const deliveryStartTimeStr = isWeekend ? app.adminSettings.weekendDeliveryStartTime : app.adminSettings.weekdayDeliveryStartTime;
+
+            // Reseta os estados visuais e de habilitação
+            app.elements.deliveryOptionDelivery.classList.add('hidden');
+            app.elements.deliveryOptionDelivery.classList.remove('opacity-50', 'cursor-not-allowed');
+            deliveryRadio.disabled = false;
+            app.elements.deliveryOptionDelivery.querySelector('.radio-title').textContent = 'Delivery (Entrega)';
+            app.elements.deliveryOptionDelivery.querySelector('.text-sm').textContent = '20-60 min';
+
+            app.elements.deliveryOptionTakeout.classList.add('hidden');
+            app.elements.deliveryOptionTakeout.classList.remove('opacity-50', 'cursor-not-allowed');
+            takeoutRadio.disabled = false;
+            app.elements.deliveryOptionTakeout.querySelector('.radio-title').textContent = 'Retirar na Loja';
+            app.elements.deliveryOptionTakeout.querySelector('.text-sm').textContent = '20-30 min';
+
+            let availableOptions = [];
+
+            // Aplica as configurações do administrador para o modo de entrega
+            if (app.adminSettings.deliveryMode === 'both' || app.adminSettings.deliveryMode === 'delivery') {
+                app.elements.deliveryOptionDelivery.classList.remove('hidden');
+                availableOptions.push('delivery');
+            }
+            if (app.adminSettings.deliveryMode === 'both' || app.adminSettings.deliveryMode === 'takeout') {
+                app.elements.deliveryOptionTakeout.classList.remove('hidden');
+                availableOptions.push('takeout');
+            }
+
+            // Aplica restrição de horário de entrega
+            if (!app.isDeliveryTime && (app.adminSettings.deliveryMode === 'both' || app.adminSettings.deliveryMode === 'delivery')) {
+                deliveryRadio.disabled = true;
+                app.elements.deliveryOptionDelivery.classList.add('opacity-50', 'cursor-not-allowed');
+                app.elements.deliveryOptionDelivery.querySelector('.radio-title').textContent = 'Delivery (Indisponível)';
+                app.elements.deliveryOptionDelivery.querySelector('.text-sm').textContent = `Disponível a partir das ${deliveryStartTimeStr}h`;
+                availableOptions = availableOptions.filter(option => option !== 'delivery');
+            }
+
+            // Desabilita todas as opções de entrega se a loja estiver fechada
+            if (!app.isStoreOpen) {
+                deliveryRadio.disabled = true;
+                app.elements.deliveryOptionDelivery.classList.add('opacity-50', 'cursor-not-allowed');
+                app.elements.deliveryOptionDelivery.querySelector('.radio-title').textContent = 'Delivery (Loja Fechada)';
+                app.elements.deliveryOptionDelivery.querySelector('.text-sm').textContent = 'Pedidos suspensos';
+
+                takeoutRadio.disabled = true;
+                app.elements.deliveryOptionTakeout.classList.add('opacity-50', 'cursor-not-allowed');
+                app.elements.deliveryOptionTakeout.querySelector('.radio-title').textContent = 'Retirar na Loja (Loja Fechada)';
+                app.elements.deliveryOptionTakeout.querySelector('.text-sm').textContent = 'Pedidos suspensos';
+
+                availableOptions = [];
+            }
+
+            if (availableOptions.length === 0) {
+                deliveryOptionsContainer.classList.add('hidden');
+            } else {
+                deliveryOptionsContainer.classList.remove('hidden');
+            }
+
+            // Garante que uma opção válida seja selecionada se a anterior estiver desabilitada
+            const currentSelected = document.querySelector('input[name="delivery_option"]:checked');
+            if (!currentSelected || currentSelected.closest('label').classList.contains('hidden') || currentSelected.disabled) {
+                if (availableOptions.includes('takeout') && !takeoutRadio.disabled) {
+                    takeoutRadio.checked = true;
+                } else if (availableOptions.includes('delivery') && !deliveryRadio.disabled) {
+                    deliveryRadio.checked = true;
+                } else {
+                    deliveryRadio.checked = false;
+                    takeoutRadio.checked = false;
+                }
+            }
+            
+            app.toggleDeliveryFields();
+        },
+
+        // Alterna a visibilidade dos campos de endereço de entrega.
+        toggleDeliveryFields() {
+            const deliveryOption = document.querySelector('input[name="delivery_option"]:checked')?.value;
+            if (deliveryOption === 'takeout' || !deliveryOption) {
+                app.elements.deliveryFields.classList.add('hidden');
+            } else {
+                app.elements.deliveryFields.classList.remove('hidden');
+            }
+            app.renderCart(); // Recalcula o total do carrinho com a taxa de entrega atualizada
+        },
+
+        // --- LÓGICA DE MODAIS ---
+        // Abre um modal com transição.
+        openModal(modalElement) {
+            modalElement.classList.remove('hidden');
+            modalElement.classList.add('flex');
+            setTimeout(() => {
+                modalElement.classList.add('modal-active');
+            }, 10);
+        },
+        // Fecha um modal com transição.
+        closeModal(modalElement) {
+            modalElement.classList.remove('modal-active');
+            setTimeout(() => {
+                modalElement.classList.remove('flex');
+                modalElement.classList.add('hidden');
+            }, 300);
+        },
+
+        // --- MODAL DE SELEÇÃO DE TAMANHO DE COMBO ---
+        // Abre o modal para selecionar o tamanho de um combo.
+        openComboSizeModal(productId) {
+            app.selectedComboProductId = productId;
+            const product = app.products.find(p => p.id.toString() === productId.toString());
+            if (!product) return;
+
+            app.elements.comboSizeModalTitle.textContent = `Escolha o Tamanho para ${product.name}`;
+            app.elements.comboSizeModalBody.innerHTML = '';
+
+            app.cupSizes.forEach(size => {
+                const sizeOptionHtml = `
+                    <label class="flex items-center space-x-3 p-3 border-2 border-gray-300 rounded-lg cursor-pointer has-[:checked]:border-pink-500 has:checked:bg-pink-100">
+                        <input type="radio" name="combo_size" value="${size.name}" data-price="${size.price}" class="hidden">
+                        <div class="flex items-center w-full">
+                            <span class="mr-3 text-pink-600 text-xl"><i class="fas fa-mug-hot"></i></span>
+                            <div>
+                                <span class="font-semibold text-gray-800 block radio-title">${size.name}</span>
+                                <span class="text-sm text-gray-600">${app.formatCurrency(size.price)}</span>
+                            </div>
+                        </div>
+                    </label>
+                `;
+                app.elements.comboSizeModalBody.innerHTML += sizeOptionHtml;
+            });
+
+            // Habilita/desabilita o botão de continuar com base na seleção E no status da loja
+            const isButtonDisabled = !document.querySelector('input[name="combo_size"]:checked') || !app.isStoreOpen;
+            app.elements.selectComboSizeBtn.disabled = isButtonDisabled;
+            app.elements.selectComboSizeBtn.classList.toggle('opacity-50', isButtonDisabled);
+            app.elements.selectComboSizeBtn.classList.toggle('cursor-not-allowed', isButtonDisabled);
+            app.elements.selectComboSizeBtn.innerHTML = isButtonDisabled && !app.isStoreOpen ? 'Loja Fechada' : '<i class="fas fa-arrow-right"></i> Continuar';
+
+
+            app.elements.comboSizeModalBody.querySelectorAll('input[name="combo_size"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    const isButtonDisabled = !document.querySelector('input[name="combo_size"]:checked') || !app.isStoreOpen;
+                    app.elements.selectComboSizeBtn.disabled = isButtonDisabled;
+                    app.elements.selectComboSizeBtn.classList.toggle('opacity-50', isButtonDisabled);
+                    app.elements.selectComboSizeBtn.classList.toggle('cursor-not-allowed', isButtonDisabled);
+                    app.elements.selectComboSizeBtn.innerHTML = isButtonDisabled && !app.isStoreOpen ? 'Loja Fechada' : '<i class="fas fa-arrow-right"></i> Continuar';
+                });
+            });
+
+            app.elements.selectComboSizeBtn.onclick = () => {
+                if (!app.isStoreOpen) {
+                    app.showAlert('A loja está fechada e não é possível adicionar itens ao carrinho agora.', 'Loja Fechada', true);
+                    return;
+                }
+                const selectedSizeRadio = document.querySelector('input[name="combo_size"]:checked');
+                if (selectedSizeRadio) {
+                    const selectedSizeName = selectedSizeRadio.value;
+                    const selectedSizePrice = parseFloat(selectedSizeRadio.dataset.price);
+                    
+                    const comboProduct = app.products.find(p => p.id.toString() === app.selectedComboProductId.toString());
+                    if (comboProduct) {
+                        app.currentItem = {
+                            id: comboProduct.id,
+                            name: comboProduct.name,
+                            basePrice: selectedSizePrice,
+                            price: selectedSizePrice,
+                            quantity: 1,
+                            toppings: [],
+                            type: comboProduct.type,
+                            selectedSize: selectedSizeName,
+                            description: comboProduct.description
+                        };
+                        app.addToCart();
+                    }
+                    app.closeComboSizeModal();
+                }
+            };
+
+            app.openModal(app.elements.comboSizeModal);
+        },
+
+        // Fecha o modal de seleção de tamanho de combo.
+        closeComboSizeModal() {
+            app.closeModal(app.elements.comboSizeModal);
+            app.selectedComboProductId = null;
+        },
+
+        // --- MODAL DE PERSONALIZAÇÃO DE ITEM ---
+        // Abre o modal para personalizar um item (açaí base ou combo).
+        openItemModal(productId, selectedBasePrice, selectedSizeName = '') {
+            const product = app.products.find(p => p.id.toString() === productId.toString());
+            if (!product) return;
+            
+            app.currentItem = {
+                id: productId, 
+                name: product.name, 
+                basePrice: selectedBasePrice, 
+                price: selectedBasePrice, 
+                quantity: 1, 
+                toppings: [], 
+                type: product.type,
+                selectedSize: selectedSizeName
+            };
+
+            if (selectedSizeName) {
+                app.elements.modalTitle.textContent = `Monte seu ${product.name} (${selectedSizeName})`;
+            } else {
+                app.elements.modalTitle.textContent = `Monte seu ${product.name}`;
+            }
+            
+            app.elements.modalBody.innerHTML = '';
+
+            const warningNote = `<div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md" role="alert"><div class="flex"><div class="py-1"><i class="fas fa-info-circle mr-3"></i></div><div><p class="font-bold">Atenção!</p><p class="text-sm">Escolha seus adicionais com carinho. Nossos copos têm espaço limitado e talvez não seja possível incluir todos os itens selecionados.</p></div></div></div>`;
+            app.elements.modalBody.innerHTML += warningNote;
+
+            if (product.type === 'combo_selectable_size' && product.description) {
+                const comboDescriptionHtml = `<div class="bg-pink-100 border-l-4 border-pink-500 text-pink-700 p-4 rounded-md mb-4" role="alert"><p class="font-bold">Este combo sugere:</p><p class="text-sm">${product.description.replace('Sugestão: ', '')}</p></div>`;
+                app.elements.modalBody.innerHTML += comboDescriptionHtml;
+            }
+
+            Object.entries(app.toppings).forEach(([key, category]) => {
+                const section = document.createElement('div');
+                let itemsHTML = category.items
+                    .filter(item => !item.disabled)
+                    .map(item => `
+                    <label class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer">
+                        <input type="checkbox" class="h-5 w-5 rounded border-gray-400 bg-gray-200 text-pink-600 focus:ring-pink-500" name="${key}" value="${item.name}" data-price="${category.price || 0}">
+                        <span class="text-gray-800">${item.name}</span>
+                    </label>
+                `).join('');
+                
+                if (itemsHTML.length > 0) {
+                    section.innerHTML = `<h4 class="text-lg font-bold text-gray-900 mb-2 pb-1 border-b border-gray-300">${category.title}</h4><div class="grid grid-cols-2 sm:grid-cols-3 gap-2">${itemsHTML}</div>`;
+                    app.elements.modalBody.appendChild(section);
+                }
+            });
+            
+            app.elements.modalBody.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', app.updateModalItemTotal);
+            });
+
+            app.updateModalItemTotal();
+            app.openModal(app.elements.itemModal);
+
+            // O botão 'Adicionar ao Carrinho' deve ser desabilitado se a loja estiver fechada
+            if (!app.isStoreOpen) {
+                app.elements.addToCartBtn.disabled = true;
+                app.elements.addToCartBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                app.elements.addToCartBtn.textContent = 'Loja Fechada';
+            } else {
+                app.elements.addToCartBtn.disabled = false;
+                app.elements.addToCartBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                app.elements.addToCartBtn.innerHTML = '<i class="fas fa-cart-plus"></i> Adicionar ao Carrinho';
+            }
+        },
+
+        // Fecha o modal de personalização de item.
+        closeItemModal() {
+            app.closeModal(app.elements.itemModal);
+            app.currentItem = null;
+        },
+
+        // Atualiza o total do item no modal de personalização com base nos adicionais selecionados.
+        updateModalItemTotal() {
+            let totalFromToppings = 0;
+            const currentToppingsList = [];
+
+            Object.entries(app.toppings).forEach(([key, category]) => {
+                const checkboxes = app.elements.modalBody.querySelectorAll(`input[name="${key}"]`);
+                const checkedCheckboxes = app.elements.modalBody.querySelectorAll(`input[name="${key}"]:checked`);
+
+                if (category.limit) {
+                    if (checkedCheckboxes.length >= category.limit) {
+                        checkboxes.forEach(cb => { if (!cb.checked) cb.disabled = true; });
+                    } else {
+                        checkboxes.forEach(cb => { cb.disabled = false; });
+                    }
+                }
+                
+                checkedCheckboxes.forEach(checkbox => {
+                    const price = parseFloat(checkbox.dataset.price);
+                    if (price > 0) totalFromToppings += price;
+                    currentToppingsList.push({ name: checkbox.value, price: price });
+                });
+            });
+            
+            app.currentItem.price = app.currentItem.basePrice + totalFromToppings;
+            app.currentItem.toppings = currentToppingsList.sort((a, b) => a.name.localeCompare(b.name)); 
+            app.elements.modalItemTotal.textContent = app.formatCurrency(app.currentItem.price);
+        },
+
+        // Alterna a visibilidade do modal do carrinho.
+        toggleCartModal() {
+            app.renderDeliveryOptions();
+            app.renderCart();
+            if (app.elements.cartModal.classList.contains('hidden')) {
+                app.openModal(app.elements.cartModal);
+            } else {
+                app.closeModal(app.elements.cartModal);
+            }
+        },
+
+        // Fecha o modal de confirmação do pedido.
+        closeConfirmationModal() {
+            app.closeModal(app.elements.confirmationModal);
+            setTimeout(() => {
+                app.elements.confirmationIcon.innerHTML = '<i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>';
+                app.elements.confirmationTitle.textContent = 'Pedido Recebido!';
+                app.elements.confirmationMessage.textContent = 'Seu pedido foi gerado! Clique no botão abaixo para encaminhá-lo para o WhatsApp da loja e finalizar a compra.';
+                app.elements.initialConfirmButtons.classList.remove('hidden');
+                app.elements.initialConfirmButtons.classList.add('flex');
+                app.elements.postSendButtons.classList.add('hidden');
+                app.elements.postSendButtons.classList.remove('flex');
+            }, 300);
+        },
+
+        // --- LÓGICA DO CARRINHO ---
+        // Adiciona o item atual ao carrinho.
+        addToCart() {
+            // Verifica se a loja está aberta antes de adicionar ao carrinho
+            if (!app.isStoreOpen) {
+                app.showAlert('A loja está fechada e não é possível adicionar itens ao carrinho agora.', 'Loja Fechada', true);
+                return;
+            }
+
+            const existingItemIndex = app.cart.findIndex(item => {
+                if (item.id !== app.currentItem.id || item.type !== app.currentItem.type) return false;
+                if (item.type === 'combo_selectable_size' && item.selectedSize !== app.currentItem.selectedSize) return false;
+
+                if (item.type === 'base_acai') {
+                    if (item.toppings.length !== app.currentItem.toppings.length) return false;
+                    const currentToppingsString = app.currentItem.toppings.map(t => `${t.name}-${t.price}`).sort().join(',');
+                    const existingToppingsString = item.toppings.map(t => `${t.name}-${t.price}`).sort().join(',');
+                    return currentToppingsString === existingToppingsString;
+                }
+                
+                return true;
+            });
+
+            if (existingItemIndex > -1) {
+                app.cart[existingItemIndex].quantity++;
+            } else {
+                app.cart.push({ ...app.currentItem });
+            }
+            
+            app.saveCart();
+            app.renderCart();
+            app.updateCartIcon();
+        },
+
+        // Atualiza a quantidade de um item no carrinho.
+        updateQuantity(index, change) {
+            if (app.cart[index].quantity + change > 0) {
+                app.cart[index].quantity += change;
+            } else {
+                app.removeFromCart(index);
+                return;
+            }
+            app.saveCart();
+            app.renderCart();
+            app.updateCartIcon();
+        },
+
+        // Remove um item do carrinho.
+        removeFromCart(index) {
+            app.cart.splice(index, 1);
+            app.saveCart();
+            app.renderCart();
+            app.updateCartIcon();
+        },
+
+        // Atualiza o contador de itens no ícone do carrinho.
+        updateCartIcon() {
+            const totalItems = app.cart.reduce((sum, item) => sum + item.quantity, 0);
+            app.elements.cartCountEl.textContent = totalItems;
+            if (totalItems > 0) {
+                app.elements.cartButton.classList.remove('hidden');
+            } else {
+                 app.elements.cartButton.classList.add('hidden');
+                 if (app.elements.cartModal.classList.contains('flex')) {
+                     app.toggleCartModal();
+                 }
+            }
+        },
+
+        // --- LÓGICA DE FINALIZAÇÃO DE PEDIDO ---
+        // Finaliza o pedido, gerando a mensagem para o WhatsApp.
+        finalizeOrder() {
+            if (!app.isStoreOpen) {
+                app.showAlert('A loja está fechada e não está aceitando pedidos no momento.', 'Loja Fechada', true);
+                return;
+            }
+
+            if (app.cart.length === 0) {
+                app.showAlert('Seu carrinho está vazio!', 'Carrinho Vazio', true);
+                return;
+            }
+
+            const name = app.elements.customerNameInput.value.trim();
+            const address = app.elements.customerAddressInput.value.trim();
+            const neighborhood = app.elements.neighborhoodSelect.value;
+            const payment = app.elements.paymentMethod.value;
+            const obs = app.elements.observations.value.trim();
+            const deliveryOption = document.querySelector('input[name="delivery_option"]:checked')?.value;
+
+            if (!deliveryOption) {
+                app.showAlert('Nenhuma opção de entrega/retirada está disponível no momento. Por favor, verifique as configurações da loja.', 'Ops!', true);
+                return;
+            }
+
+            if (!name) {
+                app.showAlert('Por favor, preencha seu Nome para continuar.', 'Dados Incompletos', true);
+                app.elements.customerNameInput.focus();
+                return;
+            }
+
+            const now = new Date();
+            const currentDay = now.getDay();
+            const isWeekend = (currentDay === 0 || currentDay === 6);
+            const deliveryStartTimeStr = isWeekend ? app.adminSettings.weekendDeliveryStartTime : app.adminSettings.weekdayDeliveryStartTime;
+
+            if (deliveryOption === 'delivery' && !app.isDeliveryTime) {
+                app.showAlert(`As entregas só começam a partir das ${deliveryStartTimeStr}h. Por favor, escolha "Retirar na Loja" ou aguarde.`, 'Horário de Entrega', true);
+                return;
+            }
+            
+            let deliveryFee = 0;
+            let summary = `*NOVO PEDIDO - SABOR AÇAÍTERIA*\n\n*Cliente:* ${name}\n`;
+
+            if (deliveryOption === 'delivery') {
+                if (!address || !neighborhood) {
+                    app.showAlert('Por favor, selecione o Bairro e preencha o Endereço para entrega.', 'Dados Incompletos', true);
+                    if (!neighborhood) app.elements.neighborhoodSelect.focus();
+                    else app.elements.customerAddressInput.focus();
+                    return;
+                }
+                summary += `*Opção:* ENTREGA\n*Tempo Estimado:* 20-60 min\n*Endereço:* ${address}, ${neighborhood}\n\n`;
+                const selectedOption = app.elements.neighborhoodSelect.options[app.elements.neighborhoodSelect.selectedIndex];
+                deliveryFee = parseFloat(selectedOption.dataset.fee || 0);
+            } else {
+                summary += `*Opção:* RETIRAR NA LOJA\n*Tempo Estimado:* 20-30 min\n\n`;
+            }
+
+            summary += `*ITENS DO PEDIDO:*\n------------------------\n`;
+            app.cart.forEach(item => {
+                summary += `*${item.quantity}x ${item.name}*`;
+                if (item.type === 'combo_selectable_size' && item.selectedSize) {
+                    summary += ` (${item.selectedSize})`;
+                    if (item.description) {
+                        summary += ` - ${item.description.replace('Sugestão: ', '')}`;
+                    }
+                }
+                summary += `\n`;
+                if (item.type === 'base_acai') {
+                    if (item.toppings.length > 0) {
+                        item.toppings.forEach(t => { summary += `  - ${t.name}${t.price > 0 ? ` (+${app.formatCurrency(t.price)})` : ''}\n`; });
+                    } else {
+                        summary += `  - Açaí puro\n`;
+                    }
+                }
+                summary += `Subtotal: ${app.formatCurrency(item.price * item.quantity)}\n------------------------\n`;
+            });
+
+            const subtotal = app.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            let finalTotal = subtotal + deliveryFee;
+            let discountAmount = 0;
+
+            if (app.elements.applyDiscountCheckbox.checked && app.appliedDiscountPercentage > 0) {
+                discountAmount = finalTotal * (app.appliedDiscountPercentage / 100);
+                finalTotal -= discountAmount;
+                app.currentDiscountPoints = 0; 
+                app.saveDiscountPoints();
+            }
+
+            summary += `\n*Subtotal dos Itens: ${app.formatCurrency(subtotal)}*\n`;
+            if (deliveryOption === 'delivery') summary += `*Taxa de Entrega: ${app.formatCurrency(deliveryFee)}*\n`;
+            if (discountAmount > 0) summary += `*Desconto Aplicado (${app.appliedDiscountPercentage.toFixed(1)}%): - ${app.formatCurrency(discountAmount)}*\n`;
+            summary += `*TOTAL DO PEDIDO: ${app.formatCurrency(finalTotal)}*\n*Forma de Pagamento:* ${payment}\n`;
+            if (obs) summary += `*Observações:* ${obs}\n`;
+
+            app.whatsAppMessage = encodeURIComponent(summary);
+            app.elements.orderSummary.innerHTML = summary.replace(/\n/g, '<br>').replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+            
+            app.closeModal(app.elements.cartModal); 
+            app.openModal(app.elements.confirmationModal);
+        },
+
+        // Envia o pedido via WhatsApp.
+        sendOrderViaWhatsApp() {
+            const url = `https://wa.me/${app.adminSettings.whatsappNumber}?text=${app.whatsAppMessage}`;
+            window.open(url, '_blank');
+            
+            app.elements.confirmationIcon.innerHTML = '<i class="fab fa-whatsapp-square text-green-400 text-6xl mb-4"></i>';
+            app.elements.confirmationTitle.textContent = 'Quase lá!';
+            app.elements.confirmationMessage.textContent = 'A janela do WhatsApp foi aberta. Após enviar sua mensagem, clique no botão abaixo para confirmar e limpar seu carrinho.';
+            app.elements.initialConfirmButtons.classList.add('hidden');
+            app.elements.postSendButtons.classList.remove('hidden');
+            app.elements.postSendButtons.classList.add('flex');
+        },
+
+        // Confirma que o pedido foi enviado e limpa o carrinho.
+        confirmOrderSent() {
+            app.cart = [];
+            app.saveCart();
+            app.closeConfirmationModal();
+            app.renderCart();
+            app.updateCartIcon();
+            app.showAlert('Ótimo! Seu carrinho foi limpo. Aguarde a confirmação da loja no WhatsApp.', 'Pedido Enviado');
+        },
+
+        // --- LÓGICA DO PAINEL DE ADMINISTRAÇÃO ---
+        // Abre o painel de administração após a autenticação.
+        openAdminPanel(event) {
+            event.preventDefault();
+            app.openModal(app.elements.passwordModal);
+            app.elements.adminPasswordInput.focus();
+        },
+
+        // Fecha o modal de senha.
+        closePasswordModal() {
+            app.closeModal(app.elements.passwordModal);
+            app.elements.adminPasswordInput.value = '';
+        },
+
+        // Verifica a senha do administrador.
+        checkAdminPassword() {
+            const password = app.elements.adminPasswordInput.value;
+            if (password === "admin123") { // SENHA PADRÃO - ALTERE SE DESEJAR
+                app.closePasswordModal();
+                app.renderAdminPanel();
+                app.openModal(app.elements.adminModal);
+            } else {
+                app.closePasswordModal();
+                app.showAlert("Senha incorreta!", 'Acesso Negado', true);
+            }
+        },
+
+        // Fecha o modal do painel de administração.
+        closeAdminModal() {
+            app.closeModal(app.elements.adminModal);
+        },
+
+        // Renderiza o conteúdo do painel de administração.
+        renderAdminPanel() {
+            app.elements.adminBody.innerHTML = '';
+
+            const daysOfWeek = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+            let daysCheckboxesHTML = daysOfWeek.map((day, index) => `
+                <label class="flex items-center gap-2 p-1.5 rounded-md hover:bg-gray-100 cursor-pointer">
+                    <input type="checkbox" name="admin_open_day" value="${index}" class="h-4 w-4 rounded text-pink-600 focus:ring-pink-500" ${app.adminSettings.openDays.includes(index) ? 'checked' : ''}>
+                    <span>${day}</span>
+                </label>
+            `).join('');
+
+            let settingsHTML = `
+                <div class="p-4 bg-gray-100 rounded-lg">
+                    <h4 class="text-xl font-bold text-pink-600 mb-4">Configurações Gerais</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                         <div>
+                            <label for="admin-whatsapp-number" class="block text-sm font-medium text-gray-800 mb-1">Número do WhatsApp</label>
+                            <input type="text" id="admin-whatsapp-number" value="${app.adminSettings.whatsappNumber}" class="bg-gray-200 p-2 rounded-md border border-gray-300 w-full" placeholder="Ex: 5511999998888">
+                        </div>
+                         <div>
+                            <label for="admin-address" class="block text-sm font-medium text-gray-800 mb-1">Endereço da Loja</label>
+                            <input type="text" id="admin-address" value="${app.adminSettings.address}" class="bg-gray-200 p-2 rounded-md border border-gray-300 w-full">
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-gray-100 rounded-lg mt-6">
+                    <h4 class="text-xl font-bold text-pink-600 mb-4">Controle de Funcionamento</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                        <div>
+                            <h5 class="font-semibold text-gray-800 mb-2">Status da Loja</h5>
+                            <div class="space-y-2">
+                                <label class="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="radio" name="admin_store_status" value="auto" class="h-4 w-4 mr-2 text-pink-600 focus:ring-pink-500" ${app.adminSettings.storeStatus === 'auto' ? 'checked' : ''}> Automático (por horário)</label>
+                                <label class="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="radio" name="admin_store_status" value="open" class="h-4 w-4 mr-2 text-pink-600 focus:ring-pink-500" ${app.adminSettings.storeStatus === 'open' ? 'checked' : ''}> Aberto (Manual)</label>
+                                <label class="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="radio" name="admin_store_status" value="closed" class="h-4 w-4 mr-2 text-pink-600 focus:ring-pink-500" ${app.adminSettings.storeStatus === 'closed' ? 'checked' : ''}> Fechado (Manual)</label>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-gray-800 mb-2">Opções de Pedido</h5>
+                             <div class="space-y-2">
+                                <label class="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="radio" name="admin_delivery_mode" value="both" class="h-4 w-4 mr-2 text-pink-600 focus:ring-pink-500" ${app.adminSettings.deliveryMode === 'both' ? 'checked' : ''}> Delivery e Retirada</label>
+                                <label class="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="radio" name="admin_delivery_mode" value="delivery" class="h-4 w-4 mr-2 text-pink-600 focus:ring-pink-500" ${app.adminSettings.deliveryMode === 'delivery' ? 'checked' : ''}> Apenas Delivery</label>
+                                <label class="flex items-center p-2 rounded-md hover:bg-gray-100 cursor-pointer"><input type="radio" name="admin_delivery_mode" value="takeout" class="h-4 w-4 mr-2 text-pink-600 focus:ring-pink-500" ${app.adminSettings.deliveryMode === 'takeout' ? 'checked' : ''}> Apenas Retirada</label>
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                             <h5 class="font-semibold text-gray-800 mb-2">Horário de Funcionamento (Modo Automático)</h5>
+                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div class="sm:col-span-2">
+                                    <h6 class="text-sm font-medium text-gray-600 mb-1">Dias da Semana</h6>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-2 text-sm">
+                                        ${daysCheckboxesHTML}
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6 class="text-sm font-medium text-gray-600 mb-1">Horário de Abertura/Fechamento</h6>
+                                    <div class="flex items-center gap-2">
+                                        <input type="time" id="admin-opening-time" value="${app.adminSettings.openingTime}" class="bg-gray-200 p-2 rounded-md border border-gray-300 w-full">
+                                        <span>às</span>
+                                        <input type="time" id="admin-closing-time" value="${app.adminSettings.closingTime}" class="bg-gray-200 p-2 rounded-md border border-gray-300 w-full">
+                                    </div>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <h6 class="text-sm font-medium text-gray-600 mb-1">Horário de Início da Entrega</h6>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="admin-weekday-delivery-start-time" class="block text-xs font-medium text-gray-600 mb-1">Dias de Semana (Seg-Sex)</label>
+                                            <input type="time" id="admin-weekday-delivery-start-time" value="${app.adminSettings.weekdayDeliveryStartTime}" class="bg-gray-200 p-2 rounded-md border border-gray-300 w-full">
+                                        </div>
+                                        <div>
+                                            <label for="admin-weekend-delivery-start-time" class="block text-xs font-medium text-gray-600 mb-1">Fins de Semana (Sáb-Dom)</label>
+                                            <input type="time" id="admin-weekend-delivery-start-time" value="${app.adminSettings.weekendDeliveryStartTime}" class="bg-gray-200 p-2 rounded-md border border-gray-300 w-full">
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            app.elements.adminBody.innerHTML += settingsHTML;
+
+            // Seção para Produtos (Tamanhos e Combos)
+            let productsHTML = `<div class="p-4 bg-gray-100 rounded-lg mt-6"><h4 class="text-xl font-bold text-pink-600 mb-4">Cardápio: Produtos (Tamanhos e Combos)</h4><div id="admin-products-list" class="space-y-3">`;
+            app.products.forEach((product, index) => {
+                const isComboSelectableSize = product.type === 'combo_selectable_size';
+                productsHTML += `
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-center p-2 bg-gray-200 rounded-md admin-item" data-type="product" data-original-id="${product.id}">
+                        <input type="text" value="${product.name}" class="admin-name col-span-2 bg-gray-300 p-2 rounded-md border border-gray-400" placeholder="Nome do Produto">
+                        <input type="number" step="0.01" value="${product.price ? product.price.toFixed(2) : '0.00'}" class="admin-price bg-gray-300 p-2 rounded-md border border-gray-400 ${isComboSelectableSize ? 'hidden' : ''}" placeholder="Preço">
+                        <select class="admin-type bg-gray-300 p-2 rounded-md border border-gray-400">
+                            <option value="base_acai" ${product.type === 'base_acai' ? 'selected' : ''}>Açaí Base</option>
+                            <option value="combo_selectable_size" ${product.type === 'combo_selectable_size' ? 'selected' : ''}>Combo (Escolhe Tamanho)</option>
+                        </select>
+                        <div class="flex items-center justify-between gap-2">
+                            <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="admin-disabled h-5 w-5 text-pink-600" ${product.disabled ? 'checked' : ''}> Bloquear</label>
+                            <button onclick="app.removeAdminItem(this)" class="text-pink-500 hover:text-pink-400"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                        <textarea class="admin-description col-span-full bg-gray-300 p-2 rounded-md border border-gray-400 ${isComboSelectableSize ? '' : 'hidden'}" placeholder="Descrição (para combos)">${product.description}</textarea>
+                    </div>`;
+            });
+            productsHTML += `</div><button onclick="app.addAdminItem('product')" class="mt-4 instagram-gradient text-white font-semibold py-2 px-4 rounded-lg instagram-gradient-hover text-sm"><i class="fas fa-plus mr-2"></i>Adicionar Produto</button></div>`;
+            app.elements.adminBody.innerHTML += productsHTML;
+
+            // Adiciona listeners de evento para a mudança de tipo de produto para alternar campos de descrição e preço
+            app.elements.adminBody.querySelectorAll('.admin-type').forEach(select => {
+                select.addEventListener('change', (event) => {
+                    const parentDiv = event.target.closest('.admin-item');
+                    const descriptionField = parentDiv.querySelector('.admin-description');
+                    const priceField = parentDiv.querySelector('.admin-price');
+                    if (event.target.value === 'combo_selectable_size') {
+                        descriptionField.classList.remove('hidden');
+                        priceField.classList.add('hidden');
+                    } else {
+                        descriptionField.classList.add('hidden');
+                        descriptionField.value = '';
+                        priceField.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // Seção para Adicionais
+            let toppingsHTML = `<div class="p-4 bg-gray-100 rounded-lg mt-6"><h4 class="text-xl font-bold text-pink-600 mb-4">Cardápio: Complementos</h4>`;
+            Object.entries(app.toppings).forEach(([key, category]) => {
+                toppingsHTML += `<div class="mt-4"><h5 class="font-semibold text-gray-800 mb-2">${category.title}</h5><div id="admin-toppings-${key}" class="space-y-2">`;
+                (category.items || []).forEach((item, index) => {
+                    toppingsHTML += `
+                        <div class="flex items-center gap-3 p-2 bg-gray-200 rounded-md admin-item" data-type="topping" data-category="${key}">
+                            <input type="text" value="${item.name}" class="admin-name flex-grow bg-gray-300 p-2 rounded-md border border-gray-400">
+                            <label class="flex items-center gap-2 text-sm cursor-pointer whitespace-nowrap"><input type="checkbox" class="admin-disabled h-5 w-5 text-pink-600"> Bloquear</label>
+                            <button onclick="app.removeAdminItem(this)" class="text-pink-500 hover:text-pink-400"><i class="fas fa-trash-alt"></i></button>
+                        </div>`;
+                });
+                toppingsHTML += `</div><button onclick="app.addAdminItem('topping', '${key}')" class="mt-3 instagram-gradient text-white font-semibold py-1 px-3 rounded-lg instagram-gradient-hover text-xs"><i class="fas fa-plus mr-1"></i>Adicionar Complemento</button></div>`;
+            });
+            toppingsHTML += `</div>`;
+            app.elements.adminBody.innerHTML += toppingsHTML;
+        },
+
+        // Adiciona um novo item (produto ou adicional) ao painel de administração.
+        addAdminItem(type, categoryKey = '') {
+            const newItemId = Date.now();
+            const newItemHTML = (type === 'product')
+                ? `<div class="grid grid-cols-1 md:grid-cols-5 gap-3 items-center p-2 bg-gray-200 rounded-md admin-item" data-type="product" data-original-id="${newItemId}">
+                       <input type="text" value="Novo Produto" class="admin-name col-span-2 bg-gray-300 p-2 rounded-md border border-gray-400">
+                       <input type="number" step="0.01" value="0.00" class="admin-price bg-gray-300 p-2 rounded-md border border-gray-400">
+                       <select class="admin-type bg-gray-300 p-2 rounded-md border border-gray-400">
+                           <option value="base_acai" selected>Açaí Base</option>
+                           <option value="combo_selectable_size">Combo (Escolhe Tamanho)</option>
+                       </select>
+                       <div class="flex items-center justify-between gap-2">
+                           <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" class="admin-disabled h-5 w-5 text-pink-600"> Bloquear</label>
+                           <button onclick="app.removeAdminItem(this)" class="text-pink-500 hover:text-pink-400"><i class="fas fa-trash-alt"></i></button>
+                       </div>
+                       <textarea class="admin-description col-span-full bg-gray-300 p-2 rounded-md border border-gray-400 hidden" placeholder="Descrição (para combos)"></textarea>
+                   </div>`
+                : `<div class="flex items-center gap-3 p-2 bg-gray-200 rounded-md admin-item" data-type="topping" data-category="${categoryKey}">
+                       <input type="text" value="Novo Complemento" class="admin-name flex-grow bg-gray-300 p-2 rounded-md border border-gray-400">
+                       <label class="flex items-center gap-2 text-sm cursor-pointer whitespace-nowrap"><input type="checkbox" class="admin-disabled h-5 w-5 text-pink-600"> Bloquear</label>
+                       <button onclick="app.removeAdminItem(this)" class="text-pink-500 hover:text-pink-400"><i class="fas fa-trash-alt"></i></button>
+                   </div>`;
+            
+            const containerId = (type === 'product') ? 'admin-products-list' : `admin-toppings-${categoryKey}`;
+            document.getElementById(containerId).insertAdjacentHTML('beforeend', newItemHTML);
+
+            if (type === 'product') {
+                const newSelect = document.querySelector(`#admin-products-list .admin-item[data-original-id="${newItemId}"] .admin-type`);
+                newSelect.addEventListener('change', (event) => {
+                    const parentDiv = event.target.closest('.admin-item');
+                    const descriptionField = parentDiv.querySelector('.admin-description');
+                    const priceField = parentDiv.querySelector('.admin-price');
+                    if (event.target.value === 'combo_selectable_size') {
+                        descriptionField.classList.remove('hidden');
+                        priceField.classList.add('hidden');
+                    } else {
+                        descriptionField.classList.add('hidden');
+                        descriptionField.value = '';
+                        priceField.classList.remove('hidden');
+                    }
+                });
+            }
+        },
+
+        // Remove um item do painel de administração.
+        removeAdminItem(button) {
+            button.closest('.admin-item').remove();
+        },
+        
+        // Salva as alterações feitas no painel de administração no localStorage.
+        saveAdminChanges() {
+            const newAdminSettings = {
+                storeStatus: document.querySelector('input[name="admin_store_status"]:checked').value,
+                deliveryMode: document.querySelector('input[name="admin_delivery_mode"]:checked').value,
+                openingTime: document.getElementById('admin-opening-time').value,
+                closingTime: document.getElementById('admin-closing-time').value,
+                openDays: Array.from(document.querySelectorAll('input[name="admin_open_day"]:checked')).map(cb => parseInt(cb.value)),
+                whatsappNumber: document.getElementById('admin-whatsapp-number').value,
+                address: document.getElementById('admin-address').value,
+                weekdayDeliveryStartTime: document.getElementById('admin-weekday-delivery-start-time').value,
+                weekendDeliveryStartTime: document.getElementById('admin-weekend-delivery-start-time').value,
+            };
+            localStorage.setItem(app.ADMIN_SETTINGS_STORAGE_KEY, JSON.stringify(newAdminSettings));
+            app.adminSettings = newAdminSettings;
+            
+            const newProducts = [];
+            document.querySelectorAll('#admin-products-list .admin-item').forEach(item => {
+                const name = item.querySelector('.admin-name').value;
+                const type = item.querySelector('.admin-type').value;
+                const disabled = item.querySelector('.admin-disabled').checked;
+                const description = item.querySelector('.admin-description').value;
+                const originalId = parseInt(item.dataset.originalId);
+
+                let price = 0;
+                if (type === 'base_acai') {
+                    price = parseFloat(item.querySelector('.admin-price').value);
+                }
+                
+                if (name && (type === 'combo_selectable_size' || !isNaN(price))) {
+                    newProducts.push({ id: originalId || Date.now(), name, price, disabled, type, description });
+                }
+            });
+            localStorage.setItem(app.PRODUCTS_STORAGE_KEY, JSON.stringify(newProducts));
+            app.products = newProducts;
+
+            const newToppings = {};
+            Object.keys(app.toppings).forEach(key => {
+                const categoryItems = [];
+                document.querySelectorAll(`#admin-toppings-${key} .admin-item`).forEach(item => {
+                    const name = item.querySelector('.admin-name').value;
+                    const disabled = item.querySelector('.admin-disabled').checked;
+                    if (name) {
+                        categoryItems.push({ name, disabled });
+                    }
+                });
+                newToppings[key] = { ...app.toppings[key], items: categoryItems };
+            });
+            localStorage.setItem(app.TOPPINGS_STORAGE_KEY, JSON.stringify(newToppings));
+            app.toppings = newToppings;
+            
+            app.showAlert('Configurações salvas com sucesso!', 'Salvo!', false);
+            app.closeAdminModal();
+            app.initializeApp(); // Re-inicializa o app para aplicar as novas configurações
+        },
+
+        // Exibe um modal de confirmação genérico antes de uma ação importante.
+        showConfirmationModal(message, onConfirm) {
+            app.elements.confirmActionMessage.textContent = message;
+            
+            const oldConfirmBtn = app.elements.confirmActionConfirmBtn;
+            const newConfirmBtn = oldConfirmBtn.cloneNode(true);
+            oldConfirmBtn.parentNode.replaceChild(newConfirmBtn, oldConfirmBtn);
+
+            const oldCancelBtn = app.elements.confirmActionCancelBtn;
+            const newCancelBtn = oldCancelBtn.cloneNode(true);
+            oldCancelBtn.parentNode.replaceChild(newCancelBtn, oldCancelBtn);
+
+            newConfirmBtn.addEventListener('click', () => {
+                onConfirm();
+                app.closeConfirmationActionModal();
+            }, { once: true });
+
+            newCancelBtn.addEventListener('click', () => {
+                app.closeConfirmationActionModal();
+            }, { once: true });
+
+            app.openModal(app.elements.confirmActionModal);
+        },
+
+        // Fecha o modal de confirmação de ação.
+        closeConfirmationActionModal() {
+            app.closeModal(app.elements.confirmActionModal);
+        },
+
+        // Restaura todas as configurações e o cardápio para os valores padrão.
+        resetToDefaults() {
+            app.showConfirmationModal(
+                "Tem certeza que deseja restaurar o cardápio e as configurações para os valores padrão? Todas as suas alterações serão perdidas.",
+                () => {
+                    localStorage.removeItem(app.PRODUCTS_STORAGE_KEY);
+                    localStorage.removeItem(app.TOPPINGS_STORAGE_KEY);
+                    localStorage.removeItem(app.ADMIN_SETTINGS_STORAGE_KEY);
+                    localStorage.removeItem(app.DISCOUNT_POINTS_STORAGE_KEY);
+                    app.closeAdminModal();
+                    app.showAlert('Cardápio e configurações restaurados! A página será recarregada.', 'Sucesso', false);
+                    setTimeout(() => window.location.reload(), 2500);
+                }
+            );
+        },
+
+        // --- LÓGICA DO JOGO ---
+        game: {
+            canvas: null,
+            ctx: null,
+            player: {},
+            fallingItems: [],
+            score: 0,
+            misses: 0,
+            maxMisses: 5,
+            gameOver: false,
+            gameStarted: false,
+            isTrainingMode: false,
+            animationFrameId: null,
+            itemSpawnInterval: null,
+            lastTouchX: null, // Para controle de deslize (swipe) em dispositivos móveis
+            baseItemSpeed: 1.5,
+            basePlayerSpeed: 10,
+            currentSpeedMultiplier: 1,
+            discountAwardedScores: [],
+            // Adicionado: players de som
+            collectSound: null,
+            missSound: null,
+            discountSound: null, // Novo som para o desconto
+
+            // Inicializa o jogo e o canvas.
+            init() {
+                this.canvas = app.elements.gameCanvas;
+                this.ctx = this.canvas.getContext('2d');
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+
+                this.player = {
+                    width: 80,
+                    height: 60,
+                    x: (this.canvas.width / 2) - 40,
+                    y: this.canvas.height - 70,
+                    speed: this.basePlayerSpeed,
+                    dx: 0 // Mudança na direção X (para teclado/botões)
+                };
+
+                this.resetGame();
+                this.addEventListeners();
+                this.initSounds(); // Inicializa os sons
+            },
+
+            // Inicializa os players de som usando Tone.js
+            initSounds() {
+                // Cria um sintetizador simples para o som de coleta
+                this.collectSound = new Tone.Synth({
+                    oscillator: {
+                        type: "sine"
+                    },
+                    envelope: {
+                        attack: 0.005,
+                        decay: 0.1,
+                        sustain: 0.05,
+                        release: 0.1
+                    }
+                }).toDestination();
+
+                // Cria um sintetizador simples para o som de erro
+                this.missSound = new Tone.Synth({
+                    oscillator: {
+                        type: "sawtooth"
+                    },
+                    envelope: {
+                        attack: 0.01,
+                        decay: 0.2,
+                        sustain: 0.1,
+                        release: 0.2
+                    }
+                }).toDestination();
+
+                // Novo sintetizador para o som de desconto
+                this.discountSound = new Tone.Synth({
+                    oscillator: {
+                        type: "triangle"
+                    },
+                    envelope: {
+                        attack: 0.01,
+                        decay: 0.3,
+                        sustain: 0.1,
+                        release: 0.5
+                    }
+                }).toDestination();
+            },
+
+            // Reproduz o som de coleta
+            playCollectSound() {
+                if (this.collectSound) {
+                    this.collectSound.triggerAttackRelease("C5", "8n"); // Nota C5 por uma oitava
+                }
+            },
+
+            // Reproduz o som de erro
+            playMissSound() {
+                if (this.missSound) {
+                    this.missSound.triggerAttackRelease("C3", "8n"); // Nota C3 por uma oitava
+                }
+            },
+
+            // Reproduz o som de desconto
+            playDiscountSound() {
+                if (this.discountSound) {
+                    this.discountSound.triggerAttackRelease("G5", "4n"); // Nota G5 por uma quarta
+                }
+            },
+
+            // Redimensiona o canvas para ser responsivo e mantém a proporção.
+            resizeCanvas() {
+                const containerWidth = this.canvas.parentElement.clientWidth;
+                this.canvas.width = Math.min(containerWidth, 900); 
+                this.canvas.height = this.canvas.width * (2 / 3); 
+                
+                if (this.player.x) {
+                    this.player.x = Math.max(0, Math.min(this.canvas.width - this.player.width, this.player.x));
+                    this.player.y = this.canvas.height - 70;
+                }
+                if (this.gameStarted) {
+                    this.draw(); 
+                }
+            },
+
+            // Reseta o estado do jogo para um novo início.
+            resetGame() {
+                this.score = 0;
+                this.misses = 0;
+                this.fallingItems = [];
+                this.gameOver = false;
+                this.gameStarted = false;
+                this.isTrainingMode = false;
+                this.currentSpeedMultiplier = 1;
+                this.player.speed = this.basePlayerSpeed;
+                this.player.x = (this.canvas.width / 2) - (this.player.width / 2);
+                this.player.dx = 0;
+                this.discountAwardedScores = [];
+
+                app.elements.gameScore.textContent = this.score;
+                app.elements.gameMisses.textContent = this.misses;
+                app.elements.gameMessage.textContent = '';
+                // A mensagem de desconto não deve sumir ao resetar o jogo, apenas ser ocultada se não houver desconto.
+                app.elements.gameDiscountMessage.classList.add('hidden'); 
+                app.elements.gameStartBtn.classList.remove('hidden');
+                app.elements.gameTrainingBtn.classList.remove('hidden');
+                app.elements.gameRestartBtn.classList.add('hidden');
+
+                if (this.animationFrameId) {
+                    cancelAnimationFrame(this.animationFrameId);
+                }
+                if (this.itemSpawnInterval) {
+                    clearInterval(this.itemSpawnInterval);
+                }
+                this.draw();
+            },
+
+            // Inicia o jogo, com opção de modo treino.
+            startGame(isTraining) {
+                // Ativa o áudio no primeiro clique do usuário para contornar políticas de autoplay
+                if (Tone.context.state !== 'running') {
+                    Tone.start();
+                }
+
+                this.resetGame();
+                this.gameStarted = true;
+                this.isTrainingMode = isTraining;
+
+                app.elements.gameStartBtn.classList.add('hidden');
+                app.elements.gameTrainingBtn.classList.add('hidden');
+                app.elements.gameRestartBtn.classList.remove('hidden');
+
+                if (this.isTrainingMode) {
+                    app.elements.gameMessage.textContent = 'Modo Treino Ativo: Sem game over e mais lento!';
+                    this.currentSpeedMultiplier = 0.5;
+                    this.player.speed = this.basePlayerSpeed * 0.7;
+                } else {
+                    app.elements.gameMessage.textContent = '';
+                }
+
+                this.itemSpawnInterval = setInterval(() => this.spawnItem(), 1000 / this.currentSpeedMultiplier);
+                this.gameLoop();
+            },
+
+            // Finaliza o jogo.
+            endGame() {
+                this.gameOver = true;
+                this.gameStarted = false;
+                cancelAnimationFrame(this.animationFrameId);
+                clearInterval(this.itemSpawnInterval);
+                if (!this.isTrainingMode) {
+                    app.elements.gameMessage.textContent = `Fim de Jogo! Você pegou ${this.score} açaís!`;
+                } else {
+                    app.elements.gameMessage.textContent = `Treino Concluído! Você pegou ${this.score} açaís.`;
+                }
+                app.elements.gameRestartBtn.classList.remove('hidden');
+            },
+
+            // Gera um novo item (açaí) caindo.
+            spawnItem() {
+                const itemSize = Math.random() * (25 - 15) + 15;
+                this.fallingItems.push({
+                    x: Math.random() * (this.canvas.width - itemSize),
+                    y: 0,
+                    size: itemSize,
+                    speed: (Math.random() * (3 - 1) + 1) * this.currentSpeedMultiplier * this.baseItemSpeed, 
+                    color: '#4B0082' // Cor de açaí
+                });
+            },
+
+            // Desenha os elementos do jogo no canvas.
+            draw() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Desenha o jogador (cesta)
+                this.ctx.fillStyle = '#A0522D'; // Marrom sienna para o corpo da cesta
+                this.ctx.beginPath();
+                this.ctx.roundRect(this.player.x, this.player.y + 10, this.player.width, this.player.height - 10, [5, 5, 5, 5]);
+                this.ctx.fill();
+
+                this.ctx.fillStyle = '#D2B48C'; // Bege para a borda da cesta
+                this.ctx.beginPath();
+                this.ctx.ellipse(this.player.x + this.player.width / 2, this.player.y + 10, this.player.width / 2, 15, 0, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Desenha os itens caindo (frutas de açaí)
+                this.fallingItems.forEach(item => {
+                    this.ctx.fillStyle = item.color;
+                    this.ctx.beginPath();
+                    this.ctx.arc(item.x + item.size / 2, item.y + item.size / 2, item.size / 2, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.strokeStyle = '#000000'; // Borda preta
+                    this.ctx.lineWidth = 1;
+                    this.ctx.stroke();
+                });
+            },
+
+            // Atualiza o estado do jogo (movimento, colisões).
+            update() {
+                if (this.gameOver) return;
+
+                // Atualiza a posição do jogador com base em dx (teclado/botões) SOMENTE se não houver arraste por toque
+                if (this.lastTouchX === null) {
+                    this.player.x += this.player.dx;
+                }
+                
+                // Mantém o jogador dentro dos limites do canvas
+                if (this.player.x < 0) this.player.x = 0;
+                if (this.player.x + this.player.width > this.canvas.width) this.player.x = this.canvas.width - this.player.width;
+
+                // Atualiza os itens caindo
+                this.fallingItems.forEach((item, index) => {
+                    item.y += item.speed;
+
+                    // Detecção de colisão com o jogador (cesta)
+                    if (item.y + item.size > this.player.y &&
+                        item.y < this.player.y + this.player.height &&
+                        item.x < this.player.x + this.player.width &&
+                        item.x + item.size > this.player.x) {
+                        this.score++;
+                        app.elements.gameScore.textContent = this.score;
+                        this.playCollectSound(); // Toca o som de coleta
+
+                        // Aumenta a velocidade a cada 20 pontos (apenas no modo normal)
+                        if (!this.isTrainingMode && this.score > 0 && this.score % 20 === 0) {
+                            this.currentSpeedMultiplier *= 1.15;
+                            this.player.speed = this.basePlayerSpeed * this.currentSpeedMultiplier;
+                            this.fallingItems.forEach(fallingItem => {
+                                fallingItem.speed *= 1.15;
+                            });
+                        }
+
+                        // Verifica e concede pontos de desconto (apenas no modo normal)
+                        if (!this.isTrainingMode) {
+                            app.discountTiers.forEach(tier => {
+                                if (this.score === tier.points && !this.discountAwardedScores.includes(tier.points)) {
+                                    app.currentDiscountPoints = tier.points;
+                                    app.saveDiscountPoints();
+                                    app.elements.gameDiscountMessage.textContent = `PARABÉNS! Você ganhou ${tier.points} pontos de desconto de ${tier.percentage}%!`;
+                                    app.elements.gameDiscountMessage.classList.remove('hidden');
+                                    this.playDiscountSound(); // Toca o som de desconto
+                                    this.discountAwardedScores.push(tier.points);
+                                }
+                            });
+                        }
+
+                        this.fallingItems.splice(index, 1); // Remove o item pego
+                    } else if (item.y + item.size > this.canvas.height) {
+                        if (!this.isTrainingMode) { // Conta erros apenas no modo normal
+                            this.misses++;
+                            app.elements.gameMisses.textContent = this.misses;
+                            this.playMissSound(); // Toca o som de erro
+                            if (this.misses >= this.maxMisses) {
+                                this.endGame();
+                            }
+                        }
+                        this.fallingItems.splice(index, 1); // Remove o item perdido
+                    }
+                });
+            },
+
+            // Loop principal do jogo usando requestAnimationFrame.
+            gameLoop() {
+                this.update();
+                this.draw();
+                this.animationFrameId = requestAnimationFrame(() => this.gameLoop());
+            },
+
+            // Adiciona listeners de eventos para controles do jogo (teclado, toque, botões).
+            addEventListeners() {
+                // Controles de teclado para desktop
+                document.addEventListener('keydown', (e) => {
+                    if (app.elements.gameModal.classList.contains('flex') && this.gameStarted) {
+                        if (e.key === 'ArrowLeft') {
+                            this.player.dx = -this.player.speed;
+                        } else if (e.key === 'ArrowRight') {
+                            this.player.dx = this.player.speed;
+                        }
+                    }
+                });
+
+                document.addEventListener('keyup', (e) => {
+                    if (app.elements.gameModal.classList.contains('flex') && this.gameStarted) {
+                        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                            this.player.dx = 0;
+                        }
+                    }
+                });
+
+                // Controles de toque para mobile (deslize/arraste)
+                this.canvas.addEventListener('touchstart', (e) => {
+                    if (this.gameStarted) {
+                        this.lastTouchX = e.touches[0].clientX;
+                        this.player.dx = 0; // Para parar o movimento de teclado/botão ao iniciar o toque
+                    }
+                }, { passive: false });
+
+                this.canvas.addEventListener('touchmove', (e) => {
+                    if (this.gameStarted && this.lastTouchX !== null) {
+                        e.preventDefault(); // Previne o scroll da página durante o arraste
+                        const currentTouchX = e.touches[0].clientX;
+                        const deltaX = currentTouchX - this.lastTouchX;
+                        
+                        // Move diretamente o jogador com base na diferença do toque
+                        this.player.x += deltaX;
+                        // Garante que o jogador permaneça dentro dos limites do canvas
+                        this.player.x = Math.max(0, Math.min(this.canvas.width - this.player.width, this.player.x));
+                        
+                        this.lastTouchX = currentTouchX;
+                    }
+                }, { passive: false });
+
+                this.canvas.addEventListener('touchend', () => {
+                    this.lastTouchX = null;
+                });
+
+                // Controles de botão (mousedown/mouseup para desktop, touchstart/touchend para mobile)
+                const setPlayerDx = (direction) => {
+                    if (this.gameStarted) {
+                        this.player.dx = direction * this.player.speed;
+                        this.lastTouchX = null; // Limpa o estado de toque se os botões forem usados
+                    }
+                };
+
+                const stopPlayerDx = () => {
+                    if (this.gameStarted) {
+                        this.player.dx = 0;
+                    }
+                };
+
+                // Botão Esquerdo
+                app.elements.moveLeftBtn.addEventListener('mousedown', () => setPlayerDx(-1));
+                app.elements.moveLeftBtn.addEventListener('mouseup', stopPlayerDx);
+                app.elements.moveLeftBtn.addEventListener('mouseleave', stopPlayerDx);
+                app.elements.moveLeftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); setPlayerDx(-1); }, { passive: false });
+                app.elements.moveLeftBtn.addEventListener('touchend', stopPlayerDx);
+
+                // Botão Direito
+                app.elements.moveRightBtn.addEventListener('mousedown', () => setPlayerDx(1));
+                app.elements.moveRightBtn.addEventListener('mouseup', stopPlayerDx);
+                app.elements.moveRightBtn.addEventListener('mouseleave', stopPlayerDx);
+                app.elements.moveRightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); setPlayerDx(1); }, { passive: false });
+                app.elements.moveRightBtn.addEventListener('touchend', stopPlayerDx);
+            },
+
+            // Abre o modal do jogo.
+            openGameModal(event) {
+                if (event) event.preventDefault();
+                app.openModal(app.elements.gameModal);
+                this.init(); // Inicializa o jogo ao abrir o modal
+            },
+
+            // Fecha o modal do jogo.
+            closeGameModal() {
+                this.endGame(); // Para o jogo ao fechar o modal
+                app.closeModal(app.elements.gameModal);
+            }
+        },
+
+        // --- INICIALIZAÇÃO ---
+        // Função principal para inicializar o aplicativo.
+        initializeApp() {
+            app.loadLocalData();
+            app.loadCart();
+            app.loadCustomerInfo();
+            app.loadDiscountPoints();
+            
+            app.elements.storeAddressDisplay.textContent = app.adminSettings.address;
+            app.elements.whatsappLink.href = `https://wa.me/${app.adminSettings.whatsappNumber}`;
+
+            app.renderProducts();
+            app.renderDeliveryOptions();
+            app.renderCart();
+            app.updateCartIcon();
+            app.checkStoreStatus();
+            app.updateDiscountSection();
+
+            // Listeners de eventos
+            app.elements.addToCartBtn.addEventListener('click', () => {
+                // A verificação de loja aberta já é feita dentro de app.addToCart()
+                app.addToCart();
+                // Se o item foi adicionado (ou seja, a loja estava aberta), o modal é fechado.
+                // Caso contrário, o alerta será exibido e o modal permanecerá aberto.
+                if (app.isStoreOpen) {
+                    app.closeItemModal(); 
+                }
+            });
+
+            app.elements.customerNameInput.addEventListener('input', app.saveCustomerInfo);
+            app.elements.customerAddressInput.addEventListener('input', app.saveCustomerInfo);
+            app.elements.neighborhoodSelect.addEventListener('change', () => {
+                app.saveCustomerInfo();
+                app.renderCart();
+            });
+            app.elements.deliveryOptionRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    app.toggleDeliveryFields();
+                    app.saveCustomerInfo();
+                });
+            });
+            app.elements.applyDiscountCheckbox.addEventListener('change', () => {
+                app.renderCart();
+            });
+            
+            app.elements.adminPasswordInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    app.checkAdminPassword();
+                }
+            });
+
+            // Configura um temporizador para verificar periodicamente o status da loja (ex: a cada minuto)
+            setInterval(app.checkStoreStatus, 60 * 1000);
+        }
+    };
+
+    // Inicia o aplicativo quando o DOM estiver totalmente carregado
+    document.addEventListener('DOMContentLoaded', () => {
+        app.initializeApp();
+    });
+
+    </script>
+</body>
+</html>
+
