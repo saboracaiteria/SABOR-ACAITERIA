@@ -94,6 +94,12 @@
 </head>
 <body class="bg-gray-900 text-gray-300">
 
+    <!-- Closing Countdown Timer -->
+    <div id="closing-timer-container" class="hidden fixed top-2 left-4 text-xs text-gray-200 z-50 bg-gray-800 bg-opacity-80 border border-gray-600 px-3 py-1 rounded-full shadow-lg items-center gap-2">
+        <i class="fas fa-stopwatch text-red-400"></i>
+        <div>Fecha em: <span id="closing-timer" class="font-bold tracking-wider">--:--:--</span></div>
+    </div>
+
     <!-- Fake Online People Counter -->
     <div id="online-counter-container" class="fixed top-2 right-4 text-xs text-gray-300 flex items-center z-50 bg-gray-800 bg-opacity-70 px-2 py-1 rounded-full shadow-lg">
         <span class="relative flex h-2 w-2 mr-2">
@@ -166,6 +172,7 @@
         <!-- Main Content Area - Product List -->
         <main class="space-y-8">
             <section id="tamanhos">
+                <p class="text-lg text-gray-300 mb-4 text-center">👇 Clique e escolha 👇</p>
                 <h2 class="text-2xl font-bold text-gray-100 mb-4 tracking-wide">Nosso Cardápio</h2>
                 <div id="product-list" class="grid grid-cols-2 gap-3">
                     <!-- Product cards will be rendered here by JavaScript -->
@@ -419,6 +426,7 @@
         products: [],
         toppings: {},
         selectedComboProductId: null,
+        countdownInterval: null,
 
         // --- DEFAULT DATA (for initial load or reset) ---
         defaultAdminSettings: {
@@ -546,6 +554,8 @@
             comboSizeModalBody: document.getElementById('combo-size-modal-body'),
             selectComboSizeBtn: document.getElementById('select-combo-size-btn'),
             onlineCount: document.getElementById('online-count'),
+            closingTimerContainer: document.getElementById('closing-timer-container'),
+            closingTimer: document.getElementById('closing-timer'),
         },
 
         // --- HELPER FUNCTIONS ---
@@ -611,7 +621,7 @@
         },
         closeAlertModal() { app.closeModal(app.elements.alertModal); },
 
-        // --- STORE STATUS LOGIC ---
+        // --- STORE STATUS & COUNTDOWN LOGIC ---
         renderStoreHoursDisplay() {
             const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
             let daysString = "Fechado";
@@ -620,6 +630,47 @@
                 daysString = app.adminSettings.openDays.sort((a, b) => a - b).map(dayIndex => dayNames[dayIndex]).join(', ');
             }
             app.elements.storeHoursDisplay.textContent = `${app.adminSettings.openingTime} às ${app.adminSettings.closingTime} (${daysString})`;
+        },
+
+        startClosingCountdown() {
+            if (app.countdownInterval) clearInterval(app.countdownInterval);
+            
+            const [closeHour, closeMinute] = app.adminSettings.closingTime.split(':').map(Number);
+            const targetTime = new Date();
+            targetTime.setHours(closeHour, closeMinute, 0, 0);
+
+            // Se o horário de fechamento já passou hoje, significa que é no dia seguinte (loja vira a noite)
+            if (targetTime < new Date()) {
+                targetTime.setDate(targetTime.getDate() + 1);
+            }
+
+            app.elements.closingTimerContainer.classList.remove('hidden');
+            app.elements.closingTimerContainer.classList.add('flex');
+
+            app.countdownInterval = setInterval(() => {
+                const now = new Date();
+                const diff = targetTime - now;
+
+                if (diff <= 0) {
+                    app.stopClosingCountdown();
+                    app.checkStoreStatus(); // Re-verifica o status, que agora deve ser "fechado"
+                    return;
+                }
+
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                app.elements.closingTimer.textContent = 
+                    `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+        },
+
+        stopClosingCountdown() {
+            clearInterval(app.countdownInterval);
+            app.countdownInterval = null;
+            app.elements.closingTimerContainer.classList.add('hidden');
+            app.elements.closingTimerContainer.classList.remove('flex');
         },
 
         checkStoreStatus() {
@@ -641,6 +692,14 @@
                     else app.isStoreOpen = (currentTime >= openTime && currentTime <= closeTime);
                 }
             }
+            
+            // Inicia ou para o cronômetro com base no status da loja
+            if (app.isStoreOpen) {
+                app.startClosingCountdown();
+            } else {
+                app.stopClosingCountdown();
+            }
+
 
             const isWeekend = (currentDay === 0 || currentDay === 6);
             const deliveryStartTimeStr = isWeekend ? app.adminSettings.weekendDeliveryStartTime : app.adminSettings.weekdayDeliveryStartTime;
@@ -1003,7 +1062,7 @@
         confirmOrderSent() {
             app.cart = [];
             app.saveCart();
-            app.closeConfirmationModal();
+            closeConfirmationModal();
             app.renderCart();
             app.updateCartIcon();
             app.showAlert('Seu carrinho foi limpo. Aguarde a confirmação da loja!', 'Pedido Enviado');
@@ -1098,5 +1157,7 @@
     </script>
 </body>
 </html>
+
+
 
 
