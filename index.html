@@ -100,6 +100,18 @@
         <div>Fecha em: <span id="closing-timer" class="font-bold tracking-wider">--:--:--</span></div>
     </div>
 
+    <!-- Opening Countdown Timer -->
+    <div id="opening-timer-container" class="hidden fixed top-11 left-4 text-xs text-gray-200 z-50 bg-gray-800 bg-opacity-80 border border-gray-600 px-3 py-1 rounded-full shadow-lg items-center gap-2">
+        <i class="fas fa-stopwatch text-green-400"></i>
+        <div>Abre em: <span id="opening-timer" class="font-bold tracking-wider">--:--:--</span></div>
+    </div>
+
+    <!-- Delivery Countdown Timer -->
+    <div id="delivery-countdown-container" class="hidden fixed top-20 left-4 text-xs text-gray-200 z-50 bg-gray-800 bg-opacity-80 border border-gray-600 px-3 py-1 rounded-full shadow-lg items-center gap-2">
+        <i class="fas fa-motorcycle text-blue-400"></i>
+        <div>Delivery em: <span id="delivery-countdown-timer" class="font-bold tracking-wider">--:--:--</span></div>
+    </div>
+
     <!-- Fake Online People Counter -->
     <div id="online-counter-container" class="fixed top-2 right-4 text-xs text-gray-300 flex items-center z-50 bg-gray-800 bg-opacity-70 px-2 py-1 rounded-full shadow-lg">
         <span class="relative flex h-2 w-2 mr-2">
@@ -427,6 +439,8 @@
         toppings: {},
         selectedComboProductId: null,
         countdownInterval: null,
+        openingCountdownInterval: null,
+        deliveryCountdownInterval: null,
 
         // --- DEFAULT DATA (for initial load or reset) ---
         defaultAdminSettings: {
@@ -556,10 +570,42 @@
             onlineCount: document.getElementById('online-count'),
             closingTimerContainer: document.getElementById('closing-timer-container'),
             closingTimer: document.getElementById('closing-timer'),
+            openingTimerContainer: document.getElementById('opening-timer-container'),
+            openingTimer: document.getElementById('opening-timer'),
+            deliveryCountdownContainer: document.getElementById('delivery-countdown-container'),
+            deliveryCountdownTimer: document.getElementById('delivery-countdown-timer'),
         },
 
         // --- HELPER FUNCTIONS ---
         formatCurrency(value) { return `R$ ${value.toFixed(2).replace('.', ',')}`; },
+
+        getNextOpeningDate() {
+            const now = new Date();
+            const [openHour, openMinute] = app.adminSettings.openingTime.split(':').map(Number);
+            
+            // Check for opening later today
+            if (app.adminSettings.openDays.includes(now.getDay())) {
+                const openingTimeToday = new Date();
+                openingTimeToday.setHours(openHour, openMinute, 0, 0);
+                if (now < openingTimeToday) {
+                    return openingTimeToday;
+                }
+            }
+            
+            // Find the next open day
+            for (let i = 1; i <= 7; i++) {
+                const nextDate = new Date();
+                nextDate.setDate(now.getDate() + i);
+                const nextDayOfWeek = nextDate.getDay();
+                
+                if (app.adminSettings.openDays.includes(nextDayOfWeek)) {
+                    nextDate.setHours(openHour, openMinute, 0, 0);
+                    return nextDate;
+                }
+            }
+            
+            return null; // Should not happen if at least one day is open
+        },
 
         // --- LOCAL STORAGE FUNCTIONS ---
         saveCart() { localStorage.setItem(app.CART_STORAGE_KEY, JSON.stringify(app.cart)); },
@@ -673,6 +719,98 @@
             app.elements.closingTimerContainer.classList.remove('flex');
         },
 
+        startOpeningCountdown() {
+            if (app.openingCountdownInterval) clearInterval(app.openingCountdownInterval);
+
+            const targetTime = app.getNextOpeningDate();
+            if (!targetTime) return;
+
+            app.elements.openingTimerContainer.classList.remove('hidden');
+            app.elements.openingTimerContainer.classList.add('flex');
+
+            const updateTimer = () => {
+                const now = new Date();
+                const diff = targetTime - now;
+
+                if (diff <= 0) {
+                    app.stopOpeningCountdown();
+                    app.checkStoreStatus(); // Re-check status, it should be open now
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                let timerString = '';
+                if (days > 0) {
+                    timerString = `${days}d ${String(hours).padStart(2, '0')}h`;
+                } else {
+                    timerString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                }
+                app.elements.openingTimer.textContent = timerString;
+            };
+            
+            updateTimer(); // Initial call
+            app.openingCountdownInterval = setInterval(updateTimer, 1000);
+        },
+
+        stopOpeningCountdown() {
+            clearInterval(app.openingCountdownInterval);
+            app.openingCountdownInterval = null;
+            app.elements.openingTimerContainer.classList.add('hidden');
+            app.elements.openingTimerContainer.classList.remove('flex');
+        },
+
+        startDeliveryCountdown() {
+            if (app.deliveryCountdownInterval) clearInterval(app.deliveryCountdownInterval);
+
+            const now = new Date();
+            const currentDay = now.getDay();
+            const isWeekend = (currentDay === 0 || currentDay === 6);
+            const deliveryStartTimeStr = isWeekend ? app.adminSettings.weekendDeliveryStartTime : app.adminSettings.weekdayDeliveryStartTime;
+            
+            const [deliveryHour, deliveryMinute] = deliveryStartTimeStr.split(':').map(Number);
+            const targetTime = new Date();
+            targetTime.setHours(deliveryHour, deliveryMinute, 0, 0);
+
+            if (targetTime < now) {
+                app.stopDeliveryCountdown();
+                return;
+            }
+
+            app.elements.deliveryCountdownContainer.classList.remove('hidden');
+            app.elements.deliveryCountdownContainer.classList.add('flex');
+            
+            const updateTimer = () => {
+                 const now = new Date();
+                const diff = targetTime - now;
+
+                if (diff <= 0) {
+                    app.stopDeliveryCountdown();
+                    app.checkStoreStatus();
+                    return;
+                }
+
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                app.elements.deliveryCountdownTimer.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            };
+            
+            updateTimer();
+            app.deliveryCountdownInterval = setInterval(updateTimer, 1000);
+        },
+
+        stopDeliveryCountdown() {
+            clearInterval(app.deliveryCountdownInterval);
+            app.deliveryCountdownInterval = null;
+            app.elements.deliveryCountdownContainer.classList.add('hidden');
+            app.elements.deliveryCountdownContainer.classList.remove('flex');
+        },
+
         checkStoreStatus() {
             const now = new Date();
             const currentDay = now.getDay();
@@ -693,14 +831,6 @@
                 }
             }
             
-            // Inicia ou para o cronômetro com base no status da loja
-            if (app.isStoreOpen) {
-                app.startClosingCountdown();
-            } else {
-                app.stopClosingCountdown();
-            }
-
-
             const isWeekend = (currentDay === 0 || currentDay === 6);
             const deliveryStartTimeStr = isWeekend ? app.adminSettings.weekendDeliveryStartTime : app.adminSettings.weekdayDeliveryStartTime;
             const [deliveryStartHour, deliveryStartMinute] = deliveryStartTimeStr.split(':').map(Number);
@@ -708,6 +838,22 @@
             const currentTime = now.getHours() * 60 + now.getMinutes();
             app.isDeliveryTime = currentTime >= deliveryStartTime;
             
+            // Countdown logic
+            if (app.isStoreOpen) {
+                app.stopOpeningCountdown();
+                app.startClosingCountdown();
+                
+                if (!app.isDeliveryTime && ['both', 'delivery'].includes(app.adminSettings.deliveryMode)) {
+                    app.startDeliveryCountdown();
+                } else {
+                    app.stopDeliveryCountdown();
+                }
+            } else { // Store is closed
+                app.stopClosingCountdown();
+                app.stopDeliveryCountdown();
+                app.startOpeningCountdown();
+            }
+
             const indicator = app.elements.storeStatusIndicator;
             indicator.textContent = app.isStoreOpen ? 'Aberto' : 'Fechado';
             indicator.className = `ml-2 px-2 py-0.5 text-xs rounded-full font-semibold ${app.isStoreOpen ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`;
@@ -1157,5 +1303,4 @@
     </script>
 </body>
 </html>
-
 
