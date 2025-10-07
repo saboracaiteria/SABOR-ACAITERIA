@@ -883,6 +883,8 @@
         // --- RENDER FUNCTIONS ---
         renderProducts() {
             app.elements.productList.innerHTML = '';
+            const mostOrderedIds = [2, 5, 8, 10, 12, 19];
+
             app.products.forEach(product => {
                 const isCombo = product.type === 'combo_selectable_size';
                 const isCup = product.name.toLowerCase().includes('copo');
@@ -898,8 +900,14 @@
                     ? 'border-2 border-pink-500 shadow-lg shadow-pink-500/30'
                     : 'border border-gray-700';
 
+                const isMostOrdered = mostOrderedIds.includes(product.id);
+                const mostOrderedTag = isMostOrdered 
+                    ? `<div class="absolute -top-2.5 -right-2.5 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-lg transform rotate-12 z-10">MAIS PEDIDO!</div>` 
+                    : '';
+
                 const productCard = `
                     <div class="product-card group relative cursor-pointer bg-gray-800 rounded-lg p-3 flex flex-col justify-between h-full transition-all duration-200 hover:shadow-xl hover:border-pink-500/50 ${cardContainerClasses}" ${onclickHandler}>
+                        ${mostOrderedTag}
                         <div>
                             <h3 class="font-bold text-gray-100 text-base leading-tight">${product.name}</h3>
                             ${product.description ? `<p class="text-xs text-gray-400 mt-1">${product.description.replace('Sugestão: ','')}</p>` : ''}
@@ -1303,4 +1311,3 @@
     </script>
 </body>
 </html>
-
