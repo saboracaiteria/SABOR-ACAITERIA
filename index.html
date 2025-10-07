@@ -116,8 +116,8 @@
         <header class="flex items-center gap-4 md:gap-8 mb-8 p-4 border-b border-gray-700">
             <div class="w-20 h-20 md:w-28 md:h-28 rounded-full flex-shrink-0 bg-gray-200 p-1 flex items-center justify-center instagram-gradient-bg-ring" style="background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);">
                 <div class="bg-gray-800 rounded-full w-full h-full p-0.5">
-                     <!-- ATENÇÃO: Troque "perfil.jpg" pelo nome exato do arquivo que você enviou no Passo 1 -->
-                     <img src="175.jpg" alt="Logo da Sabor Açaíteria" class="w-full h-full rounded-full object-cover">
+                      <!-- ATENÇÃO: Troque "perfil.jpg" pelo nome exato do arquivo que você enviou no Passo 1 -->
+                      <img src="175.jpg" alt="Logo da Sabor Açaíteria" class="w-full h-full rounded-full object-cover">
                 </div>
             </div>
             <div class="flex-grow">
@@ -259,14 +259,14 @@
             <div class="p-6 space-y-6 overflow-y-auto modal-body">
                 <div id="cart-items-container"></div>
                 <div id="cart-summary-details" class="pt-4 mt-4 border-t border-gray-700 space-y-2 hidden">
-                     <div class="flex justify-between text-gray-400">
-                         <span>Subtotal</span>
-                         <span id="cart-subtotal">R$ 0,00</span>
-                     </div>
-                     <div class="flex justify-between text-gray-400">
-                         <span>Taxa de Entrega</span>
-                         <span id="cart-delivery-fee">R$ 0,00</span>
-                     </div>
+                      <div class="flex justify-between text-gray-400">
+                          <span>Subtotal</span>
+                          <span id="cart-subtotal">R$ 0,00</span>
+                      </div>
+                      <div class="flex justify-between text-gray-400">
+                          <span>Taxa de Entrega</span>
+                          <span id="cart-delivery-fee">R$ 0,00</span>
+                      </div>
                 </div>
                 <div id="checkout-form" class="space-y-4 pt-6 border-t border-gray-700 hidden">
                     <h4 class="text-lg font-bold text-white">Informações do Pedido</h4>
@@ -458,7 +458,7 @@
             { id: 16, name: 'Namorados', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: uva, morango, creme de avelã (Nutella), leite em pó, leite condensado' },
             { id: 17, name: 'Kitkat', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: KitKat, creme de avelã, leite em pó, calda de chocolate' },
             { id: 18, name: 'Euforia', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: morango, kiwi, banana, leite em pó, calda de morango' },
-            { id: 19, name: 'Ninho', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: creme de Ninho, creme de avelã, calda de chocolate' },
+            { id: 19, name: 'Ninho (A)', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: leite em po, morango, banana, leite condensado' },
             { id: 20, name: 'Bombom', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: Sonho de Valsa, leite em pó, calda de chocolate, creme de avelã' },
             { id: 21, name: 'Maracujá', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: mousse de maracujá, creme de avelã, leite em pó, calda de chocolate' },
         ],
@@ -822,7 +822,7 @@
             app.elements.cartDeliveryFee.textContent = app.formatCurrency(deliveryFee);
             app.elements.cartTotalEl.textContent = app.formatCurrency(finalTotal);
             const finalizeBtn = document.querySelector('button[onclick="app.finalizeOrder()"]');
-            if (finalizeBtn) {
+            if(finalizeBtn){
                 finalizeBtn.disabled = !app.isStoreOpen || app.cart.length === 0;
                 finalizeBtn.classList.toggle('opacity-50', finalizeBtn.disabled);
                 finalizeBtn.classList.toggle('cursor-not-allowed', finalizeBtn.disabled);
@@ -1062,7 +1062,7 @@
         confirmOrderSent() {
             app.cart = [];
             app.saveCart();
-            closeConfirmationModal();
+            app.closeConfirmationModal();
             app.renderCart();
             app.updateCartIcon();
             app.showAlert('Seu carrinho foi limpo. Aguarde a confirmação da loja!', 'Pedido Enviado');
@@ -1157,7 +1157,5 @@
     </script>
 </body>
 </html>
-
-
 
 
