@@ -113,6 +113,22 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
+
+        /* Bouncing arrow animation */
+        @keyframes bounce-horizontal {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(0);
+            }
+            40% {
+                transform: translateX(-10px);
+            }
+            60% {
+                transform: translateX(-5px);
+            }
+        }
+        .animate-bounce-horizontal {
+            animation: bounce-horizontal 2s infinite;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-300">
@@ -185,7 +201,10 @@
                     </div>
                 </div>
                 <!-- Action Buttons -->
-                <div class="mt-4 flex gap-2">
+                <div class="mt-4 flex gap-2 items-center relative">
+                    <div class="absolute -left-12 text-green-400 animate-bounce-horizontal">
+                        <i class="fas fa-arrow-right text-4xl" style="filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));"></i>
+                    </div>
                     <a href="https://www.instagram.com/sabor_acaiteria/profilecard/?igsh=NjF2ZWMwNHNiNzI0" target="_blank" class="flex-1 text-center btn-gradient text-white font-bold py-2 px-4 rounded-lg text-sm">
                         Seguir
                     </a>
