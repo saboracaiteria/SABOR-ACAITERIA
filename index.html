@@ -163,6 +163,13 @@
 
     <div class="container mx-auto p-4 max-w-3xl">
 
+        <!-- Children's Day Banner -->
+        <div class="mb-6 text-center bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white font-bold p-3 rounded-lg shadow-lg animate-pulse">
+            <i class="fas fa-star text-yellow-300"></i>
+            <span class="mx-2 text-lg">Feliz Dia das Crianças!</span>
+            <i class="fas fa-star text-yellow-300"></i>
+        </div>
+
         <!-- Header Section -->
         <header class="flex items-center gap-4 md:gap-8 mb-8 p-4 border-b border-gray-700">
             <div class="w-20 h-20 md:w-28 md:h-28 rounded-full flex-shrink-0 bg-gray-200 p-1 flex items-center justify-center instagram-gradient-bg-ring" style="background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);">
@@ -500,23 +507,24 @@
             { id: 1, name: 'Copo 300ml', price: 14.00, disabled: false, type: 'base_acai', description: 'Monte seu açaí com seus acompanhamentos preferidos.' },
             { id: 2, name: 'Copo 400ml', price: 17.00, disabled: false, type: 'base_acai', description: 'Monte seu açaí com seus acompanhamentos preferidos.' },
             { id: 3, name: 'Copo 500ml', price: 20.00, disabled: false, type: 'base_acai', description: 'Monte seu açaí com seus acompanhamentos preferidos.' },
-            { id: 5, name: 'Diet Granola', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: granola, leite em pó, leite condensado' },
-            { id: 6, name: 'Refrescante', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: sorvete, calda de chocolate, leite em pó, leite condensado' },
-            { id: 7, name: 'Mega Especial', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: leite em pó, leite condensado, banana, creme de avelã (Nutella)' },
-            { id: 8, name: 'Preferido', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: paçoca, leite em pó, leite condensado, creme de avelã (Nutella)' },
-            { id: 9, name: 'Maltine +', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: ovomaltine, tapioca, leite em pó, leite condensado' },
-            { id: 10, name: 'Amendoimix', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: amendoim, leite em pó, leite condensado' },
-            { id: 11, name: 'Megapower', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: chocopower, leite em pó, leite condensado, creme de avelã (Nutella)' },
-            { id: 12, name: 'Açaí Banana', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: leite em pó, tapioca, leite condensado, banana' },
-            { id: 13, name: 'Favorito Nutella', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: flocos, leite condensado, leite em pó, creme de avelã (Nutella)' },
-            { id: 14, name: 'Sabores do Pará', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: banana, uva, leite em pó, leite condensado, creme de avelã (Nutella)' },
-            { id: 15, name: 'Kids Especial', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: M&M\'s, uva, creme de avelã (Nutella), leite em pó, leite condensado, banana' },
-            { id: 16, name: 'Namorados', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: uva, morango, creme de avelã (Nutella), leite em pó, leite condensado' },
-            { id: 17, name: 'Kitkat', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: KitKat, creme de avelã, leite em pó, calda de chocolate' },
-            { id: 18, name: 'Euforia', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: morango, kiwi, banana, leite em pó, calda de morango' },
-            { id: 19, name: 'Ninho (A)', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: leite em po, morango, banana, leite condensado' },
-            { id: 20, name: 'Bombom', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: Sonho de Valsa, leite em pó, calda de chocolate, creme de avelã' },
-            { id: 21, name: 'Maracujá', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: mousse de maracujá, creme de avelã, leite em pó, calda de chocolate' },
+            { id: 22, name: 'Barca de Açaí (P)', price: 55.00, disabled: false, type: 'base_acai', description: 'Monte sua barca com até 7 ingredientes e 2 caldas!', customToppingLimits: { free: 7, caldas: 2 } },
+            { id: 5, name: 'Diet Granola', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: granola, leite em pó, leite condensado', sizesKey: 'cupSizes' },
+            { id: 6, name: 'Refrescante', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: sorvete, calda de chocolate, leite em pó, leite condensado', sizesKey: 'cupSizes' },
+            { id: 7, name: 'Mega Especial', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: leite em pó, leite condensado, banana, creme de avelã (Nutella)', sizesKey: 'cupSizes' },
+            { id: 8, name: 'Preferido', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: paçoca, leite em pó, leite condensado, creme de avelã (Nutella)', sizesKey: 'cupSizes' },
+            { id: 9, name: 'Maltine +', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: ovomaltine, tapioca, leite em pó, leite condensado', sizesKey: 'cupSizes' },
+            { id: 10, name: 'Amendoimix', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: amendoim, leite em pó, leite condensado', sizesKey: 'cupSizes' },
+            { id: 11, name: 'Megapower', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: chocopower, leite em pó, leite condensado, creme de avelã (Nutella)', sizesKey: 'cupSizes' },
+            { id: 12, name: 'Açaí Banana', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: leite em pó, tapioca, leite condensado, banana', sizesKey: 'cupSizes' },
+            { id: 13, name: 'Favorito Nutella', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: flocos, leite condensado, leite em pó, creme de avelã (Nutella)', sizesKey: 'cupSizes' },
+            { id: 14, name: 'Sabores do Pará', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: banana, uva, leite em pó, leite condensado, creme de avelã (Nutella)', sizesKey: 'cupSizes' },
+            { id: 15, name: 'Kids Especial', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: M&M\'s, uva, creme de avelã (Nutella), leite em pó, leite condensado, banana', sizesKey: 'cupSizes' },
+            { id: 16, name: 'Namorados', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: uva, morango, creme de avelã (Nutella), leite em pó, leite condensado', sizesKey: 'cupSizes' },
+            { id: 17, name: 'Kitkat', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: KitKat, creme de avelã, leite em pó, calda de chocolate', sizesKey: 'cupSizes' },
+            { id: 18, name: 'Euforia', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: morango, kiwi, banana, leite em pó, calda de morango', sizesKey: 'cupSizes' },
+            { id: 19, name: 'Ninho (A)', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: leite em po, morango, banana, leite condensado', sizesKey: 'cupSizes' },
+            { id: 20, name: 'Bombom', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: Sonho de Valsa, leite em pó, calda de chocolate, creme de avelã', sizesKey: 'cupSizes' },
+            { id: 21, name: 'Maracujá', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: mousse de maracujá, creme de avelã, leite em pó, calda de chocolate', sizesKey: 'cupSizes' },
         ],
         cupSizes: [
             { name: '300ml', price: 14.00 },
@@ -527,7 +535,7 @@
             free: {
                 title: '🍓 Frutas, Cremes e Grãos (Grátis, escolha até 3)', limit: 3, items: [
                     { name: 'Sorvete' }, { name: 'Banana' }, { name: 'Morango' }, { name: 'Manga' }, { name: 'Kiwi' }, { name: 'Uva' }, 
-                    { name: 'Abacaxi' }, { name: 'Creme de Leite Ninho' }, { name: 'Creme de Cupuaçu' }, { name: 'Creme de Avelã' }, { name: 'Mousse de Maracujá' },
+                    { name: 'Creme de Leite Ninho' }, { name: 'Creme de Cupuaçu' }, { name: 'Creme de Avelã' }, { name: 'Mousse de Maracujá' },
                     { name: 'Granola Tradicional' }, { name: 'Aveia' }, { name: 'Flocos' }, { name: 'Tapioca' }, { name: 'Paçoca' }, { name: 'Leite em Pó' }, 
                     { name: 'Amendoim' }, { name: 'Coco Ralado' }
                 ].map(item => ({ ...item, disabled: false }))
@@ -931,16 +939,26 @@
                 const isCombo = product.type === 'combo_selectable_size';
                 const isCup = product.name.toLowerCase().includes('copo');
                 const isKit = product.name.toLowerCase().includes('kit') || product.name.toLowerCase().includes('namorados') || product.name.toLowerCase().includes('kids');
+                const isBarca = product.name.toLowerCase().includes('barca');
 
                 let onclickHandler = product.disabled ? '' : (isCombo ? `onclick="app.openComboSizeModal('${product.id}')"` : `onclick="app.openItemModal('${product.id}', ${product.price}, '')"`);
                 
-                const priceDisplay = isCombo 
-                    ? `<span class="text-xs text-gray-400">A partir de</span><strong class="block text-base text-gray-100">${app.formatCurrency(app.cupSizes[0].price)}</strong>`
-                    : `<strong class="text-base font-bold text-gray-100">${app.formatCurrency(product.price)}</strong>`;
-
-                const cardContainerClasses = (isCup || isKit) 
+                let priceDisplay;
+                if (isCombo) {
+                    const sizesToUse = product.sizesKey && app[product.sizesKey] ? app[product.sizesKey] : app.cupSizes;
+                    const startingPrice = sizesToUse.length > 0 ? sizesToUse[0].price : 0;
+                    priceDisplay = `<span class="text-xs text-gray-400">A partir de</span><strong class="block text-base text-gray-100">${app.formatCurrency(startingPrice)}</strong>`;
+                } else {
+                    priceDisplay = `<strong class="text-base font-bold text-gray-100">${app.formatCurrency(product.price)}</strong>`;
+                }
+                
+                let cardContainerClasses = (isCup || isKit) 
                     ? 'border-2 border-pink-500 shadow-lg shadow-pink-500/30'
                     : 'border border-gray-700';
+                if (isBarca) {
+                    cardContainerClasses = 'border-2 border-amber-400 shadow-lg shadow-amber-400/30';
+                }
+                const spanClass = '';
 
                 const isMostOrdered = mostOrderedIds.includes(product.id);
                 const mostOrderedTag = isMostOrdered 
@@ -948,7 +966,7 @@
                     : '';
 
                 const productCard = `
-                    <div class="product-card group relative cursor-pointer bg-gray-800 rounded-lg p-3 flex flex-col justify-between h-full transition-all duration-200 hover:shadow-xl hover:border-pink-500/50 ${cardContainerClasses}" ${onclickHandler}>
+                    <div class="product-card group relative cursor-pointer bg-gray-800 rounded-lg p-3 flex flex-col justify-between h-full transition-all duration-200 hover:shadow-xl hover:border-pink-500/50 ${spanClass} ${cardContainerClasses}" ${onclickHandler}>
                         ${mostOrderedTag}
                         <div>
                             <h3 class="font-bold text-gray-100 text-base leading-tight">${product.name}</h3>
@@ -1077,8 +1095,11 @@
             app.selectedComboProductId = productId;
             const product = app.products.find(p => p.id.toString() === productId.toString());
             if (!product) return;
+
+            const sizesToUse = product.sizesKey && app[product.sizesKey] ? app[product.sizesKey] : app.cupSizes;
+
             app.elements.comboSizeModalTitle.textContent = `Escolha o Tamanho para ${product.name}`;
-            app.elements.comboSizeModalBody.innerHTML = app.cupSizes.map(size => `
+            app.elements.comboSizeModalBody.innerHTML = sizesToUse.map(size => `
                 <label>
                     <input type="radio" name="combo_size" value="${size.name}" data-price="${size.price}" class="hidden">
                     <div class="flex items-center justify-between p-3 border-2 border-gray-600 rounded-lg cursor-pointer transition-all">
@@ -1113,11 +1134,16 @@
         openItemModal(productId, basePrice, sizeName = '') {
             const product = app.products.find(p => p.id.toString() === productId.toString());
             if (!product) return;
+
             app.currentItem = {
                 id: productId, name: product.name, basePrice: basePrice, price: basePrice, 
                 quantity: 1, toppings: [], type: product.type, selectedSize: sizeName
             };
-            app.elements.modalTitle.textContent = sizeName ? `Monte seu ${product.name} (${sizeName})` : `Monte seu ${product.name}`;
+            if (product.customToppingLimits) {
+                app.currentItem.customToppingLimits = product.customToppingLimits;
+            }
+
+            app.elements.modalTitle.textContent = sizeName ? `Monte seu ${product.name} (${sizeName})` : `Monte sua ${product.name}`;
             app.elements.modalBody.innerHTML = '';
             
             if (product.type.includes('combo')) {
@@ -1125,14 +1151,22 @@
             }
 
             Object.entries(app.toppings).forEach(([key, category]) => {
+                const limit = app.currentItem.customToppingLimits?.[key] || category.limit;
+                let categoryTitle = category.title;
+
+                if (limit) {
+                    categoryTitle = categoryTitle.replace(/\(Grátis,.*? \d+\)/, `(Grátis, escolha até ${limit})`);
+                }
+                
                 const itemsHTML = category.items.filter(item => !item.disabled).map(item => `
                     <label class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-700 cursor-pointer">
                         <input type="checkbox" class="h-5 w-5 rounded border-gray-500 bg-gray-600 text-pink-600 focus:ring-pink-500" name="${key}" value="${item.name}" data-price="${category.price || 0}">
                         <span class="text-gray-300">${item.name}</span>
                     </label>
                 `).join('');
+
                 if (itemsHTML) {
-                    app.elements.modalBody.innerHTML += `<div class="mt-4"><h4 class="text-lg font-bold text-gray-100 mb-2 pb-1 border-b border-gray-700">${category.title}</h4><div class="grid grid-cols-2 sm:grid-cols-3 gap-2">${itemsHTML}</div></div>`;
+                    app.elements.modalBody.innerHTML += `<div class="mt-4"><h4 class="text-lg font-bold text-gray-100 mb-2 pb-1 border-b border-gray-700">${categoryTitle}</h4><div class="grid grid-cols-2 sm:grid-cols-3 gap-2">${itemsHTML}</div></div>`;
                 }
             });
             app.elements.modalBody.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.addEventListener('change', app.updateModalItemTotal));
@@ -1147,8 +1181,10 @@
             Object.entries(app.toppings).forEach(([key, category]) => {
                 const checked = app.elements.modalBody.querySelectorAll(`input[name="${key}"]:checked`);
                 const all = app.elements.modalBody.querySelectorAll(`input[name="${key}"]`);
-                if (category.limit) {
-                    const limitReached = checked.length >= category.limit;
+                const limit = app.currentItem.customToppingLimits?.[key] || category.limit;
+
+                if (limit) {
+                    const limitReached = checked.length >= limit;
                     all.forEach(cb => { if (!cb.checked) cb.disabled = limitReached; });
                 }
                 checked.forEach(cb => {
@@ -1353,3 +1389,5 @@
     </script>
 </body>
 </html>
+
+
