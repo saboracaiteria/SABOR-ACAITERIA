@@ -25,7 +25,7 @@
         /* Base font inspired by Instagram's clean look */
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #111827; /* Tailwind gray-900 for a dark theme */
+            background-color: #000000; /* Super AMOLED Black */
         }
         
         /* Instagram Gradient Text */
@@ -51,7 +51,7 @@
             width: 8px;
         }
         .modal-body::-webkit-scrollbar-track {
-            background: #374151; /* gray-700 */
+            background: #1F2937; /* gray-800 */
             border-radius: 10px;
         }
         .modal-body::-webkit-scrollbar-thumb {
@@ -59,7 +59,7 @@
             border-radius: 10px;
         }
         .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #9CA3AF; /* gray-400 */
+            background: #6B7280; /* gray-500 */
         }
 
         /* Hide spin buttons for number inputs */
@@ -100,7 +100,7 @@
         /* Product card hover effect */
         .product-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
         }
 
         /* Bouncing arrow animation */
@@ -120,24 +120,24 @@
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-300">
+<body class="bg-black text-gray-300">
 
-    <div id="closing-timer-container" class="hidden fixed top-2 left-4 text-xs text-gray-200 z-50 bg-gray-800 bg-opacity-80 border border-gray-600 px-3 py-1 rounded-full shadow-lg items-center gap-2">
+    <div id="closing-timer-container" class="hidden fixed top-2 left-4 text-xs text-gray-200 z-50 bg-gray-900 bg-opacity-80 border border-gray-700 px-3 py-1 rounded-full shadow-lg items-center gap-2">
         <i class="fas fa-stopwatch text-red-400"></i>
         <div>Fecha em: <span id="closing-timer" class="font-bold tracking-wider">--:--:--</span></div>
     </div>
 
-    <div id="opening-timer-container" class="hidden fixed top-11 left-4 text-xs text-gray-200 z-50 bg-gray-800 bg-opacity-80 border border-gray-600 px-3 py-1 rounded-full shadow-lg items-center gap-2">
+    <div id="opening-timer-container" class="hidden fixed top-11 left-4 text-xs text-gray-200 z-50 bg-gray-900 bg-opacity-80 border border-gray-700 px-3 py-1 rounded-full shadow-lg items-center gap-2">
         <i class="fas fa-stopwatch text-green-400"></i>
         <div>Abre em: <span id="opening-timer" class="font-bold tracking-wider">--:--:--</span></div>
     </div>
 
-    <div id="delivery-countdown-container" class="hidden fixed top-20 left-4 text-xs text-gray-200 z-50 bg-gray-800 bg-opacity-80 border border-gray-600 px-3 py-1 rounded-full shadow-lg items-center gap-2">
+    <div id="delivery-countdown-container" class="hidden fixed top-20 left-4 text-xs text-gray-200 z-50 bg-gray-900 bg-opacity-80 border border-gray-700 px-3 py-1 rounded-full shadow-lg items-center gap-2">
         <i class="fas fa-motorcycle text-blue-400"></i>
         <div>Delivery em: <span id="delivery-countdown-timer" class="font-bold tracking-wider">--:--:--</span></div>
     </div>
 
-    <div id="online-counter-container" class="fixed top-2 right-4 text-xs text-gray-300 flex items-center z-50 bg-gray-800 bg-opacity-70 px-2 py-1 rounded-full shadow-lg">
+    <div id="online-counter-container" class="fixed top-2 right-4 text-xs text-gray-300 flex items-center z-50 bg-gray-900 bg-opacity-70 border border-gray-700 px-2 py-1 rounded-full shadow-lg">
         <span class="relative flex h-2 w-2 mr-2">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
@@ -148,24 +148,15 @@
 
     <div class="container mx-auto p-4 max-w-3xl">
 
-        <div class="mb-6 text-center bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white font-bold p-3 rounded-lg shadow-lg animate-pulse">
-            <i class="fas fa-star text-yellow-300"></i>
-            <span class="mx-2 text-lg">Feliz Dia das Crianças!</span>
-            <i class="fas fa-star text-yellow-300"></i>
-        </div>
-
-        <header class="flex items-center gap-4 md:gap-8 mb-8 p-4 border-b border-gray-700">
-            <div class="w-20 h-20 md:w-28 md:h-28 rounded-full flex-shrink-0 bg-gray-200 p-1 flex items-center justify-center instagram-gradient-bg-ring" style="background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);">
-                <div class="bg-gray-800 rounded-full w-full h-full p-0.5">
+        <header class="flex items-center gap-4 md:gap-8 mb-8 p-4 border-b border-gray-800">
+            <div class="w-20 h-20 md:w-28 md:h-28 rounded-full flex-shrink-0 bg-gray-800 p-1 flex items-center justify-center instagram-gradient-bg-ring" style="background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);">
+                <div class="bg-gray-900 rounded-full w-full h-full p-0.5">
                       <img src="175.jpg" alt="Logo da Sabor Açaíteria" class="w-full h-full rounded-full object-cover">
                 </div>
             </div>
             <div class="flex-grow">
                 <div class="flex items-center gap-2">
-                    <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-gray-100">sabor_acaiteria</h1>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 flex-shrink-0 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm3.733 6.764a1 1 0 10-1.414-1.414L8.793 9.586 7.5 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l3-3z" clip-rule="evenodd" />
-                    </svg>
+                    <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-gray-100">sabor acaiteria</h1>
                 </div>
                 <p class="text-sm text-gray-400 mt-2">
                     <i class="fas fa-clock mr-1 opacity-70"></i>
@@ -176,15 +167,15 @@
                 <p id="store-address-display" class="text-xs text-gray-500 mt-1">Carregando endereço...</p>
                 <div class="mt-4 flex justify-around text-center">
                     <div>
-                        <p class="font-bold text-gray-100">36</p>
+                        <p class="font-bold text-gray-100">38</p>
                         <p class="text-sm text-gray-400">posts</p>
                     </div>
                     <div>
-                        <p class="font-bold text-gray-100">1.685</p>
+                        <p class="font-bold text-gray-100">1.679</p>
                         <p class="text-sm text-gray-400">seguidores</p>
                     </div>
                     <div>
-                        <p class="font-bold text-gray-100">3.545</p>
+                        <p class="font-bold text-gray-100">3.541</p>
                         <p class="text-sm text-gray-400">seguindo</p>
                     </div>
                 </div>
@@ -211,19 +202,19 @@
 
         <main class="space-y-8">
             <section id="tamanhos">
-                <p class="text-lg text-gray-300 mb-4 text-center">👇 Clique e escolha 👇</p>
+                <p class="text-lg text-gray-400 mb-4 text-center">👇 Clique em <span class="font-bold text-white">"Montar"</span> para começar 👇</p>
                 <h2 class="text-2xl font-bold text-gray-100 mb-4 tracking-wide">MONTE SEU AÇAÍ</h2>
                 <div id="product-list" class="grid grid-cols-2 gap-3">
                     </div>
             </section>
         </main>
 
-        <footer class="text-center mt-12 space-y-4 py-6 border-t border-gray-700">
-            <div class="text-gray-400 text-sm">
+        <footer class="text-center mt-12 space-y-4 py-6 border-t border-gray-800">
+            <div class="text-gray-500 text-sm">
                 <p>Siga-nos no Instagram: 
-                    <a href="https://www.instagram.com/sabor_acaiteria/profilecard/?igsh=NjF2ZWMwNHNiNzI0" target="_blank" class="font-semibold text-gray-200 hover:underline">@sabor_acaiteria</a>
+                    <a href="https://www.instagram.com/sabor_acaiteria/profilecard/?igsh=NjF2ZWMwNHNiNzI0" target="_blank" class="font-semibold text-gray-300 hover:underline">@sabor_acaiteria</a>
                 </p>
-                 <a href="#" onclick="app.openAdminPanel(event)" class="mt-4 inline-block text-gray-500 hover:text-gray-300 transition-colors text-xs">
+                 <a href="#" onclick="app.openAdminPanel(event)" class="mt-4 inline-block text-gray-600 hover:text-gray-400 transition-colors text-xs">
                     Painel do Administrador
                 </a>
             </div>
@@ -239,19 +230,19 @@
     <div id="cart-button" class="fixed bottom-5 right-5 z-50 hidden">
         <button onclick="app.toggleCartModal()" class="btn-gradient text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-transform transform hover:scale-110">
             <i class="fas fa-shopping-bag text-2xl"></i>
-            <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white">0</span>
+            <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center border-2 border-gray-800">0</span>
         </button>
     </div>
 
-    <div id="combo-size-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
-        <div class="bg-gray-800 border border-gray-700 text-gray-300 rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col">
+    <div id="combo-size-modal" class="modal fixed inset-0 bg-black bg-opacity-70 z-50 hidden items-center justify-center p-4">
+        <div class="bg-gray-900 border border-gray-700 text-gray-300 rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col">
             <div class="p-4 border-b border-gray-700 flex justify-between items-center">
                 <h3 id="combo-size-modal-title" class="text-xl font-bold text-white">Escolha o Tamanho</h3>
                 <button onclick="app.closeComboSizeModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
             </div>
             <div id="combo-size-modal-body" class="p-6 space-y-4 overflow-y-auto modal-body">
                 </div>
-            <div class="p-4 bg-gray-900 border-t border-gray-700 flex justify-end">
+            <div class="p-4 bg-black border-t border-gray-700 flex justify-end">
                 <button id="select-combo-size-btn" class="btn-gradient text-white font-bold py-3 px-6 rounded-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                     Continuar <i class="fas fa-arrow-right"></i>
                 </button>
@@ -259,15 +250,15 @@
         </div>
     </div>
 
-    <div id="item-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
-        <div class="bg-gray-800 border border-gray-700 text-gray-300 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+    <div id="item-modal" class="modal fixed inset-0 bg-black bg-opacity-70 z-50 hidden items-center justify-center p-4">
+        <div class="bg-gray-900 border border-gray-700 text-gray-300 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
             <div class="p-4 border-b border-gray-700 flex justify-between items-center">
                 <h3 id="modal-title" class="text-xl font-bold text-white">Monte seu Açaí</h3>
                 <button onclick="app.closeItemModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
             </div>
             <div id="modal-body" class="p-6 space-y-6 overflow-y-auto modal-body">
                 </div>
-            <div class="p-4 bg-gray-900 border-t border-gray-700 flex justify-between items-center">
+            <div class="p-4 bg-black border-t border-gray-700 flex justify-between items-center">
                 <div>
                     <span class="text-md font-medium text-gray-400">Total:</span>
                     <span id="modal-item-total" class="text-2xl font-bold text-white ml-2">R$ 0,00</span>
@@ -279,8 +270,8 @@
         </div>
     </div>
 
-    <div id="cart-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
-         <div class="bg-gray-800 border border-gray-700 text-gray-300 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col">
+    <div id="cart-modal" class="modal fixed inset-0 bg-black bg-opacity-70 z-50 hidden items-center justify-center p-4">
+         <div class="bg-gray-900 border border-gray-700 text-gray-300 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col">
             <div class="p-4 border-b border-gray-700 flex justify-between items-center">
                 <h3 class="text-xl font-bold text-white">Seu Carrinho e Pedido</h3>
                 <button onclick="app.toggleCartModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
@@ -322,11 +313,11 @@
                         </div>
                     </div>
                     <div>
-                        <input type="text" id="customer-name" class="mt-1 block w-full bg-gray-700 border-2 border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base text-white placeholder-gray-400" placeholder="Seu Nome" required>
+                        <input type="text" id="customer-name" class="mt-1 block w-full bg-gray-800 border-2 border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base text-white placeholder-gray-400" placeholder="Seu Nome" required>
                     </div>
                     <div id="delivery-fields" class="space-y-4">
                          <div>
-                            <select id="neighborhood" class="mt-1 block w-full bg-gray-700 border-2 border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base text-white">
+                            <select id="neighborhood" class="mt-1 block w-full bg-gray-800 border-2 border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base text-white">
                                 <option value="" data-fee="0">-- Selecione o Bairro --</option>
                                 <option value="Jardim Europa" data-fee="9.00">Jardim Europa (R$ 9,00)</option>
                                 <option value="Amec" data-fee="9.00">Amec (R$ 9,00)</option>
@@ -340,11 +331,11 @@
                             </select>
                         </div>
                         <div>
-                            <input type="text" id="customer-address" class="mt-1 block w-full bg-gray-700 border-2 border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base text-white placeholder-gray-400" placeholder="Endereço Completo (Rua, Número, Comp.)" required>
+                            <input type="text" id="customer-address" class="mt-1 block w-full bg-gray-800 border-2 border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base text-white placeholder-gray-400" placeholder="Endereço Completo (Rua, Número, Comp.)" required>
                         </div>
                     </div>
                      <div>
-                        <select id="payment-method" class="mt-1 block w-full bg-gray-700 border-2 border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base text-white">
+                        <select id="payment-method" class="mt-1 block w-full bg-gray-800 border-2 border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base text-white">
                             <option>Pix</option>
                             <option>Cartão de Crédito (na entrega)</option>
                             <option>Cartão de Débito (na entrega)</option>
@@ -353,11 +344,11 @@
                         <p class="text-xs text-yellow-400 mt-2"><i class="fas fa-info-circle mr-1"></i>Observação: não aceitamos VR e vales refeição no momento.</p>
                     </div>
                      <div>
-                        <textarea id="observations" rows="3" class="mt-1 block w-full bg-gray-700 border-2 border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base text-white placeholder-gray-400" placeholder="Observações (Ex: Troco para R$50, sem cebola, etc.)"></textarea>
+                        <textarea id="observations" rows="3" class="mt-1 block w-full bg-gray-800 border-2 border-gray-600 rounded-md shadow-sm focus:ring-pink-500 focus:border-pink-500 p-3 text-base text-white placeholder-gray-400" placeholder="Observações (Ex: Troco para R$50, sem cebola, etc.)"></textarea>
                     </div>
                 </div>
             </div>
-            <div class="p-4 bg-gray-900 border-t border-gray-700 flex justify-between items-center">
+            <div class="p-4 bg-black border-t border-gray-700 flex justify-between items-center">
                  <div>
                     <span class="text-md font-medium text-gray-400">Total:</span>
                     <span id="cart-total" class="text-2xl font-bold text-white ml-2">R$ 0,00</span>
@@ -369,12 +360,12 @@
         </div>
     </div>
 
-    <div id="confirmation-modal" class="modal fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center p-4">
-        <div class="bg-gray-800 text-gray-300 rounded-2xl shadow-2xl w-full max-w-lg text-center p-8">
+    <div id="confirmation-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-50 hidden items-center justify-center p-4">
+        <div class="bg-gray-900 text-gray-300 rounded-2xl shadow-2xl w-full max-w-lg text-center p-8">
             <div id="confirmation-icon"><i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i></div>
             <h3 id="confirmation-title" class="text-2xl font-bold text-white mb-2">Pedido Recebido!</h3>
             <p id="confirmation-message" class="text-gray-400 mb-6">Seu pedido foi gerado! Clique no botão abaixo para encaminhá-lo para o WhatsApp da loja e finalizar a compra.</p>
-            <div id="order-summary" class="text-left bg-gray-700 p-4 rounded-lg mb-6 max-h-60 overflow-y-auto modal-body"></div>
+            <div id="order-summary" class="text-left bg-gray-800 p-4 rounded-lg mb-6 max-h-60 overflow-y-auto modal-body"></div>
             <div id="initial-confirm-buttons" class="flex flex-col sm:flex-row gap-4 justify-center">
                  <button onclick="app.sendOrderViaWhatsApp()" class="w-full btn-gradient text-white font-bold py-3 px-6 rounded-lg transition-all flex items-center justify-center gap-2">
                     <i class="fab fa-whatsapp"></i> Enviar Pedido
@@ -391,8 +382,8 @@
         </div>
     </div>
     
-    <div id="alert-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-[60] hidden items-center justify-center p-4">
-        <div class="bg-gray-800 text-gray-300 rounded-2xl shadow-2xl w-full max-w-sm text-center p-6">
+    <div id="alert-modal" class="modal fixed inset-0 bg-black bg-opacity-70 z-[60] hidden items-center justify-center p-4">
+        <div class="bg-gray-900 text-gray-300 rounded-2xl shadow-2xl w-full max-w-sm text-center p-6">
             <div id="alert-icon" class="mx-auto mb-4"></div>
             <h3 id="alert-title" class="text-xl font-bold text-white mb-2">Atenção!</h3>
             <p id="alert-message" class="text-gray-400 mb-6">Mensagem de alerta.</p>
@@ -401,23 +392,23 @@
     </div>
     
     <div id="admin-modal" class="modal fixed inset-0 bg-black bg-opacity-80 z-[70] hidden items-center justify-center p-4">
-        <div class="bg-gray-800 text-gray-200 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+        <div class="bg-gray-900 text-gray-200 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
             <div class="p-4 border-b border-gray-700 flex justify-between items-center">
                 <h3 class="text-2xl font-bold text-yellow-400"><i class="fas fa-user-shield mr-2"></i>Painel do Administrador</h3>
                 <button onclick="app.closeAdminModal()" class="text-gray-400 hover:text-red-500"><i class="fas fa-times text-2xl"></i></button>
             </div>
             <div id="admin-body" class="p-6 space-y-6 overflow-y-auto modal-body"></div>
-            <div class="p-4 bg-gray-900 border-t border-gray-700 flex flex-wrap justify-between items-center gap-4">
+            <div class="p-4 bg-black border-t border-gray-700 flex flex-wrap justify-between items-center gap-4">
                 <button onclick="app.saveAdminChanges()" class="bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700"><i class="fas fa-save mr-2"></i> Salvar Alterações</button>
                 <button onclick="app.resetToDefaults()" class="bg-yellow-600 text-gray-900 font-bold py-2 px-4 rounded-lg hover:bg-yellow-700"><i class="fas fa-undo mr-2"></i> Restaurar Padrão</button>
             </div>
         </div>
     </div>
     <div id="password-modal" class="modal fixed inset-0 bg-black bg-opacity-70 z-[80] hidden items-center justify-center p-4">
-        <div class="bg-gray-800 text-gray-200 rounded-2xl shadow-2xl w-full max-w-sm text-center p-6">
+        <div class="bg-gray-900 text-gray-200 rounded-2xl shadow-2xl w-full max-w-sm text-center p-6">
             <h3 class="text-xl font-bold text-yellow-400 mb-4">Acesso Restrito</h3>
             <p class="text-gray-400 mb-4">Insira a senha de administrador.</p>
-            <input type="password" id="admin-password-input" class="block w-full bg-gray-700 border-2 border-gray-600 rounded-md p-3 text-white">
+            <input type="password" id="admin-password-input" class="block w-full bg-gray-800 border-2 border-gray-600 rounded-md p-3 text-white">
             <div class="mt-6 flex gap-4">
                 <button onclick="app.closePasswordModal()" class="w-full bg-gray-600 font-bold py-2 px-6 rounded-lg hover:bg-gray-500">Cancelar</button>
                 <button onclick="app.checkAdminPassword()" class="w-full bg-yellow-600 text-gray-900 font-bold py-2 px-6 rounded-lg hover:bg-yellow-700">Entrar</button>
@@ -425,7 +416,7 @@
         </div>
     </div>
     <div id="confirm-action-modal" class="modal fixed inset-0 bg-black bg-opacity-70 z-[80] hidden items-center justify-center p-4">
-        <div class="bg-gray-800 text-gray-200 rounded-2xl shadow-2xl w-full max-w-sm text-center p-6">
+        <div class="bg-gray-900 text-gray-200 rounded-2xl shadow-2xl w-full max-w-sm text-center p-6">
             <div id="confirm-action-icon" class="mx-auto mb-4"><i class="fas fa-exclamation-triangle text-yellow-500 text-5xl"></i></div>
             <h3 id="confirm-action-title" class="text-xl font-bold text-gray-100 mb-2">Confirmar Ação</h3>
             <p id="confirm-action-message" class="text-gray-400 mb-6">Você tem certeza?</p>
@@ -457,11 +448,11 @@
         defaultAdminSettings: {
             storeStatus: 'auto', // 'auto', 'open', 'closed'
             deliveryMode: 'both', // 'both', 'delivery', 'takeout'
-            openingTime: '15:15',
-            closingTime: '22:15',
+            openingTime: '15:20',
+            closingTime: '22:30',
             openDays: [0, 1, 2, 3, 4, 5, 6],
             whatsappNumber: '5594991623576',
-            address: 'Av. Rio Branco, Novo Horizonte.. antigo Obba açaí',
+            address: 'Av. rio Branco. novo Horizonte.. antigo Obba açaí',
             weekdayDeliveryStartTime: '19:15',
             weekendDeliveryStartTime: '15:30'
         },
@@ -496,22 +487,22 @@
         defaultToppings: {
             free: {
                 title: '🍓 Frutas, Cremes e Grãos (Grátis, escolha até 3)', limit: 3, items: [
-                    { name: 'Sorvete' }, { name: 'Banana' }, { name: 'Morango' }, { name: 'Manga' }, { name: 'Kiwi' }, { name: 'Uva' }, 
-                    { name: 'Creme de Leite Ninho' }, { name: 'Creme de Cupuaçu' }, { name: 'Creme de Avelã' }, { name: 'Mousse de Maracujá' },
-                    { name: 'Granola Tradicional' }, { name: 'Aveia' }, { name: 'Flocos' }, { name: 'Tapioca' }, { name: 'Paçoca' }, { name: 'Leite em Pó' }, 
-                    { name: 'Amendoim' }, { name: 'Coco Ralado' }
+                    { name: 'Amendoim' }, { name: 'Aveia' }, { name: 'Banana' }, { name: 'Coco Ralado' }, { name: 'Creme de Avelã' }, 
+                    { name: 'Creme de Cupuaçu' }, { name: 'Creme de Leite Ninho' }, { name: 'Flocos' }, { name: 'Granola Tradicional' },
+                    { name: 'Kiwi' }, { name: 'Leite em Pó' }, { name: 'Manga' }, { name: 'Morango' }, { name: 'Mousse de Maracujá' },
+                    { name: 'Paçoca' }, { name: 'Sorvete' }, { name: 'Tapioca' }, { name: 'Uva' }
                 ].map(item => ({ ...item, disabled: false }))
             },
             caldas: {
                 title: '🍯 Caldas (Grátis, escolha até 1)', limit: 1, items: [
-                    { name: 'Leite Condensado' }, { name: 'Calda de Chocolate' }, { name: 'Calda de Morango' }, 
-                    { name: 'Calda de Caramelo' }, { name: 'Calda de Açaí' }, { name: 'Calda de Kiwi' }
+                    { name: 'Calda de Açaí' }, { name: 'Calda de Caramelo' }, { name: 'Calda de Chocolate' }, 
+                    { name: 'Calda de Kiwi' }, { name: 'Calda de Morango' }, { name: 'Leite Condensado' }
                 ].map(item => ({ ...item, disabled: false }))
             },
             paid_tier2: {
                 title: '🍫 Doces e Chocolates (+ R$ 2,00 cada)', price: 2.00, items: [
-                    { name: 'Gotas de Chocolate' }, { name: 'Confetes' }, { name: 'Bis Picado' }, { name: 'Sonho de Valsa' }, 
-                    { name: 'M&M\'s' }, { name: 'Ovomaltine' }, { name: 'Chocopower' }, { name: 'KitKat' }
+                    { name: 'Bis Picado' }, { name: 'Chocopower' }, { name: 'Confetes' }, { name: 'Gotas de Chocolate' },
+                    { name: 'KitKat' }, { name: 'M&M\'s' }, { name: 'Ovomaltine' }, { name: 'Sonho de Valsa' } 
                 ].map(item => ({ ...item, disabled: false }))
             }
         },
@@ -872,7 +863,7 @@
 
             const statusBanner = app.elements.storeStatusBanner;
             if (!app.isStoreOpen) {
-                statusBanner.innerHTML = `<div class="bg-red-900 border border-red-700 text-red-300 p-3 rounded-lg text-center text-sm"><p class="font-bold">Estamos fechados!</p><p>O cardápio está disponível para visualização.</p></div>`;
+                statusBanner.innerHTML = `<div class="bg-red-900 bg-opacity-50 border border-red-700 text-red-300 p-3 rounded-lg text-center text-sm"><p class="font-bold">Estamos fechados!</p><p>O cardápio está disponível para visualização.</p></div>`;
                 statusBanner.classList.remove('hidden');
             } else {
                 statusBanner.classList.add('hidden');
@@ -880,7 +871,7 @@
 
             const deliveryBanner = app.elements.deliveryTimeBanner;
             if (!app.isDeliveryTime && app.isStoreOpen && ['both', 'delivery'].includes(app.adminSettings.deliveryMode)) {
-                deliveryBanner.innerHTML = `<div class="bg-blue-900 border border-blue-700 text-blue-300 p-3 rounded-lg text-center text-sm"><p class="font-bold">Entregas a partir das ${deliveryStartTimeStr}h!</p><p>Pedidos para retirada já estão disponíveis.</p></div>`;
+                deliveryBanner.innerHTML = `<div class="bg-blue-900 bg-opacity-50 border border-blue-700 text-blue-300 p-3 rounded-lg text-center text-sm"><p class="font-bold">Entregas a partir das ${deliveryStartTimeStr}h!</p><p>Pedidos para retirada já estão disponíveis.</p></div>`;
                 deliveryBanner.classList.remove('hidden');
             } else {
                 deliveryBanner.classList.add('hidden');
@@ -915,10 +906,10 @@
                 }
                 
                 let cardContainerClasses = (isCup || isKit) 
-                    ? 'border-2 border-pink-500 shadow-lg shadow-pink-500/30'
+                    ? 'border-2 border-pink-500 shadow-lg shadow-pink-500/20'
                     : 'border border-gray-700';
                 if (isBarca) {
-                    cardContainerClasses = 'border-2 border-amber-400 shadow-lg shadow-amber-400/30';
+                    cardContainerClasses = 'border-2 border-amber-400 shadow-lg shadow-amber-400/20';
                 }
                 const spanClass = '';
 
@@ -928,7 +919,7 @@
                     : '';
 
                 const productCard = `
-                    <div class="product-card group relative cursor-pointer bg-gray-800 rounded-lg p-3 flex flex-col justify-between h-full transition-all duration-200 hover:shadow-xl hover:border-pink-500/50 ${spanClass} ${cardContainerClasses}" ${onclickHandler}>
+                    <div class="product-card group relative cursor-pointer bg-gray-900 rounded-lg p-3 flex flex-col justify-between h-full transition-all duration-200 hover:shadow-xl hover:border-pink-500/50 ${spanClass} ${cardContainerClasses}" ${onclickHandler}>
                         ${mostOrderedTag}
                         <div>
                             <h3 class="font-bold text-gray-100 text-base leading-tight">${product.name}</h3>
@@ -938,11 +929,12 @@
                             <div class="text-left">
                                 ${priceDisplay}
                             </div>
-                            <div class="text-pink-400 group-hover:text-pink-300 transition-colors">
-                                <i class="fas fa-plus-circle text-2xl"></i>
+                            <div class="btn-gradient text-white font-bold py-1 px-3 rounded-lg flex items-center gap-1.5 text-sm transform group-hover:scale-105 transition-transform">
+                                <span>Montar</span>
+                                <i class="fas fa-arrow-right fa-xs"></i>
                             </div>
                         </div>
-                        ${product.disabled ? `<div class="absolute inset-0 bg-gray-800 bg-opacity-80 flex items-center justify-center rounded-lg cursor-not-allowed"><span class="text-gray-200 font-bold text-sm bg-gray-600 px-3 py-1 rounded-full shadow-sm">Indisponível</span></div>` : ''}
+                        ${product.disabled ? `<div class="absolute inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center rounded-lg cursor-not-allowed"><span class="text-gray-200 font-bold text-sm bg-gray-700 px-3 py-1 rounded-full shadow-sm">Indisponível</span></div>` : ''}
                     </div>
                 `;
 
@@ -971,15 +963,15 @@
                     return `
                         <div class="flex items-start justify-between py-4 border-b border-gray-700">
                             <div>
-                                <p class="font-bold text-md text-gray-100">${item.name}</p>
+                                <p class="font-bold text-md text-gray-100">${item.quantity}x ${item.name}</p>
                                 <div class="text-sm text-gray-400 mt-1">${toppingsDisplay}</div>
                             </div>
                             <div class="text-right">
                                 <p class="font-bold text-md text-gray-100">${app.formatCurrency(item.price * item.quantity)}</p>
                                 <div class="flex items-center gap-2 mt-2">
-                                    <button onclick="app.updateQuantity(${index}, -1)" class="bg-gray-600 text-white w-7 h-7 rounded-md font-bold">-</button>
+                                    <button onclick="app.updateQuantity(${index}, -1)" class="bg-gray-700 text-white w-7 h-7 rounded-md font-bold">-</button>
                                     <span class="font-bold w-5 text-center">${item.quantity}</span>
-                                    <button onclick="app.updateQuantity(${index}, 1)" class="bg-gray-600 text-white w-7 h-7 rounded-md font-bold">+</button>
+                                    <button onclick="app.updateQuantity(${index}, 1)" class="bg-gray-700 text-white w-7 h-7 rounded-md font-bold">+</button>
                                     <button onclick="app.removeFromCart(${index})" class="text-red-500 hover:text-red-400 ml-2"><i class="fas fa-trash"></i></button>
                                 </div>
                             </div>
@@ -1069,7 +1061,16 @@
                         <span class="text-sm text-gray-400">${app.formatCurrency(size.price)}</span>
                     </div>
                 </label>
-            `).join('');
+            `).join('') + `
+                <div class="mt-6 space-y-2">
+                    <h4 class="text-lg font-bold text-gray-100 text-center">Quantidade</h4>
+                    <div class="flex items-center justify-center gap-4">
+                        <button onclick="app.updateComboModalQuantity(-1)" class="bg-gray-700 text-white w-10 h-10 rounded-full font-bold text-xl flex items-center justify-center hover:bg-gray-600 transition-colors">-</button>
+                        <span id="combo-modal-quantity" class="font-bold text-3xl text-white w-12 text-center">1</span>
+                        <button onclick="app.updateComboModalQuantity(1)" class="bg-gray-700 text-white w-10 h-10 rounded-full font-bold text-xl flex items-center justify-center hover:bg-gray-600 transition-colors">+</button>
+                    </div>
+                </div>
+            `;
 
             app.elements.comboSizeModalBody.querySelectorAll('input[name="combo_size"]').forEach(radio => {
                 radio.addEventListener('change', () => { app.elements.selectComboSizeBtn.disabled = false; });
@@ -1077,15 +1078,16 @@
             app.elements.selectComboSizeBtn.disabled = true;
             app.elements.selectComboSizeBtn.onclick = () => {
                 const selected = document.querySelector('input[name="combo_size"]:checked');
+                const quantity = parseInt(document.getElementById('combo-modal-quantity').textContent);
                 if (selected) {
                     const comboProduct = app.products.find(p => p.id.toString() === app.selectedComboProductId.toString());
                     app.currentItem = {
                         id: comboProduct.id, name: comboProduct.name,
                         basePrice: parseFloat(selected.dataset.price), price: parseFloat(selected.dataset.price),
-                        quantity: 1, toppings: [], type: comboProduct.type,
+                        quantity: quantity, toppings: [], type: comboProduct.type,
                         selectedSize: selected.value, description: comboProduct.description
                     };
-                    app.addToCart();
+                    app.addToCart(); // We call addToCart which now handles quantity correctly
                     app.closeComboSizeModal();
                 }
             };
@@ -1094,6 +1096,10 @@
         closeComboSizeModal() { app.closeModal(app.elements.comboSizeModal); app.selectedComboProductId = null; },
 
         openItemModal(productId, basePrice, sizeName = '') {
+            if (!app.isStoreOpen) {
+                app.showAlert('A loja está fechada e não é possível montar pedidos agora.', 'Loja Fechada', true);
+                return;
+            }
             const product = app.products.find(p => p.id.toString() === productId.toString());
             if (!product) return;
 
@@ -1106,10 +1112,21 @@
             }
 
             app.elements.modalTitle.textContent = sizeName ? `Monte seu ${product.name} (${sizeName})` : `Monte sua ${product.name}`;
-            app.elements.modalBody.innerHTML = '';
+            
+            // Add quantity selector first
+            app.elements.modalBody.innerHTML = `
+                <div class="space-y-2 mb-6 border-b border-gray-700 pb-6">
+                    <h4 class="text-lg font-bold text-gray-100 text-center">Quantidade</h4>
+                    <div class="flex items-center justify-center gap-4">
+                        <button onclick="app.updateModalQuantity(-1)" class="bg-gray-700 text-white w-10 h-10 rounded-full font-bold text-xl flex items-center justify-center hover:bg-gray-600 transition-colors">-</button>
+                        <span id="modal-quantity" class="font-bold text-3xl text-white w-12 text-center">${app.currentItem.quantity}</span>
+                        <button onclick="app.updateModalQuantity(1)" class="bg-gray-700 text-white w-10 h-10 rounded-full font-bold text-xl flex items-center justify-center hover:bg-gray-600 transition-colors">+</button>
+                    </div>
+                </div>
+            `;
             
             if (product.type.includes('combo')) {
-                app.elements.modalBody.innerHTML += `<div class="bg-gray-700 p-3 rounded-lg text-sm text-gray-300"><p class="font-bold">Este combo sugere:</p><p>${product.description.replace('Sugestão: ', '')}</p></div>`;
+                app.elements.modalBody.innerHTML += `<div class="bg-gray-800 p-3 rounded-lg text-sm text-gray-300"><p class="font-bold">Este combo sugere:</p><p>${product.description.replace('Sugestão: ', '')}</p></div>`;
             }
 
             Object.entries(app.toppings).forEach(([key, category]) => {
@@ -1136,6 +1153,28 @@
             app.openModal(app.elements.itemModal);
         },
         closeItemModal() { app.closeModal(app.elements.itemModal); app.currentItem = null; },
+        
+        updateComboModalQuantity(change) {
+            const quantityEl = document.getElementById('combo-modal-quantity');
+            if (!quantityEl) return;
+            let currentQuantity = parseInt(quantityEl.textContent);
+            if (currentQuantity + change >= 1) {
+                quantityEl.textContent = currentQuantity + change;
+            }
+        },
+        
+        updateModalQuantity(change) {
+            const quantityEl = document.getElementById('modal-quantity');
+            if (!quantityEl || !app.currentItem) return;
+
+            let currentQuantity = app.currentItem.quantity || 1;
+            if (currentQuantity + change >= 1) {
+                currentQuantity += change;
+                app.currentItem.quantity = currentQuantity;
+                quantityEl.textContent = currentQuantity;
+                app.updateModalItemTotal();
+            }
+        },
 
         updateModalItemTotal() {
             let toppingsTotal = 0;
@@ -1155,9 +1194,21 @@
                     toppingsList.push({ name: cb.value, price: price });
                 });
             });
+            // The item price is always the unit price
             app.currentItem.price = app.currentItem.basePrice + toppingsTotal;
             app.currentItem.toppings = toppingsList.sort((a, b) => a.name.localeCompare(b.name));
-            app.elements.modalItemTotal.textContent = app.formatCurrency(app.currentItem.price);
+            
+            // Calculate final price for display
+            const finalPrice = app.currentItem.price * app.currentItem.quantity;
+            app.elements.modalItemTotal.textContent = app.formatCurrency(finalPrice);
+
+            // Update button text
+            const btn = app.elements.addToCartBtn;
+            if (app.currentItem.quantity > 1) {
+                btn.innerHTML = `Adicionar ${app.currentItem.quantity} Itens`;
+            } else {
+                btn.innerHTML = `Adicionar ao Carrinho`;
+            }
         },
 
         // --- CART LOGIC ---
@@ -1173,8 +1224,15 @@
                 item.id === app.currentItem.id && item.selectedSize === app.currentItem.selectedSize &&
                 item.toppings.map(t => `${t.name}-${t.price}`).sort().join(',') === toppingsStr
             );
-            if (existingItemIndex > -1) app.cart[existingItemIndex].quantity++;
-            else app.cart.push({ ...app.currentItem });
+            
+            const quantityToAdd = app.currentItem.quantity || 1;
+
+            if (existingItemIndex > -1) {
+                app.cart[existingItemIndex].quantity += quantityToAdd;
+            } else {
+                // currentItem already has the correct quantity set from the modal
+                app.cart.push({ ...app.currentItem });
+            }
             app.saveCart();
             app.renderCart();
             app.updateCartIcon();
@@ -1339,7 +1397,7 @@
     };
     
     // Simplified Admin Panel Render/Save for this context
-    app.renderAdminPanel = () => { app.elements.adminBody.innerHTML = `<p class="text-center">A interface do painel de administração foi mantida funcional e não segue o tema do Instagram.</p><p class="text-center mt-4">Clique em "Salvar" para aplicar as configurações atuais ou "Restaurar" para limpar os dados.</p>`; }
+    app.renderAdminPanel = () => { app.elements.adminBody.innerHTML = `<p class="text-center">A interface do painel de administração foi mantida funcional e não segue o tema escuro.</p><p class="text-center mt-4">Clique em "Salvar" para aplicar as configurações atuais ou "Restaurar" para limpar os dados.</p>`; }
     app.saveAdminChanges = () => { app.showAlert('As configurações foram salvas.', 'Salvo'); app.closeAdminModal(); }
     app.resetToDefaults = () => {
         localStorage.clear();
@@ -1351,4 +1409,5 @@
     </script>
 </body>
 </html>
+
 
