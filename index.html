@@ -288,6 +288,10 @@
                           <span id="cart-delivery-fee">R$ 0,00</span>
                       </div>
                 </div>
+                
+                <div id="coupon-container" class="space-y-4 pt-6 border-t border-gray-700">
+                    </div>
+
                 <div id="checkout-form" class="space-y-4 pt-6 border-t border-gray-700 hidden">
                     <h4 class="text-lg font-bold text-white">Informações do Pedido</h4>
                     <div id="delivery-options">
@@ -443,6 +447,17 @@
         countdownInterval: null,
         openingCountdownInterval: null,
         deliveryCountdownInterval: null,
+        
+        // --- CUPON STATE ---
+        COUPON_STORAGE_KEY: 'saborAcaiteriaCouponHistory',
+        coupons: [
+            { code: 'TAXAZERO', type: 'free_delivery', value: 0 },
+            { code: 'SABOR10', type: 'percentage', value: 0.10 }, // 10%
+            { code: 'SABOR15', type: 'percentage', value: 0.15 }, // 15%
+            { code: 'SABOR25', type: 'percentage', value: 0.25 }  // 25%
+        ],
+        appliedCoupon: null, // { code, type, value, discountAmount, isDeliveryFree }
+        couponHistory: {}, // { 'CODE': 'YYYY-MM-DD', ... }
 
         // --- DEFAULT DATA (for initial load or reset) ---
         defaultAdminSettings: {
@@ -577,6 +592,7 @@
             openingTimer: document.getElementById('opening-timer'),
             deliveryCountdownContainer: document.getElementById('delivery-countdown-container'),
             deliveryCountdownTimer: document.getElementById('delivery-countdown-timer'),
+            cartSummaryDetails: document.getElementById('cart-summary-details'), // Adicionado
         },
 
         // --- HELPER FUNCTIONS ---
@@ -943,6 +959,172 @@
         },
 
 
+        // --- CART LOGIC ---
+        toggleCartModal() {
+            app.renderDeliveryOptions();
+            app.renderCart();
+            if (app.elements.cartModal.classList.contains('hidden')) app.openModal(app.elements.cartModal);
+            else app.closeModal(app.elements.cartModal);
+        },
+        addToCart() {
+            const toppingsStr = app.currentItem.toppings.map(t => `${t.name}-${t.price}`).sort().join(',');
+            const existingItemIndex = app.cart.findIndex(item =>
+                item.id === app.currentItem.id && item.selectedSize === app.currentItem.selectedSize &&
+                item.toppings.map(t => `${t.name}-${t.price}`).sort().join(',') === toppingsStr
+            );
+            
+            const quantityToAdd = app.currentItem.quantity || 1;
+
+            if (existingItemIndex > -1) {
+                app.cart[existingItemIndex].quantity += quantityToAdd;
+            } else {
+                // currentItem already has the correct quantity set from the modal
+                app.cart.push({ ...app.currentItem });
+            }
+            app.saveCart();
+            app.renderCart();
+            app.updateCartIcon();
+        },
+        updateQuantity(index, change) {
+            if (app.cart[index].quantity + change > 0) app.cart[index].quantity += change;
+            else app.removeFromCart(index);
+            
+            // Clear coupon on cart change to force re-application/recalculation
+            app.clearAppliedCoupon(); 
+
+            app.saveCart();
+            app.renderCart();
+            app.updateCartIcon();
+        },
+        removeFromCart(index) {
+            app.cart.splice(index, 1);
+            
+            // Clear coupon on cart change to force re-application/recalculation
+            app.clearAppliedCoupon();
+
+            app.saveCart();
+            app.renderCart();
+            app.updateCartIcon();
+        },
+        updateCartIcon() {
+            const totalItems = app.cart.reduce((sum, item) => sum + item.quantity, 0);
+            app.elements.cartCountEl.textContent = totalItems;
+            app.elements.cartButton.classList.toggle('hidden', totalItems === 0);
+            if (totalItems === 0 && !app.elements.cartModal.classList.contains('hidden')) {
+                app.toggleCartModal();
+            }
+        },
+
+        // --- CUPON LOGIC ---
+        loadCouponHistory() {
+            const savedHistory = localStorage.getItem(app.COUPON_STORAGE_KEY);
+            if (savedHistory) app.couponHistory = JSON.parse(savedHistory);
+        },
+
+        saveCouponUsage(code) {
+            const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+            app.couponHistory[code] = today;
+            localStorage.setItem(app.COUPON_STORAGE_KEY, JSON.stringify(app.couponHistory));
+        },
+
+        isCouponUsedToday(code) {
+            const today = new Date().toISOString().slice(0, 10);
+            return app.couponHistory[code] === today;
+        },
+
+        clearAppliedCoupon() {
+            app.appliedCoupon = null;
+            app.renderCart();
+        },
+
+        applyCoupon() {
+            const input = document.getElementById('coupon-input');
+            const code = input.value.toUpperCase().trim();
+            app.clearAppliedCoupon();
+            
+            if (!code) return app.showAlert('Digite um código de cupom.', 'Atenção', true);
+
+            const coupon = app.coupons.find(c => c.code === code);
+            
+            if (!coupon) {
+                input.value = '';
+                return app.showAlert('Cupom inválido.', 'Erro', true);
+            }
+
+            if (app.isCouponUsedToday(code)) {
+                input.value = '';
+                return app.showAlert('Este cupom já foi utilizado hoje. Você só pode usar cada cupom uma vez por dia.', 'Uso Limitado', true);
+            }
+            
+            // Check if the cart has items
+            if (app.cart.length === 0) {
+                input.value = '';
+                return app.showAlert('Adicione itens ao carrinho antes de aplicar um cupom.', 'Carrinho Vazio', true);
+            }
+
+            // Apply the coupon logic
+            const subtotal = app.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            app.appliedCoupon = { code: coupon.code, type: coupon.type, value: coupon.value };
+
+            if (coupon.type === 'percentage') {
+                app.appliedCoupon.discountAmount = subtotal * coupon.value;
+            } else if (coupon.type === 'free_delivery') {
+                app.appliedCoupon.isDeliveryFree = true;
+                app.appliedCoupon.discountAmount = 0; // The actual delivery fee will be calculated in renderCart
+            }
+            
+            app.renderCart();
+            
+            let message = `Cupom **${code}** aplicado com sucesso!`;
+            if (coupon.type === 'percentage') {
+                message = `Cupom **${code}** aplicado! Você ganhou ${Math.round(coupon.value * 100)}% de desconto.`;
+            } else if (coupon.type === 'free_delivery') {
+                message = `Cupom **${code}** aplicado! Sua entrega será grátis (se aplicável).`;
+            }
+            
+            app.showAlert(message, 'Cupom Aplicado');
+            
+            // Keep the value in the input to show the applied coupon
+            if(input) input.value = code;
+        },
+
+        renderCouponInput() {
+            let couponHtml = '';
+
+            if (app.appliedCoupon) {
+                const discountType = app.appliedCoupon.type === 'percentage' 
+                    ? `${Math.round(app.appliedCoupon.value * 100)}%` 
+                    : 'Entrega Grátis';
+                    
+                couponHtml = `
+                    <div class="flex items-center justify-between p-3 bg-green-900 border border-green-700 rounded-lg">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-tags text-green-400"></i>
+                            <span class="font-bold text-gray-100">CUPOM APLICADO: ${app.appliedCoupon.code}</span>
+                            <span class="text-xs text-green-300">(${discountType})</span>
+                        </div>
+                        <button onclick="app.clearAppliedCoupon()" class="text-red-400 hover:text-red-300 transition-colors" title="Remover Cupom">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+            } else if (app.cart.length > 0) {
+                couponHtml = `
+                    <div class="flex gap-2">
+                        <input type="text" id="coupon-input" class="flex-grow bg-gray-800 border-2 border-gray-600 rounded-md p-3 text-base text-white placeholder-gray-400 uppercase" placeholder="Insira seu Cupom (Ex: SABOR10)">
+                        <button onclick="app.applyCoupon()" class="bg-pink-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50" title="Aplicar Cupom">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Cupons só podem ser usados uma vez por dia.</p>
+                `;
+            }
+            
+            const couponContainer = document.getElementById('coupon-container');
+            if (couponContainer) couponContainer.innerHTML = couponHtml;
+        },
+
         renderCart() {
             if (app.cart.length === 0) {
                 app.elements.cartItemsContainer.innerHTML = '<p class="text-gray-400 text-center">Seu carrinho está vazio.</p>';
@@ -978,16 +1160,72 @@
                         </div>`;
                 }).join('');
             }
-            const subtotal = app.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const deliveryOption = document.querySelector('input[name="delivery_option"]:checked')?.value;
+            
+            // --- CUPOM CALCULATION LOGIC ---
+            let subtotalItems = app.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             let deliveryFee = 0;
-            if (deliveryOption === 'delivery' && subtotal > 0) {
-                const selectedOption = app.elements.neighborhoodSelect.options[app.elements.neighborhoodSelect.selectedIndex];
-                deliveryFee = parseFloat(selectedOption.dataset.fee || 0);
+            let couponDiscount = 0;
+            let isDeliveryFree = false;
+
+            // Apply percentage discount to subtotal
+            let subtotalAfterDiscount = subtotalItems;
+            if (app.appliedCoupon && app.appliedCoupon.type === 'percentage') {
+                couponDiscount = subtotalItems * app.appliedCoupon.value;
+                app.appliedCoupon.discountAmount = couponDiscount;
+                subtotalAfterDiscount -= couponDiscount;
             }
-            const finalTotal = subtotal + deliveryFee;
-            app.elements.cartSubtotal.textContent = app.formatCurrency(subtotal);
-            app.elements.cartDeliveryFee.textContent = app.formatCurrency(deliveryFee);
+            
+            const deliveryOption = document.querySelector('input[name="delivery_option"]:checked')?.value;
+            if (deliveryOption === 'delivery' && subtotalItems > 0) {
+                const selectedOption = app.elements.neighborhoodSelect.options[app.elements.neighborhoodSelect.selectedIndex];
+                let baseFee = parseFloat(selectedOption.dataset.fee || 0);
+
+                // Check for free delivery coupon
+                if (app.appliedCoupon && app.appliedCoupon.type === 'free_delivery') {
+                    isDeliveryFree = true;
+                    app.appliedCoupon.discountAmount = baseFee; // Store the waived fee as the discount amount
+                    deliveryFee = 0;
+                } else {
+                    deliveryFee = baseFee;
+                }
+            }
+            
+            const finalTotal = subtotalAfterDiscount + deliveryFee;
+
+            // Render Summary Details
+            let summaryHtml = `
+                <div class="flex justify-between text-gray-400">
+                    <span>Subtotal dos Itens</span>
+                    <span id="cart-subtotal">${app.formatCurrency(subtotalItems)}</span>
+                </div>
+            `;
+            
+            if (couponDiscount > 0) {
+                 summaryHtml += `
+                    <div class="flex justify-between text-green-400 font-semibold">
+                        <span>Desconto (${app.appliedCoupon.code})</span>
+                        <span id="cart-discount">- ${app.formatCurrency(couponDiscount)}</span>
+                    </div>
+                `;
+            }
+
+            summaryHtml += `
+                <div class="flex justify-between text-gray-400">
+                    <span>Taxa de Entrega</span>
+                    <span id="cart-delivery-fee">${app.formatCurrency(deliveryFee)}</span>
+                </div>
+            `;
+            
+            if (isDeliveryFree && app.appliedCoupon.discountAmount > 0) {
+                summaryHtml += `
+                    <div class="flex justify-between text-green-400 font-semibold border-t border-gray-700 pt-2">
+                        <span>Taxa Grátis (Desconto)</span>
+                        <span>- ${app.formatCurrency(app.appliedCoupon.discountAmount)}</span>
+                    </div>
+                `;
+            }
+            
+            app.elements.cartSummaryDetails.innerHTML = summaryHtml;
             app.elements.cartTotalEl.textContent = app.formatCurrency(finalTotal);
             const finalizeBtn = document.querySelector('button[onclick="app.finalizeOrder()"]');
             if(finalizeBtn){
@@ -995,106 +1233,210 @@
                 finalizeBtn.classList.toggle('opacity-50', finalizeBtn.disabled);
                 finalizeBtn.classList.toggle('cursor-not-allowed', finalizeBtn.disabled);
             }
-        },
-
-        renderDeliveryOptions() {
-            const deliveryRadio = app.elements.deliveryOptionDelivery.querySelector('input');
-            const takeoutRadio = app.elements.deliveryOptionTakeout.querySelector('input');
             
-            app.elements.deliveryOptionDelivery.classList.add('hidden');
-            deliveryRadio.disabled = true;
-            app.elements.deliveryOptionTakeout.classList.add('hidden');
-            takeoutRadio.disabled = true;
-
-            let availableOptions = [];
-            if (['both', 'delivery'].includes(app.adminSettings.deliveryMode)) {
-                app.elements.deliveryOptionDelivery.classList.remove('hidden');
-                deliveryRadio.disabled = false;
-                availableOptions.push('delivery');
-            }
-            if (['both', 'takeout'].includes(app.adminSettings.deliveryMode)) {
-                app.elements.deliveryOptionTakeout.classList.remove('hidden');
-                takeoutRadio.disabled = false;
-                availableOptions.push('takeout');
-            }
-
-            if (!app.isDeliveryTime && ['both', 'delivery'].includes(app.adminSettings.deliveryMode)) {
-                deliveryRadio.disabled = true;
-                app.elements.deliveryOptionDelivery.classList.add('opacity-50', 'cursor-not-allowed');
-                availableOptions = availableOptions.filter(o => o !== 'delivery');
-            } else {
-                 app.elements.deliveryOptionDelivery.classList.remove('opacity-50', 'cursor-not-allowed');
-            }
-
-            const currentSelected = document.querySelector('input[name="delivery_option"]:checked');
-            if (!currentSelected || currentSelected.disabled) {
-                if (availableOptions.includes('takeout') && !takeoutRadio.disabled) takeoutRadio.checked = true;
-                else if (availableOptions.includes('delivery') && !deliveryRadio.disabled) deliveryRadio.checked = true;
-            }
-            app.toggleDeliveryFields();
+            // Render the coupon input/status
+            app.renderCouponInput();
         },
 
-        toggleDeliveryFields() {
+        // --- ORDER FINALIZATION ---
+        finalizeOrder() {
+            if (!app.isStoreOpen || app.cart.length === 0) return;
+            const name = app.elements.customerNameInput.value.trim();
+            const address = app.elements.customerAddressInput.value.trim();
+            const neighborhood = app.elements.neighborhoodSelect.value;
+            const payment = app.elements.paymentMethod.value;
+            const obs = app.elements.observations.value.trim();
             const deliveryOption = document.querySelector('input[name="delivery_option"]:checked')?.value;
-            app.elements.deliveryFields.classList.toggle('hidden', deliveryOption === 'takeout' || !deliveryOption);
-            app.renderCart();
-        },
-
-        // --- COMBO & ITEM MODAL ---
-        openComboSizeModal(productId) {
-            if (!app.isStoreOpen) {
-                app.showAlert('A loja está fechada e não é possível montar pedidos agora.', 'Loja Fechada', true);
-                return;
+            
+            if (!name) return app.showAlert('Por favor, preencha seu Nome.', 'Dados Incompletos', true);
+            if (deliveryOption === 'delivery' && (!address || !neighborhood)) {
+                return app.showAlert('Selecione o Bairro e preencha o Endereço.', 'Dados Incompletos', true);
             }
-            app.selectedComboProductId = productId;
-            const product = app.products.find(p => p.id.toString() === productId.toString());
-            if (!product) return;
+            
+            // Recalculate totals including coupon for message accuracy
+            let subtotalItems = app.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            let deliveryFee = 0;
+            let couponDiscount = 0;
+            let isDeliveryFree = false;
+            
+            if (app.appliedCoupon && app.appliedCoupon.type === 'percentage') {
+                couponDiscount = subtotalItems * app.appliedCoupon.value;
+            }
+            
+            const subtotalAfterDiscount = subtotalItems - couponDiscount;
+            
+            if (deliveryOption === 'delivery') {
+                const selectedFee = app.elements.neighborhoodSelect.options[app.elements.neighborhoodSelect.selectedIndex].dataset.fee;
+                const baseFee = parseFloat(selectedFee || 0);
 
-            const sizesToUse = product.sizesKey && app[product.sizesKey] ? app[product.sizesKey] : app.cupSizes;
-
-            app.elements.comboSizeModalTitle.textContent = `Escolha o Tamanho para ${product.name}`;
-            app.elements.comboSizeModalBody.innerHTML = sizesToUse.map(size => `
-                <label>
-                    <input type="radio" name="combo_size" value="${size.name}" data-price="${size.price}" class="hidden">
-                    <div class="flex items-center justify-between p-3 border-2 border-gray-600 rounded-lg cursor-pointer transition-all">
-                        <span class="font-semibold text-gray-200">${size.name}</span>
-                        <span class="text-sm text-gray-400">${app.formatCurrency(size.price)}</span>
-                    </div>
-                </label>
-            `).join('') + `
-                <div class="mt-6 space-y-2">
-                    <h4 class="text-lg font-bold text-gray-100 text-center">Quantidade</h4>
-                    <div class="flex items-center justify-center gap-4">
-                        <button onclick="app.updateComboModalQuantity(-1)" class="bg-gray-700 text-white w-10 h-10 rounded-full font-bold text-xl flex items-center justify-center hover:bg-gray-600 transition-colors">-</button>
-                        <span id="combo-modal-quantity" class="font-bold text-3xl text-white w-12 text-center">1</span>
-                        <button onclick="app.updateComboModalQuantity(1)" class="bg-gray-700 text-white w-10 h-10 rounded-full font-bold text-xl flex items-center justify-center hover:bg-gray-600 transition-colors">+</button>
-                    </div>
-                </div>
-            `;
-
-            app.elements.comboSizeModalBody.querySelectorAll('input[name="combo_size"]').forEach(radio => {
-                radio.addEventListener('change', () => { app.elements.selectComboSizeBtn.disabled = false; });
-            });
-            app.elements.selectComboSizeBtn.disabled = true;
-            app.elements.selectComboSizeBtn.onclick = () => {
-                const selected = document.querySelector('input[name="combo_size"]:checked');
-                const quantity = parseInt(document.getElementById('combo-modal-quantity').textContent);
-                if (selected) {
-                    const comboProduct = app.products.find(p => p.id.toString() === app.selectedComboProductId.toString());
-                    app.currentItem = {
-                        id: comboProduct.id, name: comboProduct.name,
-                        basePrice: parseFloat(selected.dataset.price), price: parseFloat(selected.dataset.price),
-                        quantity: quantity, toppings: [], type: comboProduct.type,
-                        selectedSize: selected.value, description: comboProduct.description
-                    };
-                    app.addToCart(); // We call addToCart which now handles quantity correctly
-                    app.closeComboSizeModal();
+                if (app.appliedCoupon && app.appliedCoupon.type === 'free_delivery') {
+                    isDeliveryFree = true;
+                    deliveryFee = 0;
+                } else {
+                    deliveryFee = baseFee;
                 }
-            };
-            app.openModal(app.elements.comboSizeModal);
+            }
+            
+            const finalTotal = subtotalAfterDiscount + deliveryFee;
+            
+            let summary = `*NOVO PEDIDO - SABOR AÇAÍTERIA*\n\n*Cliente:* ${name}\n`;
+            if (deliveryOption === 'delivery') {
+                summary += `*Opção:* ENTREGA\n*Endereço:* ${address}, ${neighborhood}\n`;
+            } else {
+                summary += `*Opção:* RETIRAR NA LOJA\n`;
+            }
+            
+            // Add cupom information to the summary
+            if (app.appliedCoupon) {
+                summary += `\n*CUPOM APLICADO:* ${app.appliedCoupon.code}\n`;
+            }
+            
+            summary += `\n*ITENS DO PEDIDO:*\n------------------------\n`;
+            
+            app.cart.forEach(item => {
+                summary += `*${item.quantity}x ${item.name}*`;
+                if (item.selectedSize) summary += ` (${item.selectedSize})`;
+                if (item.type === 'combo_selectable_size' && item.description) summary += ` - ${item.description.replace('Sugestão: ', '')}`;
+                summary += `\n`;
+                if (item.toppings.length > 0) item.toppings.forEach(t => { summary += `  - ${t.name}\n`; });
+                summary += `Subtotal: ${app.formatCurrency(item.price * item.quantity)}\n------------------------\n`;
+            });
+            
+            summary += `\n*Subtotal dos Itens (s/ Desconto): ${app.formatCurrency(subtotalItems)}*\n`;
+            
+            if (couponDiscount > 0) {
+                summary += `*Desconto Cupom ${app.appliedCoupon.code}: - ${app.formatCurrency(couponDiscount)}*\n`;
+            }
+            
+            if (deliveryOption === 'delivery') {
+                if (isDeliveryFree) {
+                    summary += `*Taxa de Entrega: GRÁTIS (Cupom ${app.appliedCoupon.code})*\n`;
+                } else {
+                    summary += `*Taxa de Entrega: ${app.formatCurrency(deliveryFee)}*\n`;
+                }
+            }
+            
+            summary += `*TOTAL FINAL: ${app.formatCurrency(finalTotal)}*\n*Pagamento:* ${payment}\n`;
+            if (obs) summary += `*Observações:* ${obs}\n`;
+            
+            app.whatsAppMessage = encodeURIComponent(summary);
+            app.elements.orderSummary.innerHTML = summary.replace(/\n/g, '<br>').replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+            
+            // Save coupon usage if applied
+            if (app.appliedCoupon) {
+                app.saveCouponUsage(app.appliedCoupon.code);
+            }
+            
+            app.saveCustomerInfo(); // Salva dados do cliente no último momento
+            app.closeModal(app.elements.cartModal);
+            app.openModal(app.elements.confirmationModal);
         },
-        closeComboSizeModal() { app.closeModal(app.elements.comboSizeModal); app.selectedComboProductId = null; },
+        sendOrderViaWhatsApp() {
+            window.open(`https://wa.me/${app.adminSettings.whatsappNumber}?text=${app.whatsAppMessage}`, '_blank');
+            app.elements.confirmationIcon.innerHTML = '<i class="fab fa-whatsapp-square text-green-400 text-6xl mb-4"></i>';
+            app.elements.confirmationTitle.textContent = 'Quase lá!';
+            app.elements.confirmationMessage.textContent = 'A janela do WhatsApp foi aberta. Após enviar sua mensagem, clique abaixo para confirmar e limpar seu carrinho.';
+            app.elements.initialConfirmButtons.classList.add('hidden');
+            app.elements.postSendButtons.classList.remove('hidden');
+            app.elements.postSendButtons.classList.add('flex');
+        },
+        confirmOrderSent() {
+            app.cart = [];
+            app.appliedCoupon = null; // Limpa o cupom aplicado
+            app.saveCart();
+            app.closeConfirmationModal();
+            app.renderCart();
+            app.updateCartIcon();
+            app.showAlert('Seu carrinho foi limpo. Aguarde a confirmação da loja!', 'Pedido Enviado');
+        },
+        closeConfirmationModal() {
+            app.closeModal(app.elements.confirmationModal);
+            setTimeout(() => {
+                app.elements.confirmationIcon.innerHTML = '<i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>';
+                app.elements.confirmationTitle.textContent = 'Pedido Recebido!';
+                app.elements.confirmationMessage.textContent = 'Seu pedido foi gerado! Clique no botão abaixo para encaminhá-lo para o WhatsApp da loja e finalizar a compra.';
+                app.elements.initialConfirmButtons.classList.remove('hidden');
+                app.elements.postSendButtons.classList.add('hidden');
+            }, 300);
+        },
 
+        // --- ADMIN PANEL (Functionality unchanged, UI kept separate) ---
+        openAdminPanel(e) { e.preventDefault(); app.openModal(app.elements.passwordModal); app.elements.adminPasswordInput.focus(); },
+        closePasswordModal() { app.closeModal(app.elements.passwordModal); app.elements.adminPasswordInput.value = ''; },
+        checkAdminPassword() {
+            if (app.elements.adminPasswordInput.value === "admin123") {
+                app.closePasswordModal();
+                app.renderAdminPanel();
+                app.openModal(app.elements.adminModal);
+            } else {
+                app.closePasswordModal();
+                app.showAlert("Senha incorreta!", 'Acesso Negado', true);
+            }
+        },
+        closeAdminModal() { app.closeModal(app.elements.adminModal); },
+        renderAdminPanel() { /* ... Logic from original script, intentionally omitted for brevity but is unchanged ... */ },
+        saveAdminChanges() { /* ... Logic from original script, intentionally omitted for brevity but is unchanged ... */ },
+        resetToDefaults() { /* ... Logic from original script, intentionally omitted for brevity but is unchanged ... */ },
+
+        // --- FAKE ONLINE COUNTER ---
+        updateOnlineCounter() {
+            const min = 4;
+            const max = 20;
+            const currentCount = parseInt(app.elements.onlineCount.textContent, 10);
+            let newCount;
+            
+            const change = Math.random() > 0.5 ? 1 : -1;
+            newCount = currentCount + change;
+
+            if (newCount > max) newCount = max - 1;
+            if (newCount < min) newCount = min + 1;
+            
+            app.elements.onlineCount.textContent = newCount;
+            
+            const randomInterval = Math.floor(Math.random() * (8000 - 3000 + 1)) + 3000;
+            setTimeout(app.updateOnlineCounter, randomInterval);
+        },
+        
+        // As funções de modal de item e combo (openItemModal, updateModalItemTotal, etc.) são grandes e foram omitidas
+        // para brevidade aqui, mas estão na sua versão original e não precisaram de modificações diretas para o cupom,
+        // pois a lógica de cálculo final ocorre no renderCart/finalizeOrder, que foram atualizados.
+        
+        // Apenas para manter o código compilável, deixarei funções stubs para as funções que não foram alteradas
+        // (mas que *estavam* no seu código original).
+        updateModalItemTotal() {
+            let toppingsTotal = 0;
+            const toppingsList = [];
+            Object.entries(app.toppings).forEach(([key, category]) => {
+                const checked = app.elements.modalBody.querySelectorAll(`input[name="${key}"]:checked`);
+                const all = app.elements.modalBody.querySelectorAll(`input[name="${key}"]`);
+                const limit = app.currentItem.customToppingLimits?.[key] || category.limit;
+
+                if (limit) {
+                    const limitReached = checked.length >= limit;
+                    all.forEach(cb => { if (!cb.checked) cb.disabled = limitReached; });
+                }
+                checked.forEach(cb => {
+                    const price = parseFloat(cb.dataset.price);
+                    if (price > 0) toppingsTotal += price;
+                    toppingsList.push({ name: cb.value, price: price });
+                });
+            });
+            // The item price is always the unit price
+            app.currentItem.price = app.currentItem.basePrice + toppingsTotal;
+            app.currentItem.toppings = toppingsList.sort((a, b) => a.name.localeCompare(b.name));
+            
+            // Calculate final price for display
+            const finalPrice = app.currentItem.price * app.currentItem.quantity;
+            app.elements.modalItemTotal.textContent = app.formatCurrency(finalPrice);
+
+            // Update button text
+            const btn = app.elements.addToCartBtn;
+            if (app.currentItem.quantity > 1) {
+                btn.innerHTML = `Adicionar ${app.currentItem.quantity} Itens`;
+            } else {
+                btn.innerHTML = `Adicionar ao Carrinho`;
+            }
+        },
         openItemModal(productId, basePrice, sizeName = '') {
             if (!app.isStoreOpen) {
                 app.showAlert('A loja está fechada e não é possível montar pedidos agora.', 'Loja Fechada', true);
@@ -1153,7 +1495,59 @@
             app.openModal(app.elements.itemModal);
         },
         closeItemModal() { app.closeModal(app.elements.itemModal); app.currentItem = null; },
-        
+        openComboSizeModal(productId) {
+            if (!app.isStoreOpen) {
+                app.showAlert('A loja está fechada e não é possível montar pedidos agora.', 'Loja Fechada', true);
+                return;
+            }
+            app.selectedComboProductId = productId;
+            const product = app.products.find(p => p.id.toString() === productId.toString());
+            if (!product) return;
+
+            const sizesToUse = product.sizesKey && app[product.sizesKey] ? app[product.sizesKey] : app.cupSizes;
+
+            app.elements.comboSizeModalTitle.textContent = `Escolha o Tamanho para ${product.name}`;
+            app.elements.comboSizeModalBody.innerHTML = sizesToUse.map(size => `
+                <label>
+                    <input type="radio" name="combo_size" value="${size.name}" data-price="${size.price}" class="hidden">
+                    <div class="flex items-center justify-between p-3 border-2 border-gray-600 rounded-lg cursor-pointer transition-all">
+                        <span class="font-semibold text-gray-200">${size.name}</span>
+                        <span class="text-sm text-gray-400">${app.formatCurrency(size.price)}</span>
+                    </div>
+                </label>
+            `).join('') + `
+                <div class="mt-6 space-y-2">
+                    <h4 class="text-lg font-bold text-gray-100 text-center">Quantidade</h4>
+                    <div class="flex items-center justify-center gap-4">
+                        <button onclick="app.updateComboModalQuantity(-1)" class="bg-gray-700 text-white w-10 h-10 rounded-full font-bold text-xl flex items-center justify-center hover:bg-gray-600 transition-colors">-</button>
+                        <span id="combo-modal-quantity" class="font-bold text-3xl text-white w-12 text-center">1</span>
+                        <button onclick="app.updateComboModalQuantity(1)" class="bg-gray-700 text-white w-10 h-10 rounded-full font-bold text-xl flex items-center justify-center hover:bg-gray-600 transition-colors">+</button>
+                    </div>
+                </div>
+            `;
+
+            app.elements.comboSizeModalBody.querySelectorAll('input[name="combo_size"]').forEach(radio => {
+                radio.addEventListener('change', () => { app.elements.selectComboSizeBtn.disabled = false; });
+            });
+            app.elements.selectComboSizeBtn.disabled = true;
+            app.elements.selectComboSizeBtn.onclick = () => {
+                const selected = document.querySelector('input[name="combo_size"]:checked');
+                const quantity = parseInt(document.getElementById('combo-modal-quantity').textContent);
+                if (selected) {
+                    const comboProduct = app.products.find(p => p.id.toString() === app.selectedComboProductId.toString());
+                    app.currentItem = {
+                        id: comboProduct.id, name: comboProduct.name,
+                        basePrice: parseFloat(selected.dataset.price), price: parseFloat(selected.dataset.price),
+                        quantity: quantity, toppings: [], type: comboProduct.type,
+                        selectedSize: selected.value, description: comboProduct.description
+                    };
+                    app.addToCart(); // We call addToCart which now handles quantity correctly
+                    app.closeComboSizeModal();
+                }
+            };
+            app.openModal(app.elements.comboSizeModal);
+        },
+        closeComboSizeModal() { app.closeModal(app.elements.comboSizeModal); app.selectedComboProductId = null; },
         updateComboModalQuantity(change) {
             const quantityEl = document.getElementById('combo-modal-quantity');
             if (!quantityEl) return;
@@ -1162,7 +1556,6 @@
                 quantityEl.textContent = currentQuantity + change;
             }
         },
-        
         updateModalQuantity(change) {
             const quantityEl = document.getElementById('modal-quantity');
             if (!quantityEl || !app.currentItem) return;
@@ -1175,196 +1568,54 @@
                 app.updateModalItemTotal();
             }
         },
-
-        updateModalItemTotal() {
-            let toppingsTotal = 0;
-            const toppingsList = [];
-            Object.entries(app.toppings).forEach(([key, category]) => {
-                const checked = app.elements.modalBody.querySelectorAll(`input[name="${key}"]:checked`);
-                const all = app.elements.modalBody.querySelectorAll(`input[name="${key}"]`);
-                const limit = app.currentItem.customToppingLimits?.[key] || category.limit;
-
-                if (limit) {
-                    const limitReached = checked.length >= limit;
-                    all.forEach(cb => { if (!cb.checked) cb.disabled = limitReached; });
-                }
-                checked.forEach(cb => {
-                    const price = parseFloat(cb.dataset.price);
-                    if (price > 0) toppingsTotal += price;
-                    toppingsList.push({ name: cb.value, price: price });
-                });
-            });
-            // The item price is always the unit price
-            app.currentItem.price = app.currentItem.basePrice + toppingsTotal;
-            app.currentItem.toppings = toppingsList.sort((a, b) => a.name.localeCompare(b.name));
-            
-            // Calculate final price for display
-            const finalPrice = app.currentItem.price * app.currentItem.quantity;
-            app.elements.modalItemTotal.textContent = app.formatCurrency(finalPrice);
-
-            // Update button text
-            const btn = app.elements.addToCartBtn;
-            if (app.currentItem.quantity > 1) {
-                btn.innerHTML = `Adicionar ${app.currentItem.quantity} Itens`;
-            } else {
-                btn.innerHTML = `Adicionar ao Carrinho`;
-            }
-        },
-
-        // --- CART LOGIC ---
-        toggleCartModal() {
-            app.renderDeliveryOptions();
-            app.renderCart();
-            if (app.elements.cartModal.classList.contains('hidden')) app.openModal(app.elements.cartModal);
-            else app.closeModal(app.elements.cartModal);
-        },
-        addToCart() {
-            const toppingsStr = app.currentItem.toppings.map(t => `${t.name}-${t.price}`).sort().join(',');
-            const existingItemIndex = app.cart.findIndex(item =>
-                item.id === app.currentItem.id && item.selectedSize === app.currentItem.selectedSize &&
-                item.toppings.map(t => `${t.name}-${t.price}`).sort().join(',') === toppingsStr
-            );
-            
-            const quantityToAdd = app.currentItem.quantity || 1;
-
-            if (existingItemIndex > -1) {
-                app.cart[existingItemIndex].quantity += quantityToAdd;
-            } else {
-                // currentItem already has the correct quantity set from the modal
-                app.cart.push({ ...app.currentItem });
-            }
-            app.saveCart();
-            app.renderCart();
-            app.updateCartIcon();
-        },
-        updateQuantity(index, change) {
-            if (app.cart[index].quantity + change > 0) app.cart[index].quantity += change;
-            else app.removeFromCart(index);
-            app.saveCart();
-            app.renderCart();
-            app.updateCartIcon();
-        },
-        removeFromCart(index) {
-            app.cart.splice(index, 1);
-            app.saveCart();
-            app.renderCart();
-            app.updateCartIcon();
-        },
-        updateCartIcon() {
-            const totalItems = app.cart.reduce((sum, item) => sum + item.quantity, 0);
-            app.elements.cartCountEl.textContent = totalItems;
-            app.elements.cartButton.classList.toggle('hidden', totalItems === 0);
-            if (totalItems === 0 && !app.elements.cartModal.classList.contains('hidden')) {
-                app.toggleCartModal();
-            }
-        },
-
-        // --- ORDER FINALIZATION ---
-        finalizeOrder() {
-            if (!app.isStoreOpen || app.cart.length === 0) return;
-            const name = app.elements.customerNameInput.value.trim();
-            const address = app.elements.customerAddressInput.value.trim();
-            const neighborhood = app.elements.neighborhoodSelect.value;
-            const payment = app.elements.paymentMethod.value;
-            const obs = app.elements.observations.value.trim();
+        toggleDeliveryFields() {
             const deliveryOption = document.querySelector('input[name="delivery_option"]:checked')?.value;
-            if (!name) return app.showAlert('Por favor, preencha seu Nome.', 'Dados Incompletos', true);
-            if (deliveryOption === 'delivery' && (!address || !neighborhood)) {
-                return app.showAlert('Selecione o Bairro e preencha o Endereço.', 'Dados Incompletos', true);
-            }
-            
-            let deliveryFee = 0;
-            let summary = `*NOVO PEDIDO - SABOR AÇAÍTERIA*\n\n*Cliente:* ${name}\n`;
-            if (deliveryOption === 'delivery') {
-                const selectedFee = app.elements.neighborhoodSelect.options[app.elements.neighborhoodSelect.selectedIndex].dataset.fee;
-                deliveryFee = parseFloat(selectedFee || 0);
-                summary += `*Opção:* ENTREGA\n*Endereço:* ${address}, ${neighborhood}\n\n`;
-            } else {
-                summary += `*Opção:* RETIRAR NA LOJA\n\n`;
-            }
-            summary += `*ITENS DO PEDIDO:*\n------------------------\n`;
-            app.cart.forEach(item => {
-                summary += `*${item.quantity}x ${item.name}*`;
-                if (item.selectedSize) summary += ` (${item.selectedSize})`;
-                if (item.type === 'combo_selectable_size' && item.description) summary += ` - ${item.description.replace('Sugestão: ', '')}`;
-                summary += `\n`;
-                if (item.toppings.length > 0) item.toppings.forEach(t => { summary += `  - ${t.name}\n`; });
-                summary += `Subtotal: ${app.formatCurrency(item.price * item.quantity)}\n------------------------\n`;
-            });
-            const subtotal = app.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const finalTotal = subtotal + deliveryFee;
-            summary += `\n*Subtotal dos Itens: ${app.formatCurrency(subtotal)}*\n`;
-            if (deliveryOption === 'delivery') summary += `*Taxa de Entrega: ${app.formatCurrency(deliveryFee)}*\n`;
-            summary += `*TOTAL: ${app.formatCurrency(finalTotal)}*\n*Pagamento:* ${payment}\n`;
-            if (obs) summary += `*Observações:* ${obs}\n`;
-            app.whatsAppMessage = encodeURIComponent(summary);
-            app.elements.orderSummary.innerHTML = summary.replace(/\n/g, '<br>').replace(/\*(.*?)\*/g, '<strong>$1</strong>');
-            app.closeModal(app.elements.cartModal);
-            app.openModal(app.elements.confirmationModal);
-        },
-        sendOrderViaWhatsApp() {
-            window.open(`https://wa.me/${app.adminSettings.whatsappNumber}?text=${app.whatsAppMessage}`, '_blank');
-            app.elements.confirmationIcon.innerHTML = '<i class="fab fa-whatsapp-square text-green-400 text-6xl mb-4"></i>';
-            app.elements.confirmationTitle.textContent = 'Quase lá!';
-            app.elements.confirmationMessage.textContent = 'A janela do WhatsApp foi aberta. Após enviar sua mensagem, clique abaixo para confirmar e limpar seu carrinho.';
-            app.elements.initialConfirmButtons.classList.add('hidden');
-            app.elements.postSendButtons.classList.remove('hidden');
-            app.elements.postSendButtons.classList.add('flex');
-        },
-        confirmOrderSent() {
-            app.cart = [];
-            app.saveCart();
-            app.closeConfirmationModal();
+            app.elements.deliveryFields.classList.toggle('hidden', deliveryOption === 'takeout' || !deliveryOption);
             app.renderCart();
-            app.updateCartIcon();
-            app.showAlert('Seu carrinho foi limpo. Aguarde a confirmação da loja!', 'Pedido Enviado');
         },
-        closeConfirmationModal() {
-            app.closeModal(app.elements.confirmationModal);
-            setTimeout(() => {
-                app.elements.confirmationIcon.innerHTML = '<i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>';
-                app.elements.confirmationTitle.textContent = 'Pedido Recebido!';
-                app.elements.confirmationMessage.textContent = 'Seu pedido foi gerado! Clique no botão abaixo para encaminhá-lo para o WhatsApp da loja e finalizar a compra.';
-                app.elements.initialConfirmButtons.classList.remove('hidden');
-                app.elements.postSendButtons.classList.add('hidden');
-            }, 300);
-        },
+        renderDeliveryOptions() {
+            const deliveryRadio = app.elements.deliveryOptionDelivery.querySelector('input');
+            const takeoutRadio = app.elements.deliveryOptionTakeout.querySelector('input');
+            
+            app.elements.deliveryOptionDelivery.classList.add('hidden');
+            deliveryRadio.disabled = true;
+            app.elements.deliveryOptionTakeout.classList.add('hidden');
+            takeoutRadio.disabled = true;
 
-        // --- ADMIN PANEL (Functionality unchanged, UI kept separate) ---
-        openAdminPanel(e) { e.preventDefault(); app.openModal(app.elements.passwordModal); app.elements.adminPasswordInput.focus(); },
-        closePasswordModal() { app.closeModal(app.elements.passwordModal); app.elements.adminPasswordInput.value = ''; },
-        checkAdminPassword() {
-            if (app.elements.adminPasswordInput.value === "admin123") {
-                app.closePasswordModal();
-                app.renderAdminPanel();
-                app.openModal(app.elements.adminModal);
-            } else {
-                app.closePasswordModal();
-                app.showAlert("Senha incorreta!", 'Acesso Negado', true);
+            let availableOptions = [];
+            if (['both', 'delivery'].includes(app.adminSettings.deliveryMode)) {
+                app.elements.deliveryOptionDelivery.classList.remove('hidden');
+                deliveryRadio.disabled = false;
+                availableOptions.push('delivery');
             }
+            if (['both', 'takeout'].includes(app.adminSettings.deliveryMode)) {
+                app.elements.deliveryOptionTakeout.classList.remove('hidden');
+                takeoutRadio.disabled = false;
+                availableOptions.push('takeout');
+            }
+
+            if (!app.isDeliveryTime && ['both', 'delivery'].includes(app.adminSettings.deliveryMode)) {
+                deliveryRadio.disabled = true;
+                app.elements.deliveryOptionDelivery.classList.add('opacity-50', 'cursor-not-allowed');
+                availableOptions = availableOptions.filter(o => o !== 'delivery');
+            } else {
+                 app.elements.deliveryOptionDelivery.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
+            const currentSelected = document.querySelector('input[name="delivery_option"]:checked');
+            if (!currentSelected || currentSelected.disabled) {
+                if (availableOptions.includes('takeout') && !takeoutRadio.disabled) takeoutRadio.checked = true;
+                else if (availableOptions.includes('delivery') && !deliveryRadio.disabled) deliveryRadio.checked = true;
+            }
+            app.toggleDeliveryFields();
         },
-        closeAdminModal() { app.closeModal(app.elements.adminModal); },
-        renderAdminPanel() { /* ... Logic from original script, intentionally omitted for brevity but is unchanged ... */ },
-        saveAdminChanges() { /* ... Logic from original script, intentionally omitted for brevity but is unchanged ... */ },
-        resetToDefaults() { /* ... Logic from original script, intentionally omitted for brevity but is unchanged ... */ },
-
-        // --- FAKE ONLINE COUNTER ---
-        updateOnlineCounter() {
-            const min = 4;
-            const max = 20;
-            const currentCount = parseInt(app.elements.onlineCount.textContent, 10);
-            let newCount;
-            
-            const change = Math.random() > 0.5 ? 1 : -1;
-            newCount = currentCount + change;
-
-            if (newCount > max) newCount = max - 1;
-            if (newCount < min) newCount = min + 1;
-            
-            app.elements.onlineCount.textContent = newCount;
-            
-            const randomInterval = Math.floor(Math.random() * (8000 - 3000 + 1)) + 3000;
-            setTimeout(app.updateOnlineCounter, randomInterval);
+        // --- ADMIN PANEL (Functionality unchanged, UI kept separate) ---
+        renderAdminPanel() { app.elements.adminBody.innerHTML = `<p class="text-center">A interface do painel de administração foi mantida funcional e não segue o tema escuro.</p><p class="text-center mt-4">Clique em "Salvar" para aplicar as configurações atuais ou "Restaurar" para limpar os dados.</p>`; },
+        saveAdminChanges() { app.showAlert('As configurações foram salvas.', 'Salvo'); app.closeAdminModal(); },
+        resetToDefaults() {
+            localStorage.clear();
+            app.showAlert('Configurações restauradas! A página será recarregada.', 'Sucesso');
+            setTimeout(() => window.location.reload(), 2000);
         },
 
         // --- INITIALIZATION ---
@@ -1372,6 +1623,7 @@
             app.loadLocalData();
             app.loadCart();
             app.loadCustomerInfo();
+            app.loadCouponHistory(); // CARREGA HISTÓRICO DE CUPONS
             
             const whatsappUrl = `https://wa.me/${app.adminSettings.whatsappNumber}`;
             app.elements.storeAddressDisplay.textContent = app.adminSettings.address;
@@ -1396,18 +1648,7 @@
         }
     };
     
-    // Simplified Admin Panel Render/Save for this context
-    app.renderAdminPanel = () => { app.elements.adminBody.innerHTML = `<p class="text-center">A interface do painel de administração foi mantida funcional e não segue o tema escuro.</p><p class="text-center mt-4">Clique em "Salvar" para aplicar as configurações atuais ou "Restaurar" para limpar os dados.</p>`; }
-    app.saveAdminChanges = () => { app.showAlert('As configurações foram salvas.', 'Salvo'); app.closeAdminModal(); }
-    app.resetToDefaults = () => {
-        localStorage.clear();
-        app.showAlert('Configurações restauradas! A página será recarregada.', 'Sucesso');
-        setTimeout(() => window.location.reload(), 2000);
-    }
-
     document.addEventListener('DOMContentLoaded', app.initializeApp);
     </script>
 </body>
 </html>
-
-
