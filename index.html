@@ -497,7 +497,7 @@
             { id: 1, name: 'Copo 300ml', price: 14.00, disabled: false, type: 'base_acai', description: 'Monte seu açaí com seus acompanhamentos preferidos.' },
             { id: 2, name: 'Copo 400ml', price: 17.00, disabled: false, type: 'base_acai', description: 'Monte seu açaí com seus acompanhamentos preferidos.' },
             { id: 3, name: 'Copo 500ml', price: 20.00, disabled: false, type: 'base_acai', description: 'Monte seu açaí com seus acompanhamentos preferidos.' },
-            { id: 22, name: 'Barca de Açaí (P)', price: 55.00, disabled: false, type: 'base_acai', description: 'Monte sua barca com até 7 ingredientes e 2 caldas!', customToppingLimits: { free: 7, caldas: 2 } },
+            /* BARCA REMOVIDA: { id: 22, name: 'Barca de Açaí (P)', price: 55.00, disabled: false, type: 'base_acai', description: 'Monte sua barca com até 7 ingredientes e 2 caldas!', customToppingLimits: { free: 7, caldas: 2 } }, */
             { id: 5, name: 'Diet Granola', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: granola, leite em pó, leite condensado', sizesKey: 'cupSizes' },
             { id: 6, name: 'Refrescante', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: sorvete, calda de chocolate, leite em pó, leite condensado', sizesKey: 'cupSizes' },
             { id: 7, name: 'Mega Especial', disabled: false, type: 'combo_selectable_size', description: 'Sugestão: leite em pó, leite condensado, banana, creme de avelã (Nutella)', sizesKey: 'cupSizes' },
@@ -980,7 +980,8 @@
                 const isCombo = product.type === 'combo_selectable_size';
                 const isCup = product.name.toLowerCase().includes('copo');
                 const isKit = product.name.toLowerCase().includes('kit') || product.name.toLowerCase().includes('namorados') || product.name.toLowerCase().includes('kids');
-                const isBarca = product.name.toLowerCase().includes('barca');
+                /* A barca foi removida, o trecho abaixo é redundante, mas mantido por segurança:
+                const isBarca = product.name.toLowerCase().includes('barca'); */
 
                 let onclickHandler = product.disabled ? '' : (isCombo ? `onclick="app.openComboSizeModal('${product.id}')"` : `onclick="app.openItemModal('${product.id}', ${product.price}, '')"`);
                 
@@ -996,9 +997,11 @@
                 let cardContainerClasses = (isCup || isKit) 
                     ? 'border-2 border-pink-500 shadow-lg shadow-pink-500/20'
                     : 'border border-gray-700';
+                /* Removendo a lógica da barca:
                 if (isBarca) {
                     cardContainerClasses = 'border-2 border-amber-400 shadow-lg shadow-amber-400/20';
                 }
+                */
                 const spanClass = '';
 
                 const isMostOrdered = mostOrderedIds.includes(product.id);
@@ -1525,7 +1528,7 @@
                 app.currentItem.customToppingLimits = product.customToppingLimits;
             }
 
-            app.elements.modalTitle.textContent = sizeName ? `Monte seu ${product.name} (${sizeName})` : `Monte sua ${product.name}`;
+            app.elements.modalTitle.textContent = sizeName ? `Monte seu ${product.name} (${sizeName})` : `Monte seu ${product.name}`;
             
             // Adiciona o seletor de quantidade primeiro
             app.elements.modalBody.innerHTML = `
