@@ -5,72 +5,145 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sabor Açaíteria - Faça seu Pedido!</title>
 
-    <!-- ---------------------------------------------------------------- -->
-    <!-- NOVAS TAGS PARA COMPARTILHAMENTO (OPEN GRAPH E FAVICON)          -->
-    <!-- ---------------------------------------------------------------- -->
-
-    <!-- Favicon (ícone da aba do navegador) -->
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/saboracaiteria/SABOR-ACAITERIA/refs/heads/main/175.jpg"> 
     
-    <!-- Meta Tags Open Graph (Para prévia no WhatsApp, Facebook, etc.) -->
+    <!-- Meta Tags Open Graph -->
     <meta property="og:title" content="Sabor Açaíteria - Faça seu Pedido Online!">
     <meta property="og:description" content="Escolha seu açaí, creme ou combo favorito e peça pelo nosso Cardápio Digital ou Aiqfome.">
-    <!-- Imagem de prévia do compartilhamento (AGORA COM O LINK CORRETO) -->
     <meta property="og:image" content="https://raw.githubusercontent.com/saboracaiteria/SABOR-ACAITERIA/refs/heads/main/175.jpg">
-    <!-- URL da página de destino para o compartilhamento (AGORA COM O LINK CORRETO) -->
     <meta property="og:url" content="https://saboracaiteria.github.io/SABOR-/">
     <meta property="og:type" content="website">
     
-    <!-- Carregamento do Tailwind CSS para um design moderno e responsivo --><script src="https://cdn.tailwindcss.com"></script>
-    <!-- Configuração da Fonte Inter e cores customizadas --><style>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Estilos e Animações Personalizadas -->
+    <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        
         body {
             font-family: 'Inter', sans-serif;
-            /* Nova cor de fundo baseada na imagem fornecida */
             background-color: #5B21B6; /* Roxo vibrante */
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow-x: hidden;
+            position: relative;
         }
-        /* Cores de destaque para os botões */
+
+        /* Animação de Piscar (Twinkle) */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); box-shadow: 0 0 0px transparent; }
+            50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+        }
+
+        /* Animação de Flutuar Suave */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Estilo das Lâmpadas (Bulbs) */
+        .bulb {
+            position: absolute;
+            border-radius: 50%;
+            width: 8px;
+            height: 8px;
+            z-index: 20;
+            pointer-events: none; /* Garante que o clique passe pela luz e pegue o botão */
+            animation: twinkle 1.5s infinite ease-in-out;
+        }
+        
+        /* Cores padrão (usadas na Guirlanda e como fallback) */
+        .bulb-default { background-color: #FEF08A; color: #FEF08A; }
+        .bulb-default:nth-child(2n) { background-color: #FACC15; color: #FACC15; animation-duration: 1.2s; }
+        .bulb-default:nth-child(3n) { background-color: #ffffff; color: #ffffff; animation-duration: 1.8s; }
+        .bulb-default:nth-child(4n) { background-color: #fbbf24; color: #fbbf24; animation-duration: 2.1s; }
+
+        /* Container do Botão com Luzes */
+        .light-border-container {
+            position: relative;
+            padding: 10px; /* Espaço para as luzes */
+        }
+
         .btn-cardapio {
-            background-color: #FACC15; /* Amarelo Vibrante */
-            color: #5B21B6; /* Texto roxo para contraste */
+            background-color: #FACC15;
+            color: #5B21B6;
+            position: relative;
+            z-index: 10;
         }
         .btn-cardapio:hover {
-            background-color: #EAB308; /* Amarelo mais escuro no hover */
+            background-color: #EAB308;
+            transform: scale(1.02);
         }
+
         .btn-aiqfome {
-            background-color: #ffffff; /* Branco puro */
-            color: #5B21B6; /* Texto roxo para contraste */
+            background-color: #ffffff;
+            color: #5B21B6;
+            position: relative;
+            z-index: 10;
         }
         .btn-aiqfome:hover {
-            background-color: #e0e0e0; /* Cinza claro no hover */
+            background-color: #e0e0e0;
+            transform: scale(1.02);
         }
-        /* Cor do container de informações */
+
         .info-container {
-            background-color: #7c3aed; /* Um roxo um pouco mais claro que o fundo */
+            background-color: #7c3aed;
+            z-index: 10;
+            position: relative;
         }
-        /* Cor do texto principal */
-        .text-primary {
-            color: #FACC15; /* Amarelo vibrante para o título */
+
+        .text-primary { color: #FACC15; }
+        .text-secondary { color: #E0E0E0; }
+
+        /* Estilo do Wreath (Círculo de luzes no topo) */
+        .wreath-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        /* Cor dos textos secundários */
-        .text-secondary {
-            color: #E0E0E0; /* Cinza claro para descrição e rodapé */
+        
+        .main-emoji {
+            font-size: 4rem;
+            z-index: 10;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(255,255,0,0.3));
+        }
+
+        /* Partículas de fundo */
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
         }
     </style>
 </head>
 <body class="p-4">
 
-    <!-- Container Principal Centrado --><div class="w-full max-w-lg info-container shadow-2xl rounded-3xl p-6 sm:p-10 text-center transform hover:scale-[1.01] transition duration-300">
+    <!-- Elementos de fundo gerados via JS -->
+    <div id="background-particles" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+
+    <!-- Container Principal -->
+    <div class="w-full max-w-lg info-container shadow-2xl rounded-3xl p-6 sm:p-10 text-center transform transition duration-300 border border-purple-500 relative overflow-hidden">
         
-        <!-- Cabeçalho / Logo --><div class="mb-8">
-            <p class="text-6xl mb-2">
-                🍨
-            </p>
-            <h1 class="text-4xl font-extrabold text-primary">
+        <!-- Efeito de brilho no topo do card -->
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-600 via-yellow-400 to-purple-600 opacity-70"></div>
+
+        <!-- Cabeçalho com Animação de Luzes (Wreath) -->
+        <div class="mb-6">
+            <div class="wreath-container" id="wreath">
+                <p class="main-emoji">🍨</p>
+                <!-- Luzes serão inseridas aqui via JS -->
+            </div>
+            <h1 class="text-4xl font-extrabold text-primary drop-shadow-md">
                 Sabor Açaíteria
             </h1>
             <p class="text-lg text-secondary mt-2">
@@ -78,34 +151,156 @@
             </p>
         </div>
 
-        <!-- Botão 1: CARDÁPIO DIGITAL (Link fornecido pelo usuário) --><a href="https://saboracaiteria.github.io/SABOR-/" 
-           target="_blank" 
-           class="block w-full py-4 mb-5 text-xl font-bold uppercase rounded-xl shadow-lg btn-cardapio
-                  transition duration-200 ease-in-out transform hover:translate-y-[-2px] focus:outline-none focus:ring-4 focus:ring-yellow-400 focus:ring-opacity-50">
-            <span class="inline-block mr-2 text-2xl">📖</span>
-            CARDÁPIO DIGITAL
-        </a>
+        <!-- Botão 1: CARDÁPIO DIGITAL com Luzes -->
+        <div class="light-border-container mb-5" id="btn-cardapio-lights">
+            <a href="https://saboracaiteria.github.io/SABOR-/" 
+               target="_blank" 
+               class="block w-full py-4 text-xl font-bold uppercase rounded-xl shadow-lg btn-cardapio
+                      transition duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-yellow-400 focus:ring-opacity-50">
+                <span class="inline-block mr-2 text-2xl">📖</span>
+                CARDÁPIO DIGITAL
+            </a>
+        </div>
 
-        <!-- Separador Opcional --><p class="text-sm font-semibold text-secondary my-6">
-            — OU —
+        <!-- Separador -->
+        <p class="text-sm font-semibold text-secondary my-6 flex items-center justify-center gap-2">
+            <span class="h-px w-8 bg-purple-300 opacity-50"></span>
+            OU
+            <span class="h-px w-8 bg-purple-300 opacity-50"></span>
         </p>
         
-        <!-- Botão 2: AIQFOME (Link fornecido pelo usuário) --><a href="https://aiqfome.com/PA/canaa-dos-carajas/sabor-acaiteria" 
-           target="_blank" 
-           class="block w-full py-4 mb-8 text-xl font-bold uppercase rounded-xl shadow-lg btn-aiqfome
-                  transition duration-200 ease-in-out transform hover:translate-y-[-2px] focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50">
-            <span class="inline-block mr-2 text-2xl">🛵</span>
-            PEDIR PELO AIQFOME
-        </a>
+        <!-- Botão 2: AIQFOME com Luzes (Vermelho e Verde) -->
+        <div class="light-border-container mb-8" id="btn-aiqfome-lights">
+            <a href="https://aiqfome.com/PA/canaa-dos-carajas/sabor-acaiteria" 
+               target="_blank" 
+               class="block w-full py-4 text-xl font-bold uppercase rounded-xl shadow-lg btn-aiqfome
+                      transition duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50">
+                <span class="inline-block mr-2 text-2xl">🛵</span>
+                PEDIR PELO AIQFOME
+            </a>
+        </div>
 
-        <!-- Rodapé / Informação de Contato --><footer class="text-sm text-secondary mt-4">
-            Horário de funcionamento:
-            <br><span class="font-semibold text-white">Segunda a Sexta: 19:15h às 22:00h</span>
-            <br><span class="font-semibold text-white">Sábados e Domingos: 15:30h às 21:45h</span>
+        <!-- Rodapé -->
+        <footer class="text-sm text-secondary mt-4 bg-purple-900/30 p-4 rounded-xl border border-purple-500/30">
+            <p class="mb-1 uppercase tracking-wide text-xs opacity-80">Horário de funcionamento</p>
+            <div class="space-y-1">
+                <p><span class="font-semibold text-white">Segunda a Sexta:</span> 19:15h às 22:00h</p>
+                <p><span class="font-semibold text-white">Sábados e Domingos:</span> 15:30h às 21:45h</p>
+            </div>
         </footer>
 
     </div>
-    <!-- FIM do Container Principal --></body>
+
+    <!-- Scripts para gerar as luzes e partículas -->
+    <script>
+        // Função para criar luzes em círculo (Wreath)
+        function createWreathLights() {
+            const container = document.getElementById('wreath');
+            const radius = 50; 
+            const totalLights = 16; 
+
+            for (let i = 0; i < totalLights; i++) {
+                const bulb = document.createElement('div');
+                bulb.classList.add('bulb', 'bulb-default'); // Usa cores padrão
+                
+                const angle = (i / totalLights) * 2 * Math.PI;
+                const x = Math.cos(angle) * radius + 60 - 4; 
+                const y = Math.sin(angle) * radius + 60 - 4;
+
+                bulb.style.left = `${x}px`;
+                bulb.style.top = `${y}px`;
+                bulb.style.animationDelay = `${Math.random() * 2}s`;
+                
+                container.appendChild(bulb);
+            }
+        }
+
+        // Função Genérica para criar luzes ao redor de um container
+        function createButtonLights(containerId, colors = null) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const lightsCountX = 10; // Luzes na horizontal
+            const lightsCountY = 3;  // Luzes na vertical
+            
+            let totalBulbsCreated = 0;
+
+            // Função auxiliar interna para criar uma lâmpada específica
+            const addBulb = (left, top, bottomAlign, rightAlign) => {
+                const bulb = document.createElement('div');
+                bulb.classList.add('bulb');
+
+                // Definir Cor
+                if (colors && colors.length > 0) {
+                    // Se cores foram passadas, alterne entre elas
+                    const color = colors[totalBulbsCreated % colors.length];
+                    bulb.style.backgroundColor = color;
+                    bulb.style.color = color; // Para o box-shadow usar currentColor
+                } else {
+                    // Se não, use a classe padrão que tem as cores do CSS
+                    bulb.classList.add('bulb-default');
+                }
+
+                // Posicionamento
+                if (rightAlign) bulb.style.left = `calc(${left} - 4px)`;
+                else bulb.style.left = left;
+
+                if (bottomAlign) bulb.style.top = `calc(${top} - 4px)`;
+                else bulb.style.top = top;
+
+                bulb.style.animationDelay = `${Math.random() * 2}s`;
+                container.appendChild(bulb);
+                
+                totalBulbsCreated++;
+            };
+
+            // Topo e Base
+            for(let i=0; i <= lightsCountX; i++) {
+                addBulb((i/lightsCountX)*100 + '%', '0px', false, false); // Topo
+                addBulb((i/lightsCountX)*100 + '%', '100%', true, false); // Base
+            }
+
+            // Esquerda e Direita
+            for(let i=1; i < lightsCountY; i++) {
+                addBulb('0px', (i/lightsCountY)*100 + '%', false, false); // Esquerda
+                addBulb('100%', (i/lightsCountY)*100 + '%', false, true); // Direita
+            }
+        }
+
+        // Função para partículas de fundo
+        function createBackgroundParticles() {
+            const container = document.getElementById('background-particles');
+            const particleCount = 30;
+
+            for(let i=0; i<particleCount; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                const size = Math.random() * 4 + 2;
+                p.style.width = `${size}px`;
+                p.style.height = `${size}px`;
+                p.style.left = `${Math.random() * 100}vw`;
+                p.style.top = `${Math.random() * 100}vh`;
+                p.style.opacity = Math.random() * 0.5 + 0.1;
+                p.style.animation = `twinkle ${Math.random() * 3 + 2}s infinite ease-in-out`;
+                container.appendChild(p);
+            }
+        }
+
+        // Inicializar tudo
+        document.addEventListener('DOMContentLoaded', () => {
+            createWreathLights();
+            
+            // Botão Cardápio: Cores padrão (passando null nas cores)
+            createButtonLights('btn-cardapio-lights', null);
+            
+            // Botão Aiqfome: Cores Vermelho e Verde
+            // Vermelho: #EF4444, Verde: #22C55E
+            createButtonLights('btn-aiqfome-lights', ['#EF4444', '#22C55E']);
+            
+            createBackgroundParticles();
+        });
+    </script>
+</body>
 </html>
 
 
