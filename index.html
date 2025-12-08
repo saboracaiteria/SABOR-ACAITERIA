@@ -3,304 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sabor Açaíteria - Faça seu Pedido!</title>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/saboracaiteria/SABOR-ACAITERIA/refs/heads/main/175.jpg"> 
-    
-    <!-- Meta Tags Open Graph -->
-    <meta property="og:title" content="Sabor Açaíteria - Faça seu Pedido Online!">
-    <meta property="og:description" content="Escolha seu açaí, creme ou combo favorito e peça pelo nosso Cardápio Digital ou Aiqfome.">
-    <meta property="og:image" content="https://raw.githubusercontent.com/saboracaiteria/SABOR-ACAITERIA/refs/heads/main/175.jpg">
-    <meta property="og:url" content="https://saboracaiteria.github.io/SABOR-/">
-    <meta property="og:type" content="website">
+    <title>Sabor Açaíteria - Cardápio Digital</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Estilos e Animações Personalizadas -->
+    <!-- Configuração Tailwind e Animações -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4c1d95',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'twinkle': 'twinkle 4s ease-in-out infinite',
+                        'spin-slow': 'spin 20s linear infinite',
+                        'shimmer': 'shimmer 1.5s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        twinkle: {
+                            '0%, 100%': { opacity: 0.2, transform: 'scale(0.8)' },
+                            '50%': { opacity: 1, transform: 'scale(1.1)' },
+                        },
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-        
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #5B21B6; /* Roxo vibrante */
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-color: #4c1d95; /* Fallback */
             overflow-x: hidden;
-            position: relative;
         }
-
-        /* Animação de Piscar (Twinkle) */
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(0.8); box-shadow: 0 0 0px transparent; }
-            50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
-        }
-
-        /* Animação de Flutuar Suave */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        /* Estilo das Lâmpadas (Bulbs) */
-        .bulb {
-            position: absolute;
-            border-radius: 50%;
-            width: 8px;
-            height: 8px;
-            z-index: 20;
-            pointer-events: none; /* Garante que o clique passe pela luz e pegue o botão */
-            animation: twinkle 1.5s infinite ease-in-out;
+        /* Glassmorphism Classes */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
         
-        /* Cores padrão (usadas na Guirlanda e como fallback) */
-        .bulb-default { background-color: #FEF08A; color: #FEF08A; }
-        .bulb-default:nth-child(2n) { background-color: #FACC15; color: #FACC15; animation-duration: 1.2s; }
-        .bulb-default:nth-child(3n) { background-color: #ffffff; color: #ffffff; animation-duration: 1.8s; }
-        .bulb-default:nth-child(4n) { background-color: #fbbf24; color: #fbbf24; animation-duration: 2.1s; }
-
-        /* Container do Botão com Luzes */
-        .light-border-container {
-            position: relative;
-            padding: 10px; /* Espaço para as luzes */
+        .glass-panel {
+            background: rgba(46, 16, 101, 0.4);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            backdrop-filter: blur(4px);
         }
 
-        .btn-cardapio {
-            background-color: #FACC15;
-            color: #5B21B6;
-            position: relative;
-            z-index: 10;
+        /* Botões com gradiente e sombra */
+        .btn-primary {
+            background: linear-gradient(to right, #fbbf24, #eab308);
+            color: #4c1d95;
+            box-shadow: 0 0 20px rgba(234,179,8,0.4);
         }
-        .btn-cardapio:hover {
-            background-color: #EAB308;
-            transform: scale(1.02);
-        }
-
-        .btn-aiqfome {
-            background-color: #ffffff;
-            color: #5B21B6;
-            position: relative;
-            z-index: 10;
-        }
-        .btn-aiqfome:hover {
-            background-color: #e0e0e0;
-            transform: scale(1.02);
+        .btn-primary:hover {
+            box-shadow: 0 0 30px rgba(234,179,8,0.6);
+            transform: translateY(-4px);
         }
 
-        .info-container {
-            background-color: #7c3aed;
-            z-index: 10;
-            position: relative;
+        .btn-secondary {
+            background: white;
+            color: #4c1d95;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
         }
-
-        .text-primary { color: #FACC15; }
-        .text-secondary { color: #E0E0E0; }
-
-        /* Estilo do Wreath (Círculo de luzes no topo) */
-        .wreath-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 1rem auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .main-emoji {
-            font-size: 4rem;
-            z-index: 10;
-            animation: float 3s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px rgba(255,255,0,0.3));
-        }
-
-        /* Partículas de fundo */
-        .particle {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            pointer-events: none;
+        .btn-secondary:hover {
+            box-shadow: 0 0 30px rgba(255,255,255,0.5);
+            transform: translateY(-4px);
         }
     </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
 </head>
-<body class="p-4">
+<body class="min-h-screen text-white font-sans flex items-start justify-center py-12 px-4 relative">
 
-    <!-- Elementos de fundo gerados via JS -->
-    <div id="background-particles" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+    <!-- Fundo de Partículas (Gerado via JS) -->
+    <div id="bg-particles" class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute inset-0 bg-gradient-to-br from-violet-950 via-purple-900 to-indigo-950 opacity-90"></div>
+    </div>
 
-    <!-- Container Principal -->
-    <div class="w-full max-w-lg info-container shadow-2xl rounded-3xl p-6 sm:p-10 text-center transform transition duration-300 border border-purple-500 relative overflow-hidden">
+    <!-- Cartão Principal -->
+    <main class="w-full max-w-md glass-card rounded-[2.5rem] p-6 sm:p-8 relative z-10 flex flex-col items-center text-center mt-4">
         
-        <!-- Efeito de brilho no topo do card -->
-        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-600 via-yellow-400 to-purple-600 opacity-70"></div>
+        <!-- Brilho Decorativo no Topo -->
+        <div class="absolute -top-24 left-1/2 transform -translate-x-1/2 w-64 h-64 bg-purple-500 rounded-full blur-[100px] opacity-40 pointer-events-none"></div>
 
-        <!-- Cabeçalho com Animação de Luzes (Wreath) -->
-        <div class="mb-6">
-            <div class="wreath-container" id="wreath">
-                <p class="main-emoji">🍨</p>
-                <!-- Luzes serão inseridas aqui via JS -->
+        <!-- Cabeçalho (Guirlanda e Título) -->
+        <header class="mb-8 relative z-10 w-full">
+            <!-- Guirlanda (Wreath) -->
+            <div class="relative w-32 h-32 mx-auto flex items-center justify-center mb-4">
+                <div class="z-10 text-6xl drop-shadow-[0_0_15px_rgba(250,204,21,0.5)] animate-float">
+                    🍨
+                </div>
+                <!-- Luzes da Guirlanda (Geradas via JS) -->
+                <div id="wreath-lights" class="absolute inset-0 animate-spin-slow"></div>
             </div>
-            <h1 class="text-4xl font-extrabold text-primary drop-shadow-md">
+
+            <!-- Título com Cor Sólida e Sombra para Contraste Máximo -->
+            <h1 class="text-4xl font-extrabold text-yellow-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] mb-2 tracking-tight">
                 Sabor Açaíteria
             </h1>
-            <p class="text-lg text-secondary mt-2">
-                Escolha a forma mais fácil de fazer o seu pedido!
+            <p class="text-purple-200 text-sm font-medium tracking-wide drop-shadow-md">
+                O melhor açaí da cidade no conforto da sua casa
             </p>
-        </div>
+        </header>
 
-        <!-- Botão 1: CARDÁPIO DIGITAL com Luzes -->
-        <div class="light-border-container mb-5" id="btn-cardapio-lights">
-            <!-- Link atualizado aqui -->
-            <a href="https://cardapiovercel-orcin.vercel.app/" 
-               target="_blank" 
-               class="block w-full py-4 text-xl font-bold uppercase rounded-xl shadow-lg btn-cardapio
-                      transition duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-yellow-400 focus:ring-opacity-50">
-                <span class="inline-block mr-2 text-2xl">📖</span>
-                CARDÁPIO DIGITAL
+        <!-- Botões de Ação -->
+        <div class="w-full relative z-10">
+            <!-- Botão Cardápio -->
+            <a href="https://saboracaiteria.github.io/SABOR-ACAITERIA/" target="_blank" class="group relative w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-300 btn-primary mb-5 overflow-hidden">
+                <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+                <div class="flex items-center gap-4 z-10">
+                    <div class="p-2 rounded-full bg-purple-900/10">
+                        <i data-lucide="utensils" class="w-6 h-6"></i>
+                    </div>
+                    <div class="text-left">
+                        <div class="font-bold text-lg uppercase tracking-wide leading-none">Cardápio Digital</div>
+                        <div class="text-xs font-semibold opacity-70 mt-1">Monte seu açaí agora</div>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-6 h-6 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all z-10"></i>
+            </a>
+            
+            <!-- Separador -->
+            <div class="flex items-center justify-center gap-4 my-6 opacity-60">
+                <div class="h-px bg-purple-300 w-12"></div>
+                <span class="text-xs font-bold uppercase tracking-widest text-purple-200">Ou peça por</span>
+                <div class="h-px bg-purple-300 w-12"></div>
+            </div>
+
+            <!-- Botão Aiqfome -->
+            <a href="https://aiqfome.com/PA/canaa-dos-carajas/sabor-acaiteria" target="_blank" class="group relative w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-300 btn-secondary overflow-hidden">
+                <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+                <div class="flex items-center gap-4 z-10">
+                    <div class="p-2 rounded-full bg-purple-100">
+                        <i data-lucide="bike" class="w-6 h-6"></i>
+                    </div>
+                    <div class="text-left">
+                        <div class="font-bold text-lg uppercase tracking-wide leading-none">Aiqfome</div>
+                        <div class="text-xs font-semibold opacity-70 mt-1">Delivery parceiro</div>
+                    </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-6 h-6 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all z-10"></i>
             </a>
         </div>
 
-        <!-- Separador -->
-        <p class="text-sm font-semibold text-secondary my-6 flex items-center justify-center gap-2">
-            <span class="h-px w-8 bg-purple-300 opacity-50"></span>
-            OU
-            <span class="h-px w-8 bg-purple-300 opacity-50"></span>
-        </p>
-        
-        <!-- Botão 2: AIQFOME com Luzes (Vermelho e Verde) -->
-        <div class="light-border-container mb-8" id="btn-aiqfome-lights">
-            <a href="https://aiqfome.com/PA/canaa-dos-carajas/sabor-acaiteria" 
-               target="_blank" 
-               class="block w-full py-4 text-xl font-bold uppercase rounded-xl shadow-lg btn-aiqfome
-                      transition duration-200 ease-in-out focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50">
-                <span class="inline-block mr-2 text-2xl">🛵</span>
-                PEDIR PELO AIQFOME
-            </a>
+        <!-- Seção de Informações e QR Code -->
+        <div class="space-y-4 w-full mt-8 relative z-10">
+            
+            <!-- QR Code Card -->
+            <div id="share-btn" class="flex flex-col items-center justify-center p-6 bg-white rounded-2xl border-4 border-purple-500/30 shadow-lg mb-6 group transition-all hover:scale-[1.02] cursor-pointer" title="Clique para compartilhar">
+                <div class="relative">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://saboracaiteria.github.io/SABOR-ACAITERIA/&color=4c1d95" alt="QR Code" class="w-48 h-48 object-contain mix-blend-multiply">
+                    
+                    <!-- Cantos decorativos -->
+                    <div class="absolute -top-2 -left-2 w-4 h-4 border-t-4 border-l-4 border-yellow-400 rounded-tl-sm"></div>
+                    <div class="absolute -top-2 -right-2 w-4 h-4 border-t-4 border-r-4 border-yellow-400 rounded-tr-sm"></div>
+                    <div class="absolute -bottom-2 -left-2 w-4 h-4 border-b-4 border-l-4 border-yellow-400 rounded-bl-sm"></div>
+                    <div class="absolute -bottom-2 -right-2 w-4 h-4 border-b-4 border-r-4 border-yellow-400 rounded-br-sm"></div>
+                </div>
+                <div class="mt-4 flex items-center gap-2 text-purple-900">
+                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                    <span class="text-xs font-extrabold uppercase tracking-widest">Compartilhe nosso Cardápio</span>
+                </div>
+            </div>
+
+            <!-- Horário -->
+            <div class="flex items-start gap-4 p-4 glass-panel rounded-xl hover:bg-purple-900/40 transition-colors">
+                <div class="text-yellow-400 mt-1 shrink-0"><i data-lucide="clock" class="w-5 h-5"></i></div>
+                <div class="text-left">
+                    <h3 class="text-xs uppercase tracking-widest text-purple-200 font-bold mb-1">Horário de Funcionamento</h3>
+                    <div class="text-sm text-white/90 leading-relaxed">
+                        <p><span class="font-semibold text-yellow-200">Seg - Sex:</span> 19:15 - 22:00</p>
+                        <p><span class="font-semibold text-yellow-200">Sáb - Dom:</span> 15:30 - 21:45</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instagram (Substituindo Endereço) -->
+            <div class="flex items-start gap-4 p-4 glass-panel rounded-xl hover:bg-purple-900/40 transition-colors">
+                <div class="text-yellow-400 mt-1 shrink-0"><i data-lucide="instagram" class="w-5 h-5"></i></div>
+                <div class="text-left">
+                    <h3 class="text-xs uppercase tracking-widest text-purple-200 font-bold mb-1">Siga-nos</h3>
+                    <div class="text-sm text-white/90 leading-relaxed">
+                        <a href="https://www.instagram.com/sabor_acaiteria/" target="_blank" class="hover:text-yellow-400 transition-colors">
+                            @sabor_acaiteria
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contato -->
+            <div class="flex items-start gap-4 p-4 glass-panel rounded-xl hover:bg-purple-900/40 transition-colors">
+                <div class="text-yellow-400 mt-1 shrink-0"><i data-lucide="phone" class="w-5 h-5"></i></div>
+                <div class="text-left">
+                    <h3 class="text-xs uppercase tracking-widest text-purple-200 font-bold mb-1">Contato</h3>
+                    <div class="text-sm text-white/90 leading-relaxed">
+                        <a href="https://wa.me/5594991623576?text=ol%C3%A1%20preciso%20informa%C3%A7%C3%B5es%20%2Fcard%C3%A1pio%20%E2%9C%8C%EF%B8%8F" target="_blank" class="hover:text-yellow-400 transition-colors flex items-center gap-1 group">
+                            (94) 99162-3576 <span class="text-xs opacity-70 group-hover:opacity-100 transition-opacity">(Clique para WhatsApp)</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Rodapé -->
-        <footer class="text-sm text-secondary mt-4 bg-purple-900/30 p-4 rounded-xl border border-purple-500/30">
-            <p class="mb-1 uppercase tracking-wide text-xs opacity-80">Horário de funcionamento</p>
-            <div class="space-y-1">
-                <p><span class="font-semibold text-white">Segunda a Sexta:</span> 19:15h às 22:00h</p>
-                <p><span class="font-semibold text-white">Sábados e Domingos:</span> 15:30h às 21:45h</p>
-            </div>
+        <footer class="mt-8 flex flex-col items-center gap-3 w-full">
+            <p class="text-[10px] text-purple-300/60 font-medium">
+                &copy; <span id="year"></span> Sabor Açaíteria. Todos os direitos reservados.
+            </p>
         </footer>
 
-    </div>
+    </main>
 
-    <!-- Scripts para gerar as luzes e partículas -->
+    <!-- Scripts da Lógica -->
     <script>
-        // Função para criar luzes em círculo (Wreath)
-        function createWreathLights() {
-            const container = document.getElementById('wreath');
-            const radius = 50; 
-            const totalLights = 16; 
+        // Inicializar ícones Lucide
+        lucide.createIcons();
+        document.getElementById('year').textContent = new Date().getFullYear();
 
-            for (let i = 0; i < totalLights; i++) {
-                const bulb = document.createElement('div');
-                bulb.classList.add('bulb', 'bulb-default'); // Usa cores padrão
-                
-                const angle = (i / totalLights) * 2 * Math.PI;
-                const x = Math.cos(angle) * radius + 60 - 4; 
-                const y = Math.sin(angle) * radius + 60 - 4;
+        // 1. Gerar Luzes da Guirlanda (Wreath)
+        const wreathContainer = document.getElementById('wreath-lights');
+        const totalLights = 12;
+        const radius = 60;
 
-                bulb.style.left = `${x}px`;
-                bulb.style.top = `${y}px`;
-                bulb.style.animationDelay = `${Math.random() * 2}s`;
-                
-                container.appendChild(bulb);
-            }
+        for (let i = 0; i < totalLights; i++) {
+            const angle = (i / totalLights) * 2 * Math.PI;
+            // Centro (64px) - metade do tamanho do ponto (4px)
+            const x = Math.cos(angle) * radius + 64 - 4;
+            const y = Math.sin(angle) * radius + 64 - 4;
+            
+            const light = document.createElement('div');
+            light.className = 'absolute w-2 h-2 rounded-full animate-pulse shadow-[0_0_10px_currentColor]';
+            
+            // Cores alternadas
+            const color = i % 2 === 0 ? '#FACC15' : '#E879F9';
+            light.style.backgroundColor = color;
+            light.style.color = color;
+            light.style.left = `${x}px`;
+            light.style.top = `${y}px`;
+            light.style.animationDelay = `${i * 0.1}s`;
+            light.style.animationDuration = '1.5s';
+            
+            wreathContainer.appendChild(light);
         }
 
-        // Função Genérica para criar luzes ao redor de um container
-        function createButtonLights(containerId, colors = null) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-
-            const lightsCountX = 10; // Luzes na horizontal
-            const lightsCountY = 3;  // Luzes na vertical
+        // 2. Gerar Partículas de Fundo
+        const bgContainer = document.getElementById('bg-particles');
+        for (let i = 0; i < 25; i++) {
+            const particle = document.createElement('div');
+            const size = Math.random() * 4 + 2;
             
-            let totalBulbsCreated = 0;
+            particle.className = 'absolute rounded-full bg-white/20 animate-twinkle';
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.animationDuration = `${Math.random() * 5 + 3}s`;
+            particle.style.animationDelay = `${Math.random() * 2}s`;
+            
+            bgContainer.appendChild(particle);
+        }
 
-            // Função auxiliar interna para criar uma lâmpada específica
-            const addBulb = (left, top, bottomAlign, rightAlign) => {
-                const bulb = document.createElement('div');
-                bulb.classList.add('bulb');
-
-                // Definir Cor
-                if (colors && colors.length > 0) {
-                    // Se cores foram passadas, alterne entre elas
-                    const color = colors[totalBulbsCreated % colors.length];
-                    bulb.style.backgroundColor = color;
-                    bulb.style.color = color; // Para o box-shadow usar currentColor
-                } else {
-                    // Se não, use a classe padrão que tem as cores do CSS
-                    bulb.classList.add('bulb-default');
+        // 3. Função de Compartilhar
+        const menuUrl = 'https://saboracaiteria.github.io/SABOR-ACAITERIA/';
+        const shareBtn = document.getElementById('share-btn');
+        shareBtn.addEventListener('click', async () => {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Sabor Açaíteria',
+                        text: 'Peça o melhor açaí da cidade!',
+                        url: menuUrl
+                    });
+                } catch (error) {
+                    console.log('Error sharing', error);
                 }
-
-                // Posicionamento
-                if (rightAlign) bulb.style.left = `calc(${left} - 4px)`;
-                else bulb.style.left = left;
-
-                if (bottomAlign) bulb.style.top = `calc(${top} - 4px)`;
-                else bulb.style.top = top;
-
-                bulb.style.animationDelay = `${Math.random() * 2}s`;
-                container.appendChild(bulb);
-                
-                totalBulbsCreated++;
-            };
-
-            // Topo e Base
-            for(let i=0; i <= lightsCountX; i++) {
-                addBulb((i/lightsCountX)*100 + '%', '0px', false, false); // Topo
-                addBulb((i/lightsCountX)*100 + '%', '100%', true, false); // Base
+            } else {
+                alert('Compartilhe este link: ' + menuUrl);
             }
-
-            // Esquerda e Direita
-            for(let i=1; i < lightsCountY; i++) {
-                addBulb('0px', (i/lightsCountY)*100 + '%', false, false); // Esquerda
-                addBulb('100%', (i/lightsCountY)*100 + '%', false, true); // Direita
-            }
-        }
-
-        // Função para partículas de fundo
-        function createBackgroundParticles() {
-            const container = document.getElementById('background-particles');
-            const particleCount = 30;
-
-            for(let i=0; i<particleCount; i++) {
-                const p = document.createElement('div');
-                p.classList.add('particle');
-                const size = Math.random() * 4 + 2;
-                p.style.width = `${size}px`;
-                p.style.height = `${size}px`;
-                p.style.left = `${Math.random() * 100}vw`;
-                p.style.top = `${Math.random() * 100}vh`;
-                p.style.opacity = Math.random() * 0.5 + 0.1;
-                p.style.animation = `twinkle ${Math.random() * 3 + 2}s infinite ease-in-out`;
-                container.appendChild(p);
-            }
-        }
-
-        // Inicializar tudo
-        document.addEventListener('DOMContentLoaded', () => {
-            createWreathLights();
-            
-            // Botão Cardápio: Cores padrão (passando null nas cores)
-            createButtonLights('btn-cardapio-lights', null);
-            
-            // Botão Aiqfome: Cores Vermelho e Verde
-            // Vermelho: #EF4444, Verde: #22C55E
-            createButtonLights('btn-aiqfome-lights', ['#EF4444', '#22C55E']);
-            
-            createBackgroundParticles();
         });
     </script>
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>
-
