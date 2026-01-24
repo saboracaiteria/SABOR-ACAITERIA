@@ -34,6 +34,8 @@
                         'twinkle': 'twinkle 3s ease-in-out infinite',
                         'spin-slow': 'spin 15s linear infinite',
                         'shimmer': 'shimmer 1.5s infinite',
+                        'point-left': 'pointLeft 1s ease-in-out infinite',
+                        'point-right': 'pointRight 1s ease-in-out infinite',
                     },
                     keyframes: {
                         float: {
@@ -47,6 +49,14 @@
                         shimmer: {
                             '0%': { transform: 'translateX(-100%)' },
                             '100%': { transform: 'translateX(100%)' }
+                        },
+                        pointLeft: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '50%': { transform: 'translateX(5px)' }
+                        },
+                        pointRight: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '50%': { transform: 'translateX(-5px)' }
                         }
                     }
                 }
@@ -119,24 +129,35 @@
             <!-- Divisor -->
             <div class="flex items-center justify-center gap-4 my-6 opacity-80">
                 <div class="h-px bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent w-full"></div>
-                <span class="text-xs font-black uppercase tracking-widest text-fuchsia-300 whitespace-nowrap drop-shadow-[0_0_5px_rgba(217,70,239,0.5)]">Ou peça por</span>
+                <span class="text-xs font-black uppercase tracking-widest text-fuchsia-300 whitespace-nowrap drop-shadow-[0_0_5px_rgba(217,70,239,0.5)]">Diversão</span>
                 <div class="h-px bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent w-full"></div>
             </div>
 
-            <!-- Botão 2 -->
-            <a href="https://aiqfome.com/PA/canaa-dos-carajas/sabor-acaiteria" target="_blank" class="group relative w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-300 mb-5 overflow-hidden border border-white/50 bg-white/95 text-purple-900 shadow-[0_0_25px_rgba(255,255,255,0.4)] hover:shadow-[0_0_40px_rgba(255,255,255,0.7)] hover:border-white hover:-translate-y-1">
-                <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/60 to-transparent -translate-x-full group-hover:animate-shimmer z-20"></div>
-                <div class="flex items-center gap-4 z-10">
-                    <div class="p-3 rounded-xl shadow-lg bg-purple-100 text-purple-600">
-                        <i data-lucide="bike" class="w-6 h-6" stroke-width="2.5"></i>
-                    </div>
-                    <div class="text-left">
-                        <div class="font-black text-lg uppercase tracking-wide leading-none">Aiqfome</div>
-                        <div class="text-xs font-bold opacity-90 mt-1">Delivery parceiro</div>
-                    </div>
+            <!-- Botão 2 (Canaã Zona de Batalha) -->
+            <div class="relative w-full flex items-center gap-2 mb-5">
+                <!-- Seta Esquerda -->
+                <div class="animate-point-left text-lime-400 drop-shadow-[0_0_8px_rgba(163,230,53,0.8)]">
+                    <i data-lucide="chevrons-right" class="w-6 h-6"></i>
                 </div>
-                <i data-lucide="chevron-right" class="w-6 h-6 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all z-10 font-bold"></i>
-            </a>
+
+                <a href="https://tinyurl.com/Canaa-combat" target="_blank" class="group relative flex-1 flex items-center justify-between p-4 rounded-2xl transition-all duration-300 overflow-hidden border border-lime-400/50 bg-gradient-to-br from-slate-900 to-black text-white shadow-[0_0_15px_rgba(163,230,53,0.3)] hover:shadow-[0_0_30px_rgba(163,230,53,0.5)] hover:border-lime-400 hover:-translate-y-1">
+                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-lime-400/20 to-transparent -translate-x-full group-hover:animate-shimmer z-20"></div>
+                    <div class="flex items-center gap-4 z-10">
+                        <div class="p-3 rounded-xl shadow-lg bg-lime-500/20 text-lime-400 border border-lime-500/30">
+                            <i data-lucide="swords" class="w-6 h-6" stroke-width="2.5"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-black text-base sm:text-lg uppercase tracking-wide leading-none text-lime-400">Canaã Zona de Batalha</div>
+                            <div class="text-[10px] font-bold opacity-80 mt-1 uppercase tracking-tighter text-cyan-300">O Jogo Oficial de Canaã</div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Seta Direita -->
+                <div class="animate-point-right text-lime-400 drop-shadow-[0_0_8px_rgba(163,230,53,0.8)]">
+                    <i data-lucide="chevrons-left" class="w-6 h-6"></i>
+                </div>
+            </div>
         </div>
 
         <!-- Informações e QR -->
@@ -270,9 +291,14 @@
                 } catch (e) { console.log(e); }
             } else {
                 navigator.clipboard.writeText(qrData);
-                alert("Link copiado para a área de transferência!");
+                // Feedback visual em vez de alert
+                const span = document.querySelector('#share-btn span');
+                const originalText = span.textContent;
+                span.textContent = "LINK COPIADO!";
+                setTimeout(() => span.textContent = originalText, 2000);
             }
         });
     </script>
 </body>
 </html>
+
