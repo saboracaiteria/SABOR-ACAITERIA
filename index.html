@@ -27,6 +27,7 @@
                             green: '#a3e635',  // Lime 400
                             pink: '#f472b6',   // Pink 400
                             yellow: '#facc15', // Yellow 400
+                            aiq: '#7C1E70',    // Cor aproximada Aiqfome
                         }
                     },
                     animation: {
@@ -34,8 +35,6 @@
                         'twinkle': 'twinkle 3s ease-in-out infinite',
                         'spin-slow': 'spin 15s linear infinite',
                         'shimmer': 'shimmer 1.5s infinite',
-                        'point-left': 'pointLeft 1s ease-in-out infinite',
-                        'point-right': 'pointRight 1s ease-in-out infinite',
                     },
                     keyframes: {
                         float: {
@@ -49,14 +48,6 @@
                         shimmer: {
                             '0%': { transform: 'translateX(-100%)' },
                             '100%': { transform: 'translateX(100%)' }
-                        },
-                        pointLeft: {
-                            '0%, 100%': { transform: 'translateX(0)' },
-                            '50%': { transform: 'translateX(5px)' }
-                        },
-                        pointRight: {
-                            '0%, 100%': { transform: 'translateX(0)' },
-                            '50%': { transform: 'translateX(-5px)' }
                         }
                     }
                 }
@@ -80,6 +71,11 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
         }
+        
+        .glass-btn-sm {
+             backdrop-filter: blur(5px);
+             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
     </style>
 </head>
 <body class="min-h-screen text-white font-sans flex items-start justify-center py-12 px-4 relative">
@@ -97,138 +93,99 @@
         <div class="absolute -top-32 left-1/2 transform -translate-x-1/2 w-80 h-80 bg-fuchsia-600 rounded-full blur-[120px] opacity-30 pointer-events-none mix-blend-screen"></div>
 
         <!-- Cabeçalho -->
-        <header class="mb-8 relative z-10 w-full text-center">
-            <div class="relative w-32 h-32 mx-auto flex items-center justify-center mb-6">
-                <div class="z-10 text-6xl drop-shadow-[0_0_25px_rgba(250,204,21,0.8)] animate-float filter brightness-110">🍨</div>
+        <header class="mb-6 relative z-10 w-full text-center">
+            <div class="relative w-28 h-28 mx-auto flex items-center justify-center mb-4">
+                <div class="z-10 text-5xl drop-shadow-[0_0_25px_rgba(250,204,21,0.8)] animate-float filter brightness-110">🍨</div>
                 <div id="wreath-lights" class="absolute inset-0 animate-spin-slow"></div>
-                <div class="absolute inset-0 bg-purple-500 rounded-full blur-[50px] opacity-20 animate-pulse"></div>
+                <div class="absolute inset-0 bg-purple-500 rounded-full blur-[40px] opacity-20 animate-pulse"></div>
             </div>
-            <h1 class="text-4xl sm:text-5xl font-black mb-2 tracking-tight">
+            <h1 class="text-3xl sm:text-4xl font-black mb-1 tracking-tight">
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-500 to-purple-500 drop-shadow-[0_0_10px_rgba(236,72,153,0.5)]">Sabor Açaíteria</span>
             </h1>
-            <p class="text-cyan-200 text-sm font-semibold tracking-wider uppercase drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">O melhor açaí da cidade</p>
+            <p class="text-cyan-200 text-xs font-semibold tracking-wider uppercase drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">O melhor açaí da cidade</p>
         </header>
 
-        <!-- Botões -->
-        <div class="w-full relative z-10">
-            <!-- Botão 1 -->
-            <a href="https://sabor-acaiteria.vercel.app" target="_blank" class="group relative w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-300 mb-5 overflow-hidden border border-yellow-400/50 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 text-white shadow-[0_0_25px_rgba(234,179,8,0.5)] hover:shadow-[0_0_40px_rgba(234,179,8,0.8)] hover:border-yellow-300 hover:-translate-y-1">
-                <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/60 to-transparent -translate-x-full group-hover:animate-shimmer z-20"></div>
-                <div class="flex items-center gap-4 z-10">
-                    <div class="p-3 rounded-xl shadow-lg bg-white/20 text-white backdrop-blur-sm">
+        <!-- GRID DE BOTÕES COMPACTADOS -->
+        <div class="w-full grid grid-cols-2 gap-3 relative z-10 mb-6">
+            
+            <!-- 1. Botão Cardápio (Principal - Largura Total) -->
+            <a href="https://sabor-acaiteria.vercel.app" target="_blank" class="col-span-2 group relative w-full flex items-center justify-between p-4 rounded-2xl overflow-hidden border border-yellow-400/50 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 text-white shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:shadow-[0_0_35px_rgba(234,179,8,0.7)] hover:border-yellow-300 hover:-translate-y-1 transition-all duration-300">
+                <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:animate-shimmer z-20"></div>
+                <div class="flex items-center gap-3 z-10">
+                    <div class="p-2.5 rounded-xl shadow-lg bg-white/20 text-white backdrop-blur-sm">
                         <i data-lucide="utensils" class="w-6 h-6" stroke-width="2.5"></i>
                     </div>
                     <div class="text-left">
                         <div class="font-black text-lg uppercase tracking-wide leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">Cardápio Digital</div>
-                        <div class="text-xs font-bold opacity-90 mt-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">Monte seu açaí agora</div>
+                        <div class="text-[10px] font-bold opacity-90 mt-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">Monte seu copo</div>
                     </div>
                 </div>
-                <i data-lucide="chevron-right" class="w-6 h-6 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all z-10 font-bold"></i>
+                <i data-lucide="chevron-right" class="w-5 h-5 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all z-10"></i>
             </a>
 
-            <!-- Divisor -->
-            <div class="flex items-center justify-center gap-4 my-6 opacity-80">
-                <div class="h-px bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent w-full"></div>
-                <span class="text-xs font-black uppercase tracking-widest text-fuchsia-300 whitespace-nowrap drop-shadow-[0_0_5px_rgba(217,70,239,0.5)]">Diversão</span>
-                <div class="h-px bg-gradient-to-r from-transparent via-fuchsia-500 to-transparent w-full"></div>
-            </div>
-
-            <!-- Botão 2 (Canaã Zona de Batalha) -->
-            <div class="relative w-full flex items-center gap-2 mb-5">
-                <!-- Seta Esquerda -->
-                <div class="animate-point-left text-lime-400 drop-shadow-[0_0_8px_rgba(163,230,53,0.8)]">
-                    <i data-lucide="chevrons-right" class="w-6 h-6"></i>
+            <!-- 2. Botão Aiqfome (Compacto) -->
+            <a href="https://aiqfome.com/PA/canaa-dos-carajas/sabor-acaiteria" target="_blank" class="col-span-1 group relative flex flex-col items-center justify-center p-3 rounded-2xl glass-btn-sm border border-fuchsia-500/40 bg-gradient-to-br from-[#7C1E70] to-[#450a3e] hover:bg-[#962688] hover:border-fuchsia-400 hover:shadow-[0_0_20px_rgba(217,70,239,0.4)] hover:-translate-y-1">
+                <div class="p-2 rounded-full bg-white/10 text-fuchsia-200 mb-2 group-hover:scale-110 transition-transform">
+                    <i data-lucide="bike" class="w-5 h-5"></i>
                 </div>
+                <span class="font-black text-xs uppercase tracking-wider text-fuchsia-100">Delivery</span>
+                <span class="text-[10px] font-bold text-fuchsia-300">Aiqfome</span>
+            </a>
 
-                <a href="https://tinyurl.com/Canaa-combat" target="_blank" class="group relative flex-1 flex items-center justify-between p-4 rounded-2xl transition-all duration-300 overflow-hidden border border-lime-400/50 bg-gradient-to-br from-slate-900 to-black text-white shadow-[0_0_15px_rgba(163,230,53,0.3)] hover:shadow-[0_0_30px_rgba(163,230,53,0.5)] hover:border-lime-400 hover:-translate-y-1">
-                    <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-lime-400/20 to-transparent -translate-x-full group-hover:animate-shimmer z-20"></div>
-                    <div class="flex items-center gap-4 z-10">
-                        <div class="p-3 rounded-xl shadow-lg bg-lime-500/20 text-lime-400 border border-lime-500/30">
-                            <i data-lucide="swords" class="w-6 h-6" stroke-width="2.5"></i>
-                        </div>
-                        <div class="text-left">
-                            <div class="font-black text-base sm:text-lg uppercase tracking-wide leading-none text-lime-400">Canaã Zona de Batalha</div>
-                            <div class="text-[10px] font-bold opacity-80 mt-1 uppercase tracking-tighter text-cyan-300">O Jogo Oficial de Canaã</div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- Seta Direita -->
-                <div class="animate-point-right text-lime-400 drop-shadow-[0_0_8px_rgba(163,230,53,0.8)]">
-                    <i data-lucide="chevrons-left" class="w-6 h-6"></i>
+            <!-- 3. Botão Jogo (Compacto) -->
+            <a href="https://tinyurl.com/Canaa-combat" target="_blank" class="col-span-1 group relative flex flex-col items-center justify-center p-3 rounded-2xl glass-btn-sm border border-lime-400/40 bg-gradient-to-br from-slate-900 to-black hover:border-lime-400 hover:shadow-[0_0_20px_rgba(163,230,53,0.3)] hover:-translate-y-1">
+                <div class="p-2 rounded-full bg-lime-500/20 text-lime-400 mb-2 border border-lime-500/30 group-hover:scale-110 transition-transform">
+                    <i data-lucide="gamepad-2" class="w-5 h-5"></i>
                 </div>
-            </div>
+                <span class="font-black text-xs uppercase tracking-wider text-lime-400">Jogar</span>
+                <span class="text-[10px] font-bold text-cyan-300">Zona de Batalha</span>
+            </a>
+
         </div>
 
         <!-- Informações e QR -->
-        <div class="space-y-4 w-full mt-8 relative z-10">
-            <!-- QR Code -->
-            <div id="share-btn" class="relative flex flex-col items-center justify-center p-6 bg-slate-950/80 backdrop-blur-xl rounded-2xl border border-fuchsia-500/30 shadow-[0_0_20px_rgba(217,70,239,0.15)] mb-6 group transition-all hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(217,70,239,0.3)] hover:border-fuchsia-400/60 cursor-pointer w-full">
-                <div class="relative p-2 bg-white rounded-xl shadow-[0_0_15px_rgba(255,255,255,0.5)]">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https%3A%2F%2Fsabor-acaiteria.vercel.app&color=4c1d95" alt="QR Code" class="w-44 h-44 object-contain mix-blend-normal rounded-lg">
-                    <div class="absolute -top-3 -left-3 w-6 h-6 border-t-4 border-l-4 border-yellow-400 rounded-tl-lg shadow-[0_0_10px_rgba(250,204,21,0.8)]"></div>
-                    <div class="absolute -top-3 -right-3 w-6 h-6 border-t-4 border-r-4 border-cyan-400 rounded-tr-lg shadow-[0_0_10px_rgba(34,211,238,0.8)]"></div>
-                    <div class="absolute -bottom-3 -left-3 w-6 h-6 border-b-4 border-l-4 border-fuchsia-500 rounded-bl-lg shadow-[0_0_10px_rgba(217,70,239,0.8)]"></div>
-                    <div class="absolute -bottom-3 -right-3 w-6 h-6 border-b-4 border-r-4 border-lime-400 rounded-br-lg shadow-[0_0_10px_rgba(163,230,53,0.8)]"></div>
+        <div class="space-y-3 w-full relative z-10">
+            <!-- QR Code Reduzido -->
+            <div id="share-btn" class="relative flex items-center gap-4 p-3 bg-slate-950/60 backdrop-blur-xl rounded-xl border border-white/10 shadow-lg cursor-pointer group hover:bg-slate-900/80 transition-all">
+                <div class="p-1 bg-white rounded-lg shrink-0">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fsabor-acaiteria.vercel.app&color=4c1d95" alt="QR" class="w-12 h-12">
                 </div>
-                <div class="mt-5 flex items-center gap-2 text-cyan-300 group-hover:text-cyan-200 transition-colors">
-                    <i data-lucide="share-2" class="w-4 h-4 drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]"></i>
-                    <span class="text-xs font-black uppercase tracking-widest drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">Compartilhe o Cardápio</span>
+                <div class="text-left flex-1">
+                    <div class="text-xs font-bold text-cyan-300 uppercase tracking-wider mb-0.5">Compartilhar</div>
+                    <div class="text-[10px] text-slate-400 group-hover:text-white">Clique para enviar o link</div>
+                </div>
+                <i data-lucide="share-2" class="w-4 h-4 text-cyan-400 opacity-50 group-hover:opacity-100"></i>
+            </div>
+
+            <!-- Horário Compacto -->
+            <div class="group flex items-center gap-3 p-3 glass-panel rounded-xl hover:bg-purple-900/30 transition-all">
+                <div class="p-1.5 rounded-lg bg-purple-500/10 text-fuchsia-300 shrink-0">
+                    <i data-lucide="clock" class="w-4 h-4"></i>
+                </div>
+                <div class="text-left w-full flex justify-between items-center text-xs">
+                    <span class="text-slate-300">Aberto hoje:</span>
+                    <span class="font-mono text-yellow-300 font-bold drop-shadow-sm">19:15 - 22:00</span>
                 </div>
             </div>
 
-            <!-- Horário -->
-            <div class="group relative flex items-start gap-4 p-4 glass-panel rounded-xl transition-all duration-300 hover:bg-purple-900/40 hover:border-fuchsia-500/50 hover:shadow-[0_0_15px_rgba(217,70,239,0.2)]">
-                <div class="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-fuchsia-300 shadow-[0_0_10px_rgba(217,70,239,0.2)] group-hover:shadow-[0_0_15px_rgba(217,70,239,0.5)] group-hover:text-fuchsia-200 group-hover:bg-purple-500/30 transition-all shrink-0">
-                    <i data-lucide="clock" class="w-5 h-5"></i>
-                </div>
-                <div class="text-left w-full">
-                    <h3 class="text-xs uppercase tracking-widest text-fuchsia-300 font-bold mb-1 border-b border-white/5 pb-1 group-hover:text-fuchsia-200 transition-colors">Horário de Funcionamento</h3>
-                    <div class="text-sm text-slate-100 font-medium leading-relaxed">
-                        <div class="flex justify-between items-center border-b border-white/5 pb-1 mb-1">
-                            <span class="text-cyan-200 font-bold">Seg - Sex</span>
-                            <span class="font-mono text-yellow-300 font-bold drop-shadow-sm">19:15 - 22:00</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-cyan-200 font-bold">Sáb - Dom</span>
-                            <span class="font-mono text-yellow-300 font-bold drop-shadow-sm">15:30 - 21:45</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Instagram -->
-            <div class="group relative flex items-start gap-4 p-4 glass-panel rounded-xl transition-all duration-300 hover:bg-purple-900/40 hover:border-fuchsia-500/50 hover:shadow-[0_0_15px_rgba(217,70,239,0.2)]">
-                <div class="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-fuchsia-300 shadow-[0_0_10px_rgba(217,70,239,0.2)] group-hover:shadow-[0_0_15px_rgba(217,70,239,0.5)] group-hover:text-fuchsia-200 group-hover:bg-purple-500/30 transition-all shrink-0">
-                    <i data-lucide="instagram" class="w-5 h-5"></i>
-                </div>
-                <div class="text-left w-full">
-                    <h3 class="text-xs uppercase tracking-widest text-fuchsia-300 font-bold mb-1 border-b border-white/5 pb-1 group-hover:text-fuchsia-200 transition-colors">Siga-nos</h3>
-                    <div class="text-sm text-slate-100 font-medium leading-relaxed">
-                        <a href="https://www.instagram.com/sabor_acaiteria/" target="_blank" class="text-pink-300 hover:text-pink-100 transition-colors font-bold text-lg flex items-center gap-2">@sabor_acaiteria</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contato -->
-            <div class="group relative flex items-start gap-4 p-4 glass-panel rounded-xl transition-all duration-300 hover:bg-purple-900/40 hover:border-fuchsia-500/50 hover:shadow-[0_0_15px_rgba(217,70,239,0.2)]">
-                <div class="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-fuchsia-300 shadow-[0_0_10px_rgba(217,70,239,0.2)] group-hover:shadow-[0_0_15px_rgba(217,70,239,0.5)] group-hover:text-fuchsia-200 group-hover:bg-purple-500/30 transition-all shrink-0">
-                    <i data-lucide="phone" class="w-5 h-5"></i>
-                </div>
-                <div class="text-left w-full">
-                    <h3 class="text-xs uppercase tracking-widest text-fuchsia-300 font-bold mb-1 border-b border-white/5 pb-1 group-hover:text-fuchsia-200 transition-colors">Contato</h3>
-                    <div class="text-sm text-slate-100 font-medium leading-relaxed">
-                        <a href="https://wa.me/5594991623576?text=ol%C3%A1%20preciso%20informa%C3%A7%C3%B5es%20%2Fcard%C3%A1pio%20%E2%9C%8C%EF%B8%8F" target="_blank" class="text-green-300 hover:text-green-100 transition-colors font-bold text-lg flex flex-col group">
-                            <span>(94) 99162-3576</span>
-                            <span class="text-[10px] uppercase text-slate-400 group-hover:text-white transition-colors tracking-wider font-normal mt-0.5">(Clique para WhatsApp)</span>
-                        </a>
-                    </div>
-                </div>
+            <!-- Redes Sociais Compacto (Grid interno) -->
+            <div class="grid grid-cols-2 gap-3">
+                <!-- Insta -->
+                <a href="https://www.instagram.com/sabor_acaiteria/" target="_blank" class="flex items-center gap-2 p-3 glass-panel rounded-xl hover:bg-pink-900/30 hover:border-pink-500/30 transition-all group">
+                    <i data-lucide="instagram" class="w-4 h-4 text-pink-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-bold text-pink-200">Instagram</span>
+                </a>
+                
+                <!-- Zap -->
+                <a href="https://wa.me/5594991623576?text=ol%C3%A1%20preciso%20informa%C3%A7%C3%B5es%20%2Fcard%C3%A1pio%20%E2%9C%8C%EF%B8%8F" target="_blank" class="flex items-center gap-2 p-3 glass-panel rounded-xl hover:bg-green-900/30 hover:border-green-500/30 transition-all group">
+                    <i data-lucide="message-circle" class="w-4 h-4 text-green-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-bold text-green-200">WhatsApp</span>
+                </a>
             </div>
         </div>
 
-        <footer class="mt-10 flex flex-col items-center gap-3 w-full border-t border-white/5 pt-6">
-            <p class="text-[10px] text-fuchsia-300/50 font-bold tracking-widest uppercase">
+        <footer class="mt-8 flex flex-col items-center gap-2 w-full border-t border-white/5 pt-4">
+            <p class="text-[10px] text-fuchsia-300/40 font-bold tracking-widest uppercase">
                 &copy; <span id="year"></span> Sabor Açaíteria
             </p>
         </footer>
@@ -245,15 +202,15 @@
         
         for (let i = 0; i < 12; i++) {
             const angle = (i / 12) * 2 * Math.PI;
-            const radius = 60;
-            const x = Math.cos(angle) * radius + 64 - 6;
-            const y = Math.sin(angle) * radius + 64 - 6;
+            const radius = 50; // Raio reduzido para caber no header menor
+            const x = Math.cos(angle) * radius + 56 - 4; // Ajuste de centro
+            const y = Math.sin(angle) * radius + 56 - 4;
             const color = colors[i % colors.length];
 
             const light = document.createElement('div');
-            light.className = 'absolute w-3 h-3 rounded-full animate-pulse';
+            light.className = 'absolute w-2 h-2 rounded-full animate-pulse';
             light.style.backgroundColor = color;
-            light.style.boxShadow = `0 0 15px ${color}, 0 0 30px ${color}`;
+            light.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
             light.style.left = `${x}px`;
             light.style.top = `${y}px`;
             light.style.animationDelay = `${i * 0.1}s`;
@@ -265,7 +222,7 @@
         const bgContainer = document.getElementById('bg-container');
         const particleColors = ['bg-fuchsia-400', 'bg-cyan-400', 'bg-yellow-400', 'bg-lime-400'];
 
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 25; i++) {
             const particle = document.createElement('div');
             const size = Math.random() * 4 + 2;
             const colorClass = particleColors[i % particleColors.length];
@@ -277,7 +234,7 @@
             particle.style.top = `${Math.random() * 100}%`;
             particle.style.animationDuration = `${Math.random() * 3 + 2}s`;
             particle.style.animationDelay = `${Math.random() * 2}s`;
-            particle.style.opacity = '0.6';
+            particle.style.opacity = '0.5';
             
             bgContainer.appendChild(particle);
         }
@@ -291,11 +248,11 @@
                 } catch (e) { console.log(e); }
             } else {
                 navigator.clipboard.writeText(qrData);
-                // Feedback visual em vez de alert
-                const span = document.querySelector('#share-btn span');
-                const originalText = span.textContent;
-                span.textContent = "LINK COPIADO!";
-                setTimeout(() => span.textContent = originalText, 2000);
+                const originalText = document.querySelector('#share-btn div:nth-child(2) div:first-child').textContent;
+                document.querySelector('#share-btn div:nth-child(2) div:first-child').textContent = "LINK COPIADO!";
+                setTimeout(() => {
+                    document.querySelector('#share-btn div:nth-child(2) div:first-child').textContent = originalText;
+                }, 2000);
             }
         });
     </script>
