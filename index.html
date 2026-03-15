@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sabor Açaíteria - Neon Edition</title>
+    <title>Sabor Açaíteria - Light Soft</title>
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,33 +21,37 @@
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        neon: {
-                            purple: '#d946ef', // Fuchsia 500
-                            blue: '#22d3ee',   // Cyan 400
-                            green: '#a3e635',  // Lime 400
+                        soft: {
+                            rose: '#fda4af',   // Rose 300
                             pink: '#f472b6',   // Pink 400
-                            yellow: '#facc15', // Yellow 400
-                            aiq: '#7C1E70',    // Cor aproximada Aiqfome
+                            purple: '#c084fc', // Purple 400
+                            blush: '#fff1f2',  // Rose 50
+                            aiq: '#7C1E70',    // Cor original Aiqfome
                         }
                     },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
-                        'twinkle': 'twinkle 3s ease-in-out infinite',
-                        'spin-slow': 'spin 15s linear infinite',
-                        'shimmer': 'shimmer 1.5s infinite',
+                        'twinkle': 'twinkle 4s ease-in-out infinite',
+                        'spin-slow': 'spin 20s linear infinite',
+                        'shimmer': 'shimmer 2s infinite',
+                        'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
                     },
                     keyframes: {
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' }
+                            '50%': { transform: 'translateY(-8px)' }
                         },
                         twinkle: {
                             '0%, 100%': { opacity: 0.3, transform: 'scale(0.8)' },
-                            '50%': { opacity: 1, transform: 'scale(1.2)' }
+                            '50%': { opacity: 0.9, transform: 'scale(1.1)' }
                         },
                         shimmer: {
                             '0%': { transform: 'translateX(-100%)' },
                             '100%': { transform: 'translateX(100%)' }
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { opacity: 0.4 },
+                            '50%': { opacity: 0.7 }
                         }
                     }
                 }
@@ -55,137 +59,143 @@
         }
     </script>
     <style>
-        body { background-color: #0f0518; overflow-x: hidden; }
+        body { background-color: #fdf2f8; overflow-x: hidden; } /* Fundo rosa bem clarinho */
         
-        /* Vidro Neon Intenso */
+        /* Vidro Claro e Elegante */
         .glass-card {
-            background: rgba(20, 5, 30, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(217, 70, 239, 0.3);
-            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2), inset 0 0 20px rgba(168, 85, 247, 0.1);
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 40px rgba(244, 114, 182, 0.15), 
+                        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
         }
         
         .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 15px rgba(244, 114, 182, 0.05);
         }
         
         .glass-btn-sm {
-             backdrop-filter: blur(5px);
-             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+             backdrop-filter: blur(8px);
+             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
-<body class="min-h-screen text-white font-sans flex items-start justify-center py-12 px-4 relative">
+<body class="min-h-screen text-slate-800 font-sans flex items-start justify-center py-12 px-4 relative">
 
-    <!-- Fundo Animado -->
+    <!-- Fundo Animado (Tons de Branco e Rose Claro) -->
     <div id="bg-container" class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900 via-slate-950 to-black opacity-90"></div>
-        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-150 contrast-150 mix-blend-overlay"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white via-rose-50 to-pink-100 opacity-100"></div>
+        <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-multiply"></div>
     </div>
 
     <!-- Cartão Principal -->
-    <main class="w-full max-w-md glass-card rounded-[2.5rem] p-6 sm:p-8 relative z-10 flex flex-col items-center text-center mt-4 border-t border-white/10">
+    <main class="w-full max-w-md glass-card rounded-[2.5rem] p-6 sm:p-8 relative z-10 flex flex-col items-center text-center mt-4">
         
-        <!-- Brilho Superior -->
-        <div class="absolute -top-32 left-1/2 transform -translate-x-1/2 w-80 h-80 bg-fuchsia-600 rounded-full blur-[120px] opacity-30 pointer-events-none mix-blend-screen"></div>
+        <!-- Brilho Superior Suave (Fundo claro) -->
+        <div class="absolute -top-32 left-1/2 transform -translate-x-1/2 w-[22rem] h-[22rem] bg-pink-300 rounded-full blur-[100px] opacity-40 pointer-events-none animate-pulse-soft"></div>
 
         <!-- Cabeçalho -->
-        <header class="mb-6 relative z-10 w-full text-center">
-            <div class="relative w-28 h-28 mx-auto flex items-center justify-center mb-4">
-                <div class="z-10 text-5xl drop-shadow-[0_0_25px_rgba(250,204,21,0.8)] animate-float filter brightness-110">🍨</div>
+        <header class="mb-8 relative z-10 w-full text-center">
+            <div class="relative w-28 h-28 mx-auto flex items-center justify-center mb-5">
+                <div class="z-10 text-5xl drop-shadow-[0_8px_15px_rgba(244,114,182,0.4)] animate-float">🍨</div>
                 <div id="wreath-lights" class="absolute inset-0 animate-spin-slow"></div>
-                <div class="absolute inset-0 bg-purple-500 rounded-full blur-[40px] opacity-20 animate-pulse"></div>
+                <div class="absolute inset-0 bg-rose-200 rounded-full blur-[30px] opacity-60 animate-pulse-soft"></div>
             </div>
-            <h1 class="text-3xl sm:text-4xl font-black mb-1 tracking-tight">
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-500 to-purple-500 drop-shadow-[0_0_10px_rgba(236,72,153,0.5)]">Sabor Açaíteria</span>
+            <h1 class="text-3xl sm:text-4xl font-black mb-1.5 tracking-tight">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-pink-600 to-purple-600 drop-shadow-[0_2px_10px_rgba(244,114,182,0.15)]">Sabor Açaíteria</span>
             </h1>
-            <p class="text-cyan-200 text-xs font-semibold tracking-wider uppercase drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">O melhor açaí da cidade</p>
+            <p class="text-pink-600/80 text-xs font-bold tracking-[0.2em] uppercase">O melhor açaí da cidade</p>
         </header>
 
         <!-- GRID DE BOTÕES COMPACTADOS -->
-        <div class="w-full grid grid-cols-2 gap-3 relative z-10 mb-6">
+        <div class="w-full grid grid-cols-2 gap-3.5 relative z-10 mb-8">
             
-            <!-- 1. Botão Cardápio (Principal - Largura Total) -->
-            <a href="https://sabor-acaiteria.vercel.app" target="_blank" class="col-span-2 group relative w-full flex items-center justify-between p-4 rounded-2xl overflow-hidden border border-yellow-400/50 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 text-white shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:shadow-[0_0_35px_rgba(234,179,8,0.7)] hover:border-yellow-300 hover:-translate-y-1 transition-all duration-300">
-                <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:animate-shimmer z-20"></div>
-                <div class="flex items-center gap-3 z-10">
-                    <div class="p-2.5 rounded-xl shadow-lg bg-white/20 text-white backdrop-blur-sm">
-                        <i data-lucide="utensils" class="w-6 h-6" stroke-width="2.5"></i>
+            <!-- 1. Botão Cardápio (Principal - Elegante e Vibrante) -->
+            <a href="https://sabor-acaiteria.vercel.app" target="_blank" class="col-span-2 group relative w-full flex items-center justify-between p-4.5 py-4 px-5 rounded-[1.25rem] overflow-hidden border border-pink-200 bg-gradient-to-r from-pink-500 via-rose-400 to-purple-500 text-white shadow-[0_8px_25px_rgba(244,114,182,0.35)] hover:shadow-[0_12px_30px_rgba(244,114,182,0.5)] hover:border-pink-300 hover:-translate-y-1 transition-all duration-400">
+                <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-shimmer z-20"></div>
+                <div class="flex items-center gap-3.5 z-10">
+                    <div class="p-2.5 rounded-xl shadow-md bg-white/20 text-white backdrop-blur-md border border-white/30">
+                        <i data-lucide="utensils" class="w-5 h-5" stroke-width="2.5"></i>
                     </div>
                     <div class="text-left">
-                        <div class="font-black text-lg uppercase tracking-wide leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">Cardápio Digital</div>
-                        <div class="text-[10px] font-bold opacity-90 mt-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">Monte seu copo</div>
+                        <div class="font-bold text-lg tracking-wide leading-none text-white drop-shadow-sm">Cardápio Digital</div>
+                        <div class="text-[11px] font-medium text-pink-50 mt-1 opacity-90">Monte seu copo</div>
                     </div>
                 </div>
-                <i data-lucide="chevron-right" class="w-5 h-5 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all z-10"></i>
+                <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors z-10 border border-white/20">
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-white"></i>
+                </div>
             </a>
 
-            <!-- 2. Botão Aiqfome (Compacto) -->
-            <a href="https://aiqfome.com/PA/canaa-dos-carajas/sabor-acaiteria" target="_blank" class="col-span-1 group relative flex flex-col items-center justify-center p-3 rounded-2xl glass-btn-sm border border-fuchsia-500/40 bg-gradient-to-br from-[#7C1E70] to-[#450a3e] hover:bg-[#962688] hover:border-fuchsia-400 hover:shadow-[0_0_20px_rgba(217,70,239,0.4)] hover:-translate-y-1">
-                <div class="p-2 rounded-full bg-white/10 text-fuchsia-200 mb-2 group-hover:scale-110 transition-transform">
-                    <i data-lucide="bike" class="w-5 h-5"></i>
+            <!-- 2. Botão Aiqfome (Fundo claro, texto roxo) -->
+            <a href="https://aiqfome.com/PA/canaa-dos-carajas/sabor-acaiteria" target="_blank" class="col-span-1 group relative flex flex-col items-center justify-center p-3.5 rounded-2xl glass-btn-sm border border-purple-200 bg-gradient-to-br from-purple-50 to-fuchsia-100 hover:bg-purple-100 hover:border-purple-300 hover:shadow-[0_8px_20px_rgba(192,132,252,0.2)] hover:-translate-y-1">
+                <div class="p-2.5 rounded-full bg-purple-200 text-purple-700 mb-2 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                    <i data-lucide="bike" class="w-5 h-5" stroke-width="2"></i>
                 </div>
-                <span class="font-black text-xs uppercase tracking-wider text-fuchsia-100">Delivery</span>
-                <span class="text-[10px] font-bold text-fuchsia-300">Aiqfome</span>
+                <span class="font-bold text-[11px] uppercase tracking-wider text-purple-900">Delivery</span>
+                <span class="text-[10px] font-semibold text-purple-600 mt-0.5">Aiqfome</span>
             </a>
 
-            <!-- 3. Botão Jogo (Compacto) -->
-            <a href="https://tinyurl.com/Canaa-combat" target="_blank" class="col-span-1 group relative flex flex-col items-center justify-center p-3 rounded-2xl glass-btn-sm border border-lime-400/40 bg-gradient-to-br from-slate-900 to-black hover:border-lime-400 hover:shadow-[0_0_20px_rgba(163,230,53,0.3)] hover:-translate-y-1">
-                <div class="p-2 rounded-full bg-lime-500/20 text-lime-400 mb-2 border border-lime-500/30 group-hover:scale-110 transition-transform">
-                    <i data-lucide="gamepad-2" class="w-5 h-5"></i>
+            <!-- 3. Botão Jogo (Fundo lilás claro) -->
+            <a href="https://tinyurl.com/Canaa-combat" target="_blank" class="col-span-1 group relative flex flex-col items-center justify-center p-3.5 rounded-2xl glass-btn-sm border border-violet-200 bg-gradient-to-br from-violet-50 to-purple-50 hover:border-violet-300 hover:bg-violet-100 hover:shadow-[0_8px_20px_rgba(139,92,246,0.2)] hover:-translate-y-1">
+                <div class="p-2.5 rounded-full bg-violet-200 text-violet-700 mb-2 border border-violet-300/50 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                    <i data-lucide="gamepad-2" class="w-5 h-5" stroke-width="2"></i>
                 </div>
-                <span class="font-black text-xs uppercase tracking-wider text-lime-400">Jogar</span>
-                <span class="text-[10px] font-bold text-cyan-300">Zona de Batalha</span>
+                <span class="font-bold text-[11px] uppercase tracking-wider text-violet-900">Jogar</span>
+                <span class="text-[10px] font-semibold text-violet-600 mt-0.5">Zona de Batalha</span>
             </a>
 
         </div>
 
         <!-- Informações e QR -->
-        <div class="space-y-3 w-full relative z-10">
-            <!-- QR Code Reduzido -->
-            <div id="share-btn" class="relative flex items-center gap-4 p-3 bg-slate-950/60 backdrop-blur-xl rounded-xl border border-white/10 shadow-lg cursor-pointer group hover:bg-slate-900/80 transition-all">
-                <div class="p-1 bg-white rounded-lg shrink-0">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fsabor-acaiteria.vercel.app&color=4c1d95" alt="QR" class="w-12 h-12">
+        <div class="space-y-3.5 w-full relative z-10">
+            <!-- QR Code Reduzido e Delicado -->
+            <div id="share-btn" class="relative flex items-center gap-4 p-3.5 glass-panel rounded-2xl cursor-pointer group hover:bg-pink-50 transition-all duration-300">
+                <div class="p-1.5 bg-white rounded-xl shrink-0 shadow-sm border border-pink-100">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fsabor-acaiteria.vercel.app&color=db2777" alt="QR" class="w-10 h-10">
                 </div>
                 <div class="text-left flex-1">
-                    <div class="text-xs font-bold text-cyan-300 uppercase tracking-wider mb-0.5">Compartilhar</div>
-                    <div class="text-[10px] text-slate-400 group-hover:text-white">Clique para enviar o link</div>
+                    <div class="text-[11px] font-bold text-rose-600 uppercase tracking-widest mb-0.5">Compartilhar</div>
+                    <div class="text-[11px] text-slate-500 font-medium group-hover:text-rose-500 transition-colors">Clique para enviar o link</div>
                 </div>
-                <i data-lucide="share-2" class="w-4 h-4 text-cyan-400 opacity-50 group-hover:opacity-100"></i>
+                <div class="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-500 group-hover:bg-rose-200 group-hover:scale-110 transition-all shadow-sm">
+                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                </div>
             </div>
 
-            <!-- Horário Compacto -->
-            <div class="group flex items-center gap-3 p-3 glass-panel rounded-xl hover:bg-purple-900/30 transition-all">
-                <div class="p-1.5 rounded-lg bg-purple-500/10 text-fuchsia-300 shrink-0">
+            <!-- Horário Suave -->
+            <div class="flex items-center gap-3 p-3.5 glass-panel rounded-2xl">
+                <div class="p-2 rounded-xl bg-rose-100 text-rose-500 shrink-0 shadow-sm">
                     <i data-lucide="clock" class="w-4 h-4"></i>
                 </div>
-                <div class="text-left w-full flex justify-between items-center text-xs">
-                    <span class="text-slate-300">Aberto hoje:</span>
-                    <span class="font-mono text-yellow-300 font-bold drop-shadow-sm">19:15 - 22:00</span>
+                <div class="text-left w-full flex justify-between items-center text-[13px]">
+                    <span class="text-slate-600 font-medium">Aberto hoje:</span>
+                    <span class="text-rose-600 font-bold tracking-wide">19:15 - 22:00</span>
                 </div>
             </div>
 
-            <!-- Redes Sociais Compacto (Grid interno) -->
-            <div class="grid grid-cols-2 gap-3">
+            <!-- Redes Sociais Compacto -->
+            <div class="grid grid-cols-2 gap-3.5">
                 <!-- Insta -->
-                <a href="https://www.instagram.com/sabor_acaiteria/" target="_blank" class="flex items-center gap-2 p-3 glass-panel rounded-xl hover:bg-pink-900/30 hover:border-pink-500/30 transition-all group">
-                    <i data-lucide="instagram" class="w-4 h-4 text-pink-400 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold text-pink-200">Instagram</span>
+                <a href="https://www.instagram.com/sabor_acaiteria/" target="_blank" class="flex items-center justify-center gap-2.5 p-3.5 glass-panel rounded-2xl hover:bg-pink-50 hover:border-pink-300 transition-all duration-300 group">
+                    <i data-lucide="instagram" class="w-4 h-4 text-pink-500 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-[12px] font-bold text-pink-700 tracking-wide">Instagram</span>
                 </a>
                 
                 <!-- Zap -->
-                <a href="https://wa.me/5594991623576?text=ol%C3%A1%20preciso%20informa%C3%A7%C3%B5es%20%2Fcard%C3%A1pio%20%E2%9C%8C%EF%B8%8F" target="_blank" class="flex items-center gap-2 p-3 glass-panel rounded-xl hover:bg-green-900/30 hover:border-green-500/30 transition-all group">
-                    <i data-lucide="message-circle" class="w-4 h-4 text-green-400 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold text-green-200">WhatsApp</span>
+                <a href="https://wa.me/5594991623576?text=ol%C3%A1%20preciso%20informa%C3%A7%C3%B5es%20%2Fcard%C3%A1pio%20%E2%9C%8C%EF%B8%8F" target="_blank" class="flex items-center justify-center gap-2.5 p-3.5 glass-panel rounded-2xl hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-300 group">
+                    <i data-lucide="message-circle" class="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-[12px] font-bold text-emerald-700 tracking-wide">WhatsApp</span>
                 </a>
             </div>
         </div>
 
-        <footer class="mt-8 flex flex-col items-center gap-2 w-full border-t border-white/5 pt-4">
-            <p class="text-[10px] text-fuchsia-300/40 font-bold tracking-widest uppercase">
+        <footer class="mt-8 flex flex-col items-center gap-2 w-full pt-5 opacity-80">
+            <p class="text-[10px] text-pink-500 font-bold tracking-[0.2em] uppercase">
                 &copy; <span id="year"></span> Sabor Açaíteria
             </p>
         </footer>
@@ -196,45 +206,45 @@
         lucide.createIcons();
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        // 1. Gerar Luzes da Guirlanda
+        // 1. Gerar Luzes da Guirlanda (Tons pastéis mais fortes para destacar no claro)
         const wreathContainer = document.getElementById('wreath-lights');
-        const colors = ['#22d3ee', '#d946ef', '#facc15', '#a3e635'];
+        const colors = ['#f472b6', '#d946ef', '#c084fc', '#fb7185']; // Pink, fuchsia, purple, rose
         
         for (let i = 0; i < 12; i++) {
             const angle = (i / 12) * 2 * Math.PI;
-            const radius = 50; // Raio reduzido para caber no header menor
-            const x = Math.cos(angle) * radius + 56 - 4; // Ajuste de centro
-            const y = Math.sin(angle) * radius + 56 - 4;
+            const radius = 52; 
+            const x = Math.cos(angle) * radius + 56 - 3; 
+            const y = Math.sin(angle) * radius + 56 - 3;
             const color = colors[i % colors.length];
 
             const light = document.createElement('div');
-            light.className = 'absolute w-2 h-2 rounded-full animate-pulse';
+            light.className = 'absolute w-1.5 h-1.5 rounded-full animate-pulse-soft';
             light.style.backgroundColor = color;
-            light.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+            light.style.boxShadow = `0 0 5px ${color}, 0 0 10px ${color}`;
             light.style.left = `${x}px`;
             light.style.top = `${y}px`;
-            light.style.animationDelay = `${i * 0.1}s`;
-            light.style.animationDuration = '1s';
+            light.style.animationDelay = `${i * 0.15}s`;
+            light.style.animationDuration = '1.5s';
+            light.style.opacity = '0.9';
             wreathContainer.appendChild(light);
         }
 
-        // 2. Gerar Partículas
+        // 2. Gerar Partículas Suaves (Fundo claro)
         const bgContainer = document.getElementById('bg-container');
-        const particleColors = ['bg-fuchsia-400', 'bg-cyan-400', 'bg-yellow-400', 'bg-lime-400'];
+        const particleColors = ['bg-pink-400', 'bg-rose-300', 'bg-purple-300', 'bg-fuchsia-300'];
 
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 20; i++) {
             const particle = document.createElement('div');
-            const size = Math.random() * 4 + 2;
+            const size = Math.random() * 4 + 2; 
             const colorClass = particleColors[i % particleColors.length];
             
-            particle.className = `absolute rounded-full ${colorClass} animate-twinkle shadow-[0_0_5px_currentColor]`;
+            particle.className = `absolute rounded-full ${colorClass} animate-twinkle shadow-[0_0_5px_rgba(244,114,182,0.5)]`;
             particle.style.width = `${size}px`;
             particle.style.height = `${size}px`;
             particle.style.left = `${Math.random() * 100}%`;
             particle.style.top = `${Math.random() * 100}%`;
-            particle.style.animationDuration = `${Math.random() * 3 + 2}s`;
-            particle.style.animationDelay = `${Math.random() * 2}s`;
-            particle.style.opacity = '0.5';
+            particle.style.animationDuration = `${Math.random() * 4 + 3}s`;
+            particle.style.animationDelay = `${Math.random() * 3}s`;
             
             bgContainer.appendChild(particle);
         }
@@ -248,14 +258,19 @@
                 } catch (e) { console.log(e); }
             } else {
                 navigator.clipboard.writeText(qrData);
-                const originalText = document.querySelector('#share-btn div:nth-child(2) div:first-child').textContent;
-                document.querySelector('#share-btn div:nth-child(2) div:first-child').textContent = "LINK COPIADO!";
+                const textElement = document.querySelector('#share-btn div:nth-child(2) div:nth-child(2)');
+                const originalText = textElement.textContent;
+                textElement.textContent = "LINK COPIADO!";
+                textElement.classList.add("text-rose-600", "font-bold");
+                
                 setTimeout(() => {
-                    document.querySelector('#share-btn div:nth-child(2) div:first-child').textContent = originalText;
+                    textElement.textContent = originalText;
+                    textElement.classList.remove("text-rose-600", "font-bold");
                 }, 2000);
             }
         });
     </script>
 </body>
 </html>
+
 
