@@ -115,7 +115,7 @@
         <div class="w-full grid grid-cols-2 gap-3.5 relative z-10 mb-8">
             
             <!-- 1. Botão Cardápio (Principal - Elegante e Vibrante) -->
-            <a href="https://sabor-acaiteria.vercel.app" target="_blank" class="col-span-2 group relative w-full flex items-center justify-between p-4.5 py-4 px-5 rounded-[1.25rem] overflow-hidden border border-pink-200 bg-gradient-to-r from-pink-500 via-rose-400 to-purple-500 text-white shadow-[0_8px_25px_rgba(244,114,182,0.35)] hover:shadow-[0_12px_30px_rgba(244,114,182,0.5)] hover:border-pink-300 hover:-translate-y-1 transition-all duration-400">
+            <a href="https://canaadelivery.vercel.app/#/sabor-acaiteria" target="_blank" class="col-span-2 group relative w-full flex items-center justify-between p-4.5 py-4 px-5 rounded-[1.25rem] overflow-hidden border border-pink-200 bg-gradient-to-r from-pink-500 via-rose-400 to-purple-500 text-white shadow-[0_8px_25px_rgba(244,114,182,0.35)] hover:shadow-[0_12px_30px_rgba(244,114,182,0.5)] hover:border-pink-300 hover:-translate-y-1 transition-all duration-400">
                 <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:animate-shimmer z-20"></div>
                 <div class="flex items-center gap-3.5 z-10">
                     <div class="p-2.5 rounded-xl shadow-md bg-white/20 text-white backdrop-blur-md border border-white/30">
@@ -156,7 +156,8 @@
             <!-- QR Code Reduzido e Delicado -->
             <div id="share-btn" class="relative flex items-center gap-4 p-3.5 glass-panel rounded-2xl cursor-pointer group hover:bg-pink-50 transition-all duration-300">
                 <div class="p-1.5 bg-white rounded-xl shrink-0 shadow-sm border border-pink-100">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fsabor-acaiteria.vercel.app&color=db2777" alt="QR" class="w-10 h-10">
+                    <!-- URL codificada para gerar o QR Code correto -->
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fcanaadelivery.vercel.app%2F%23%2Fsabor-acaiteria&color=db2777" alt="QR" class="w-10 h-10">
                 </div>
                 <div class="text-left flex-1">
                     <div class="text-[11px] font-bold text-rose-600 uppercase tracking-widest mb-0.5">Compartilhar</div>
@@ -251,7 +252,8 @@
 
         // 3. Lógica de Compartilhar
         document.getElementById('share-btn').addEventListener('click', async () => {
-            const qrData = "https://sabor-acaiteria.vercel.app";
+            // Link atualizado aqui também
+            const qrData = "https://canaadelivery.vercel.app/#/sabor-acaiteria";
             if (navigator.share) {
                 try {
                     await navigator.share({ title: 'Sabor Açaíteria', text: 'Peça o melhor açaí da cidade!', url: qrData });
